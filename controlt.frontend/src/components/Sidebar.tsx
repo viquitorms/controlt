@@ -1,5 +1,5 @@
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
-import { Home, Person, Settings, ExitToApp } from '@mui/icons-material';
+import { Home, Settings, ExitToApp, People, TableChartRounded } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -9,7 +9,8 @@ export default function Sidebar() {
 
     const navigationList = [
         { text: 'Caixa de Entrada', icon: <Home />, path: '/caixadeentrada' },
-        { text: 'Projetos', icon: <Person />, path: '/projetos' }
+        { text: 'Projetos', icon: <TableChartRounded />, path: '/projetos' },
+        { text: 'Usuários', icon: <People />, path: '/usuarios' }
     ];
 
     const configurationList = [

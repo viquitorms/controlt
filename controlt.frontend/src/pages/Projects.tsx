@@ -1,10 +1,10 @@
 import { Stack, Typography } from "@mui/material";
 
-export default function Users() {
+export default function Projects() {
     return (
         <>
             <Stack>
-                <Typography variant={'h5'}>Usuários</Typography>
+                <Typography variant={'h5'}>Projetos</Typography>
             </Stack>
         </>
     )

@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Snackbar, Stack, TextField } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,8 +18,15 @@ export default function Login() {
             if (login && password) {
 
                 // TODO: Implement actual authentication logic here
-                console.log('Logging in with', { login, password });
-                navigate('/caixadeentrada');
+
+                if (login === 'admin' && password === 'admin') {
+                    console.log('Logging in with', { login, password });
+                    navigate('/caixadeentrada');
+                }
+                else {
+                    <Snackbar autoHideDuration={6000} message={'Usuário e/ou login inválido!'} />
+                }
+
             }
             if (!login) setErrorLogin(true);
             else setErrorLogin(false);
@@ -28,15 +35,15 @@ export default function Login() {
             else setErrorPassword(false);
 
         } catch (error) {
-            alert('Login failed. Please try again.');
+            <Snackbar autoHideDuration={6000} message={'Erro ao realizar login. Tente novamente mais tarde.'} />
         }
 
     }
 
     return (
         <Stack spacing={1} sx={{ width: '300px' }} margin={'auto'} height={'98vh'} justifyContent={'center'}>
-            <TextField value={login} label="Login" variant="outlined" onChange={(e) => setLogin(e.target.value)} error={errorLogin} helperText={helperTextLogin} />
-            <TextField value={password} label="Senha" variant="outlined" onChange={(e) => setPassword(e.target.value)} error={errorPassword} helperText={helperTextPassword} />
+            <TextField value={login} label="Login" type='text' variant="outlined" onChange={(e) => setLogin(e.target.value)} error={errorLogin} helperText={helperTextLogin} />
+            <TextField value={password} label="Senha" type='password' variant="outlined" onChange={(e) => setPassword(e.target.value)} error={errorPassword} helperText={helperTextPassword} />
             <Button variant="contained" onClick={handleLogin}>Entrar</Button>
         </Stack>
     );
