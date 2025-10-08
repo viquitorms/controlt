@@ -1,11 +1,12 @@
 import './App.css'
-import Login from './pages/Login'
+import Login from './pages/Login.page'
 import { Route, Routes } from 'react-router-dom'
-import Inbox from './pages/Inbox'
+import Inbox from './pages/Inbox.page'
 import MainLayout from './layouts/MainLayout'
-import Users from './pages/Users'
-import Projects from './pages/Projects'
-import Settings from './pages/Settings'
+import Users from './pages/Users.page'
+import Projects from './pages/Projects.page'
+import Settings from './pages/Settings.page'
+import References from './pages/References.page'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path='/usuarios' element={<MainLayout><Users /></MainLayout>} />
       <Route path='/projetos' element={<MainLayout><Projects /></MainLayout>} />
       <Route path='/configuracoes' element={<MainLayout><Settings /></MainLayout>} />
+      <Route path='/referencias' element={<MainLayout><References /></MainLayout>} />
     </Routes>
   )
 }

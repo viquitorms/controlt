@@ -1,9 +1,11 @@
-import { Button, Snackbar, Stack, TextField } from '@mui/material';
+import { Button, Stack, TextField } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from '../contexts/Snackbar.context';
 
 export default function Login() {
     const navigate = useNavigate();
+    const { showSnackbar, hideSnackbar } = useSnackbar();
 
     const [login, setLogin] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -21,10 +23,11 @@ export default function Login() {
 
                 if (login === 'admin' && password === 'admin') {
                     console.log('Logging in with', { login, password });
+                    hideSnackbar();
                     navigate('/caixadeentrada');
                 }
                 else {
-                    <Snackbar autoHideDuration={6000} message={'Usuário e/ou login inválido!'} />
+                    showSnackbar("Login ou senha incorretos.", 5000);
                 }
 
             }
@@ -35,9 +38,8 @@ export default function Login() {
             else setErrorPassword(false);
 
         } catch (error) {
-            <Snackbar autoHideDuration={6000} message={'Erro ao realizar login. Tente novamente mais tarde.'} />
+            showSnackbar("Erro ao realizar login. Tente novamente mais tarde.", 5000);
         }
-
     }
 
     return (

@@ -1,6 +1,8 @@
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
 import { Home, Settings, ExitToApp, People, TableChartRounded } from '@mui/icons-material';
+import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
+import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 
 const drawerWidth = 240;
 
@@ -10,6 +12,8 @@ export default function Sidebar() {
     const navigationList = [
         { text: 'Caixa de Entrada', icon: <Home />, path: '/caixadeentrada' },
         { text: 'Projetos', icon: <TableChartRounded />, path: '/projetos' },
+        { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
+        { text: 'Termos', icon: <SpellcheckIcon />, path: '/termos' },
         { text: 'Usuários', icon: <People />, path: '/usuarios' }
     ];
 
