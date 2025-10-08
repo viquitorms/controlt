@@ -27,7 +27,7 @@ export default function Login() {
                     navigate('/caixadeentrada');
                 }
                 else {
-                    showSnackbar("Login ou senha incorretos.", 5000);
+                    showSnackbar("Login ou senha incorretos.", 5000, 'error');
                 }
 
             }
@@ -38,7 +38,7 @@ export default function Login() {
             else setErrorPassword(false);
 
         } catch (error) {
-            showSnackbar("Erro ao realizar login. Tente novamente mais tarde.", 5000);
+            showSnackbar("Erro ao realizar login. Tente novamente mais tarde.", 5000, 'error');
         }
     }
 
