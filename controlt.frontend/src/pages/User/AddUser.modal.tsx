@@ -1,35 +1,47 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Stack, MenuItem } from "@mui/material";
 import { useState } from "react";
+import type { User } from "../../entities/User.entity";
 
-interface AddUserModalProps {
+interface IAddUserModal {
     open: boolean;
     onClose: () => void;
+    onSave: (user: Omit<User, 'id' | 'profile'>) => void;
 }
 
-export default function AddUserModal({ open, onClose }: AddUserModalProps) {
-    const [nome, setName] = useState('');
+export default function AddUserModal({ open, onClose, onSave }: IAddUserModal) {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [senha, setPassword] = useState('');
-    const [perfilId, setProfileId] = useState('');
+    const [password, setPassword] = useState('');
+    const [profileId, setProfileId] = useState<number>(0);
 
-    const perfis = [
+    const profiles = [
         { id: 1, nome: 'Gerente' },
         { id: 2, nome: 'Colaborador' },
     ];
 
-    const handleSave = () => {
-        const novoUsuario = {
-            nome,
-            email,
-            senha_hash: senha,
-            perfil_id: perfilId,
-            data_criacao: new Date()
-        };
+    // Clear state
+    const clear = () => {
+        setName('')
+        setEmail('')
+        setPassword('')
+        setProfileId(0)
+    }
 
-        console.log(novoUsuario);
+    const handleSave = () => {
+        const user: Omit<User, 'id' | 'profile'> = {
+            name,
+            email: email || undefined,
+            password,
+            profile_id: profileId,
+            created_date: new Date()
+        }
+
+        onSave(user)
+        onClose();
+        clear();
+
         // TODO: Chamar API para salvar
 
-        onClose();
     };
 
     return (
@@ -39,7 +51,7 @@ export default function AddUserModal({ open, onClose }: AddUserModalProps) {
                 <Stack spacing={2} sx={{ mt: 1 }}>
                     <TextField
                         label="Nome"
-                        value={nome}
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
                         fullWidth
                         required
@@ -55,7 +67,7 @@ export default function AddUserModal({ open, onClose }: AddUserModalProps) {
                     <TextField
                         label="Senha"
                         type="password"
-                        value={senha}
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         fullWidth
                         required
@@ -63,14 +75,14 @@ export default function AddUserModal({ open, onClose }: AddUserModalProps) {
                     <TextField
                         select
                         label="Perfil"
-                        value={perfilId}
-                        onChange={(e) => setProfileId(e.target.value)}
+                        value={profileId}
+                        onChange={(e) => setProfileId(Number(e.target.value))}
                         fullWidth
                         required
                     >
-                        {perfis.map((perfil) => (
-                            <MenuItem key={perfil.id} value={perfil.id}>
-                                {perfil.nome}
+                        {profiles.map((profile) => (
+                            <MenuItem key={profile.id} value={profile.id}>
+                                {profile.nome}
                             </MenuItem>
                         ))}
                     </TextField>
