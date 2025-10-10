@@ -5,23 +5,44 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { IconButton } from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
 
-interface IColumn {
-    key: string,
-    label: string,
+interface Column {
+    key: string;
+    label: string;
     align?: 'left' | 'right' | 'center';
+    format?: (value: any) => string;
 }
 
 interface IDataGrid<T> {
-    columns: IColumn[],
-    data: T[],
+    columns: Column[];
+    data: T[];
     getRowKey: (row: T) => string | number;
+    onEdit?: (row: T) => void;
+    onDelete?: (row: T) => void;
 }
 
-export default function DataGrid<T extends Record<string, any>>({ columns, data, getRowKey }: IDataGrid<T>) {
+export default function DataGrid<T extends Record<string, any>>({
+    columns,
+    data,
+    getRowKey,
+    onEdit,
+    onDelete
+}: IDataGrid<T>) {
+
+    const formatValue = (value: any, format?: (value: any) => string) => {
+        if (format) return format(value);
+        if (value instanceof Date) return value.toLocaleDateString('pt-BR');
+        if (value === null || value === undefined) return '-';
+        return String(value);
+    };
+
+    const hasActions = onEdit || onDelete;
+
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 650 }}>
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
@@ -29,6 +50,7 @@ export default function DataGrid<T extends Record<string, any>>({ columns, data,
                                 {column.label}
                             </TableCell>
                         ))}
+                        {hasActions && <TableCell align="center">Ações</TableCell>}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -39,9 +61,31 @@ export default function DataGrid<T extends Record<string, any>>({ columns, data,
                         >
                             {columns.map((column) => (
                                 <TableCell key={column.key} align={column.align || 'left'}>
-                                    {String(row[column.key])}
+                                    {formatValue(row[column.key], column.format)}
                                 </TableCell>
                             ))}
+                            {hasActions && (
+                                <TableCell align="center">
+                                    {onEdit && (
+                                        <IconButton
+                                            color="primary"
+                                            onClick={() => onEdit(row)}
+                                            size="small"
+                                        >
+                                            <Edit />
+                                        </IconButton>
+                                    )}
+                                    {onDelete && (
+                                        <IconButton
+                                            color="error"
+                                            onClick={() => onDelete(row)}
+                                            size="small"
+                                        >
+                                            <Delete />
+                                        </IconButton>
+                                    )}
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))}
                 </TableBody>

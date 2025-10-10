@@ -2,11 +2,11 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
 import { PersonAdd } from "@mui/icons-material";
-import AddUserModal from "./User.modal";
+import ProjectModal from "./Project.modal";
 import type { User } from "../../entities/User.entity";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 
-export default function Users() {
+export default function Projects() {
     const { showSnackbar } = useSnackbar();
     const [openModal, setOpenModal] = useState(false);
     const [userList, setUserList] = useState<User[]>([]);
@@ -77,7 +77,7 @@ export default function Users() {
 
     return (
         <Stack spacing={2}>
-            <Typography variant={'h5'}>Usuários</Typography>
+            <Typography variant={'h5'}>Projetos</Typography>
 
             <Stack direction={'row'} justifyContent={'space-between'}>
                 <Button
@@ -97,7 +97,7 @@ export default function Users() {
                 onDelete={handleDelete}
             />
 
-            <AddUserModal
+            <ProjectModal
                 open={openModal}
                 user={selectedUser}
                 onClose={handleCloseModal}
