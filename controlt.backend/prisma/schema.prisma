@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(100)
+  users User[]
+
+  @@map("profiles")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(255)
+  email         String         @unique @db.VarChar(255)
+  hash_password String         @db.VarChar(255)
+  profile_id    Int
+  created_date  DateTime       @default(now())
+  profile       Profile        @relation(fields: [profile_id], references: [id])
+  teams         UserTeam[]
+  itens         Item[]
+  recorded_time RecordedTime[]
+
+  @@map("users")
+}
+
+model Team {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  created_date DateTime   @default(now())
+  users        UserTeam[]
+
+  @@map("equipes")
+}
+
+model UserTeam {
+  user_id Int
+  team_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [team_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, team_id])
+  @@map("user_team")
+}
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(255)
+  description String? @db.Text
+  status      String  @db.VarChar(50)
+  itens       Item[]
+
+  @@map("projects")
+}
+
+model Term {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  description  String?  @db.Text
+  created_date DateTime @default(now())
+  updated_date DateTime @updatedAt
+
+  @@map("term")
+}
+
+model Item {
+  id            Int            @id @default(autoincrement())
+  title         String         @db.VarChar(255)
+  description   String?        @db.Text
+  status        String         @db.VarChar(50)
+  due_date      DateTime?
+  project_id    Int?
+  user_id       Int
+  user          User           @relation(fields: [user_id], references: [id])
+  project       Project?       @relation(fields: [project_id], references: [id])
+  recorded_time RecordedTime[]
+
+  @@map("itens")
+}
+
+model RecordedTime {
+  id               Int      @id @default(autoincrement())
+  minutes_duration Int
+  register_date    DateTime @default(now())
+  item_id          Int
+  user_id          Int
+  item             Item     @relation(fields: [item_id], references: [id])
+  user             User     @relation(fields: [user_id], references: [id])
+
+  @@map("recorded_time")
+}
