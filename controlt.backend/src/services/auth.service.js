@@ -39,6 +39,11 @@ class AuthService {
         };
     }
 
+    /**
+     * Registra um novo usuário
+     * @param {*} data 
+     * @returns 
+     */
     async register (data) {
         const { name, email, password, profile_id} = data;
 

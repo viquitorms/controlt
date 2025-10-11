@@ -1,4 +1,4 @@
-import prisma from "../config/prisma.config";
+import prisma from "../config/prisma.config.js";
 
 class UserSerivce {
 
@@ -87,3 +87,5 @@ class UserSerivce {
         });
     }
 }
+
+export default new UserSerivce();
