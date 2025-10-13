@@ -1,4 +1,4 @@
-import prisma from '../config/prisma.config'
+import prisma from '../config/prisma.config.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -12,13 +12,17 @@ class AuthService {
      */
     async Login (email, password) {
         const user = await prisma.user.findUnique({
-            where: { email, password },
+            where: { email },
             include: { profile: true }
         });
 
+        if (!user) {
+            throw new Error('Usuário não encontrado ou senha inválida');
+        }
+
         const isPasswordValid = await bcrypt.compare(password, user.hash_password);
 
-        if (!user || !isPasswordValid) {
+        if (!isPasswordValid) {
             throw new Error('Usuário não encontrado ou senha inválida');
         }
 

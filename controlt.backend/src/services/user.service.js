@@ -36,9 +36,9 @@ class UserSerivce {
                 name: true,
                 email: true,
                 profile: {
-                    select:{
+                    select: {
                         id: true,
-                        name:true,
+                        name: true,
                     }
                 },
                 created_date: true
@@ -53,18 +53,62 @@ class UserSerivce {
     }
 
     /**
+     * Cria um novo usuário
+     * @param {Object} data - Dados do usuário
+     * @returns {Promise<Object>} Usuário criado
+     */
+    async create(data) {
+        const { name, email, password, profile_id } = data;
+
+        if (!name || !email || !password) {
+            throw new Error('Nome, email e senha são obrigatórios');
+        }
+
+        const userExists = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (userExists) {
+            throw new Error('Email já  registrado');
+        }
+
+        const hash_password = await bcrypt.hash(password, 10);
+
+        return await prisma.user.create({
+            data: {
+                name,
+                email,
+                hash_password,
+                profile_id: profile_id || 2 // Padrão: Employee
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                profile: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                created_date: true
+            }
+        });
+    }
+
+    /**
      * Atualiza um usuário
      * @param {*} id 
      * @param {*} data 
      * @returns 
      */
-    async update(id, data){
-        const {name, email, profile_id} = data;
+    async update(id, data) {
+        const { name, email, profile_id } = data;
 
         return await prisma.user.update({
             where: { id },
             data: {
-                ...(name && { name}),
+                ...(name && { name }),
                 ...(email && { email }),
                 ...(profile_id && { profile_id })
             },
@@ -83,7 +127,7 @@ class UserSerivce {
      */
     async delete(id) {
         await prisma.user.delete({
-            where: {id}
+            where: { id }
         });
     }
 }

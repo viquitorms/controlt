@@ -19,7 +19,7 @@ model Profile {
   name  String @db.VarChar(100)
   users User[]
 
-  @@map("profiles")
+  @@map("profile")
 }
 
 model User {
@@ -34,7 +34,7 @@ model User {
   itens         Item[]
   recorded_time RecordedTime[]
 
-  @@map("users")
+  @@map("user")
 }
 
 model Team {
@@ -43,7 +43,7 @@ model Team {
   created_date DateTime   @default(now())
   users        UserTeam[]
 
-  @@map("equipes")
+  @@map("team")
 }
 
 model UserTeam {
@@ -57,13 +57,14 @@ model UserTeam {
 }
 
 model Project {
-  id          Int     @id @default(autoincrement())
-  title       String  @db.VarChar(255)
-  description String? @db.Text
-  status      String  @db.VarChar(50)
-  itens       Item[]
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(255)
+  description  String?  @db.Text
+  status       String   @db.VarChar(50)
+  created_date DateTime @default(now())
+  itens        Item[]
 
-  @@map("projects")
+  @@map("project")
 }
 
 model Term {
@@ -87,8 +88,10 @@ model Item {
   user          User           @relation(fields: [user_id], references: [id])
   project       Project?       @relation(fields: [project_id], references: [id])
   recorded_time RecordedTime[]
+  created_date  DateTime       @default(now())
+  updated_date  DateTime       @updatedAt
 
-  @@map("itens")
+  @@map("item")
 }
 
 model RecordedTime {
