@@ -94,7 +94,7 @@ class TermService {
 
         // Validação
         if (!name) {
-            throw new Error('Name is required');
+            throw new Error('Name é obrigatório');
         }
 
         // Verificar se termo já existe

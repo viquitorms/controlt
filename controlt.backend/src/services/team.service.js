@@ -228,7 +228,6 @@ class TeamService {
             throw new Error('Usuário não é membro desta equipe');
         }
 
-        // Remover membro
         await prisma.userTeam.delete({
             where: {
                 user_id_team_id: {

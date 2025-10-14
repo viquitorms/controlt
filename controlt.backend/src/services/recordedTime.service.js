@@ -328,7 +328,7 @@ class RecordedTimeService {
         });
 
         if (!project) {
-            throw new Error('Project not found');
+            throw new Error('Projeto não encontrado');
         }
 
         // Buscar todos os items do projeto

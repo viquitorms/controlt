@@ -10,7 +10,7 @@ class ItemService {
         const { title, description, user_id, project_id, due_date, status } = data;
 
         if (!title || !user_id) {
-            throw new Error('title and user_id are required');
+            throw new Error('title e user_id são obrigatórios');
         }
 
         const userExists = await prisma.user.findUnique({
@@ -18,7 +18,7 @@ class ItemService {
         });
 
         if (!userExists) {
-            throw new Error('User not found');
+            throw new Error('Usuário não encontrado');
         }
 
         if (project_id) {
@@ -27,7 +27,7 @@ class ItemService {
             });
 
             if (!projectExists) {
-                throw new Error('Project not found');
+                throw new Error('Projeto não encontrado');
             }
         }
 
@@ -138,7 +138,7 @@ class ItemService {
         });
 
         if (!item) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         const totalMinutes = item.recorded_time.reduce(
@@ -165,7 +165,7 @@ class ItemService {
         });
 
         if (!itemExists) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         const { title, description, status, due_date, project_id, user_id } = data;
@@ -176,7 +176,7 @@ class ItemService {
             });
 
             if (!userExists) {
-                throw new Error('User not found');
+                throw new Error('Usuário não encontrado');
             }
         }
 
@@ -186,7 +186,7 @@ class ItemService {
             });
 
             if (!projectExists) {
-                throw new Error('Project not found');
+                throw new Error('Projeto não encontrado');
             }
         }
 
@@ -234,11 +234,11 @@ class ItemService {
         });
 
         if (!itemExists) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontado');
         }
 
         if (itemExists._count.recorded_time > 0) {
-            console.warn(`Item ${id} has ${itemExists._count.recorded_time} time records`);
+            console.warn(`Item ${id} tem ${itemExists._count.recorded_time} de registros de tempo associados.`);
         }
 
         await prisma.item.delete({
@@ -285,11 +285,11 @@ class ItemService {
         });
 
         if (!item) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         if (item.status !== 'inbox') {
-            throw new Error('Item already processed');
+            throw new Error('Item já foi processado');
         }
 
         const {
@@ -364,7 +364,7 @@ class ItemService {
         });
 
         if (!itemExists) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         const validStatuses = [
@@ -381,7 +381,7 @@ class ItemService {
         ];
 
         if (!validStatuses.includes(status)) {
-            throw new Error(`Invalid status. Valid statuses: ${validStatuses.join(', ')}`);
+            throw new Error(`Status inválido. Os status válidos são os seguintes: ${validStatuses.join(', ')}`);
         }
 
         return await prisma.item.update({
@@ -415,7 +415,7 @@ class ItemService {
         });
 
         if (!itemExists) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         return await prisma.item.update({
@@ -583,7 +583,7 @@ class ItemService {
         });
 
         if (!project) {
-            throw new Error('Project not found');
+            throw new Error('Projeto não encontrado');
         }
 
         return await prisma.item.findMany({
@@ -616,7 +616,7 @@ class ItemService {
         });
 
         if (!item) {
-            throw new Error('Item not found');
+            throw new Error('Item não encontrado');
         }
 
         const project = await prisma.project.create({
@@ -647,7 +647,7 @@ class ItemService {
         return {
             project,
             item: updatedItem,
-            message: 'Item converted to project successfully'
+            message: 'Item convertido em projeto com sucesso'
         };
     }
 }
