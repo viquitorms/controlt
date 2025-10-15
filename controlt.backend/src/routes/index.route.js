@@ -6,6 +6,7 @@ import teamRoutes from "./team.route.js";
 import termRoutes from "./term.route.js";
 import recordedTimeRoutes from "./recordedTime.route.js";
 import itemRoutes from "./item.route.js";
+import profileRoutes from "./profile.route.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/teams', teamRoutes);
 router.use('/terms', termRoutes);
 router.use('/recorded-time', recordedTimeRoutes);
 router.use('/items', itemRoutes);
+router.use('/profiles', profileRoutes)
 
 export default router;

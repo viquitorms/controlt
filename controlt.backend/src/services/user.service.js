@@ -79,7 +79,7 @@ class UserSerivce {
                 name,
                 email,
                 hash_password,
-                profile_id: profile_id || 2 // Padrão: Employee
+                profile_id: profile_id || 2
             },
             select: {
                 id: true,

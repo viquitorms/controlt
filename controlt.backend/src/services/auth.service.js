@@ -10,7 +10,9 @@ class AuthService {
      * @param {*} password 
      * @returns 
      */
-    async Login (email, password) {
+    async Login(data) {
+        const { email, password } = data;
+
         const user = await prisma.user.findUnique({
             where: { email },
             include: { profile: true }
@@ -48,8 +50,8 @@ class AuthService {
      * @param {*} data 
      * @returns 
      */
-    async register (data) {
-        const { name, email, password, profile_id} = data;
+    async register(data) {
+        const { name, email, password, profile_id } = data;
 
         const userExists = await prisma.user.findUnique({
             where: { email }
