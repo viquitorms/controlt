@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Stack, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import type { User } from "../../entities/User.entity";
+import type { User } from "../../dtos/user/User.res.dto";
 
 interface IAddUserModal {
     open: boolean;

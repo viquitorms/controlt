@@ -1,5 +1,5 @@
 import type { Team } from "./Team.entity";
-import type { User } from "./User.entity";
+import type { User } from "./user/User.res.dto";
 
 export interface TeamUser {
     user_id: number;

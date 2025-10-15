@@ -1,7 +1,8 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import type { User } from "../../entities/User.entity";
+import type { User } from "../../dtos/user/User.res.dto";
 import Dialog from "../../components/Dialog.component";
+import type { Profile } from "../../dtos/Profile.entity";
 
 
 interface IAddUserModal {
@@ -9,19 +10,15 @@ interface IAddUserModal {
     user?: User | null;
     onClose: () => void;
     onSave: (user: Omit<User, 'id' | 'profile'>) => void;
+    profiles?: Profile[];
 }
 
-export default function AddUserModal({ open, user, onClose, onSave }: IAddUserModal) {
+export default function AddUserModal({ open, user, onClose, onSave, profiles }: IAddUserModal) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
 
     const [password, setPassword] = useState('');
-    const [profileId, setProfileId] = useState<number>(0);
-
-    const profiles = [
-        { id: 1, name: 'Gerente' },
-        { id: 2, name: 'Colaborador' },
-    ];
+    const [profileId, setProfileId] = useState<number>(2);
 
     useEffect(() => {
         if (user) {
@@ -38,7 +35,7 @@ export default function AddUserModal({ open, user, onClose, onSave }: IAddUserMo
         setName('');
         setEmail('');
         setPassword('');
-        setProfileId(0);
+        setProfileId(2);
     };
 
     const isValid = () => {
@@ -105,7 +102,7 @@ export default function AddUserModal({ open, user, onClose, onSave }: IAddUserMo
                     fullWidth
                     required
                 >
-                    {profiles.map((profile) => (
+                    {profiles?.map((profile) => (
                         <MenuItem key={profile.id} value={profile.id}>
                             {profile.name}
                         </MenuItem>

@@ -23,7 +23,7 @@ export default function Snackbar({ open, message, duration = 6000, onClose, seve
     };
 
     return (
-        <MuiSnackbar open={open} autoHideDuration={duration} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <MuiSnackbar open={open} autoHideDuration={duration} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             <Alert
                 onClose={handleClose}
                 severity={severity}

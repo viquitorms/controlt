@@ -1,5 +1,5 @@
-import type { Project } from "./Project.entity";
-import type { User } from "./User.entity";
+import type { Project } from "../Project.entity";
+import type { User } from "../user/User.res.dto";
 
 export interface Item {
     id: number;

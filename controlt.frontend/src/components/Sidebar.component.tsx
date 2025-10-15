@@ -3,6 +3,7 @@ import { Home, Settings, ExitToApp, People, TableChartRounded } from '@mui/icons
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
+import { authService } from '../services/auth.service';
 
 const drawerWidth = 240;
 
@@ -19,8 +20,18 @@ export default function Sidebar() {
 
     const configurationList = [
         { text: 'Configurações', icon: <Settings />, path: '/configuracoes' },
-        { text: 'Sair', icon: <ExitToApp />, path: '/' },
+        { text: 'Sair', icon: <ExitToApp />, action: Logout },
     ];
+
+    const handleNavigate = (item: any) => {
+        if (item.path) navigate(item.path);
+        if (item.action) item.action();
+    }
+
+    async function Logout() {
+        await authService.logout();
+        navigate('/login');
+    }
 
     return (
         <Drawer
@@ -42,7 +53,7 @@ export default function Sidebar() {
                 <List>
                     {navigationList.map((item) => (
                         <ListItem key={item.text} disablePadding>
-                            <ListItemButton onClick={() => navigate(item.path)}>
+                            <ListItemButton onClick={() => handleNavigate(item)}>
                                 <ListItemIcon>{item.icon}</ListItemIcon>
                                 <ListItemText primary={item.text} />
                             </ListItemButton>
@@ -52,7 +63,7 @@ export default function Sidebar() {
                 <List>
                     {configurationList.map((item) => (
                         <ListItem key={item.text} disablePadding>
-                            <ListItemButton onClick={() => navigate(item.path)}>
+                            <ListItemButton onClick={() => handleNavigate(item)}>
                                 <ListItemIcon>{item.icon}</ListItemIcon>
                                 <ListItemText primary={item.text} />
                             </ListItemButton>

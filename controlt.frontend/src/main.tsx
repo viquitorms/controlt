@@ -8,12 +8,15 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from './contexts/Snackbar.context.tsx';
+import { BackdropProvider } from './contexts/Backdrop.context.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <SnackbarProvider>
-        <App />
+        <BackdropProvider>
+          <App />
+        </BackdropProvider>
       </SnackbarProvider>
     </BrowserRouter>
   </StrictMode>,

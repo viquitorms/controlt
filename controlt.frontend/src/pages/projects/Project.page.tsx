@@ -3,7 +3,7 @@ import { useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
 import { PersonAdd } from "@mui/icons-material";
 import ProjectModal from "./Project.modal";
-import type { User } from "../../entities/User.entity";
+import type { User } from "../../dtos/user/User.res.dto";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 
 export default function Projects() {
