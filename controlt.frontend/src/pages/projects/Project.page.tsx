@@ -3,8 +3,9 @@ import { useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
 import { PersonAdd } from "@mui/icons-material";
 import ProjectModal from "./Project.modal";
-import type { User } from "../../dtos/user/User.res.dto";
+
 import { useSnackbar } from "../../contexts/Snackbar.context";
+import type { User } from "../../models/Models.model";
 
 export default function Projects() {
     const { showSnackbar } = useSnackbar();
@@ -33,7 +34,7 @@ export default function Projects() {
         },
     ];
 
-    const handleAddUser = (user: Omit<User, 'id' | 'profile'>) => {
+    const handleAddUser = (user: User) => {
         try {
             if (selectedUser) {
                 // Editar usuário existente
@@ -46,10 +47,14 @@ export default function Projects() {
                 showSnackbar(`Usuário ${updatedUser.name} atualizado!`, 5000, 'success');
                 setSelectedUser(null);
             } else {
-                // Adicionar novo usuário
+
                 const newUser: User = {
-                    ...user,
-                    id: userList.length + 1
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    password: user.password,
+                    profile_id: user.profile_id,
+                    created_date: user.created_date
                 };
 
                 setUserList(prevList => [...prevList, newUser]);
@@ -92,7 +97,7 @@ export default function Projects() {
             <DataGrid
                 columns={columns}
                 data={userList}
-                getRowKey={(row) => row.id}
+                rowKey={(row) => row.id ?? ''}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />

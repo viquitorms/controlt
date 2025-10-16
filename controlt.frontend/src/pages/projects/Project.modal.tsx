@@ -1,12 +1,12 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Stack, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import type { User } from "../../dtos/user/User.res.dto";
+import type { User } from "../../models/Models.model";
 
 interface IAddUserModal {
     open: boolean;
     user?: User | null;
     onClose: () => void;
-    onSave: (user: Omit<User, 'id' | 'profile'>) => void;
+    onSave: (user: User) => void;
 }
 
 export default function ProjectModal({ open, user, onClose, onSave }: IAddUserModal) {
@@ -45,9 +45,10 @@ export default function ProjectModal({ open, user, onClose, onSave }: IAddUserMo
     const handleSave = () => {
         if (!isValid()) return;
 
-        const userData: Omit<User, 'id' | 'profile'> = {
+        const userData: User = {
+            id: 0,
             name,
-            email: email || undefined,
+            email: email,
             password,
             profile_id: profileId,
             created_date: user?.created_date || new Date()

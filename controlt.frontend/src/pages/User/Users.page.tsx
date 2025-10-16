@@ -2,25 +2,24 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
 import { PersonAdd } from "@mui/icons-material";
-import AddUserModal from "./User.modal";
+import CreateUserModal from "./CreateUser.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { profileService } from "../../services/profile.service";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import type { Profile } from "../../dtos/Profile.entity";
-import type { RegisterRequest } from "../../dtos/auth/Auth.req.dto";
-import { authService } from "../../services/auth.service";
 import { userService } from "../../services/user.service";
-import type { UserListResponse } from "../../dtos/user/User.res.dto";
-import type { User } from "../../models/Models.model";
+import type { UserFindByIdResponse, UserListResponse } from "../../dtos/user/User.res.dto";
+import type { UserCreateRequest, UserUpdateRequest } from "../../dtos/user/User.req.dto";
+import UpdateUserModal from "./UpdateUser.modal";
 
 export default function Users() {
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
 
-    const [openModal, setOpenModal] = useState(false);
+    const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
+    const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
     const [userList, setUserList] = useState<UserListResponse[]>([]);
-    const [selectedUser, setSelectedUser] = useState<UserListResponse | null>(null);
-    const [profileMap, setProfileMap] = useState<{ [key: number]: string }>({});
+    const [selectedUser, setSelectedUser] = useState<UserFindByIdResponse | null>(null);
     const [profiles, setProfiles] = useState<Profile[]>([]);
 
     useEffect(() => {
@@ -41,23 +40,22 @@ export default function Users() {
 
     async function getProfiles() {
         try {
+            showBackdrop();
             const response = await profileService.getList();
-            const newProfileMap: { [key: number]: string } = {};
-            response.forEach((profile: Profile) => {
-                newProfileMap[profile.id] = profile.name;
-            });
-
-            setProfileMap(newProfileMap);
             setProfiles(response);
         } catch (error: any) {
             const message = error.response?.data?.message || 'Erro ao carregar perfis';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
+        finally {
+            hideBackdrop();
+        }
     }
 
     async function getUsers() {
         try {
+            showBackdrop();
             const list = await userService.list();
             setUserList(list)
         } catch (error: any) {
@@ -65,81 +63,58 @@ export default function Users() {
             showSnackbar(message, 5000, 'error');
             throw error;
         }
-    }
-
-    async function registerUser(data: RegisterRequest) {
-        try {
-            await authService.register(data);
-            var userList = await userService.list();
-            setUserList(userList);
-        } catch (error: any) {
-            throw error
+        finally {
+            hideBackdrop();
         }
     }
 
-    const columns = [
-        { key: 'id', label: 'ID' },
-        { key: 'name', label: 'Nome' },
-        { key: 'email', label: 'Email' },
-        {
-            key: 'profile_id',
-            label: 'Perfil',
-            format: (value: number) => profileMap[value] || 'Desconhecido'
-        },
-        {
-            key: 'created_date',
-            label: 'Data de Criação',
-            format: (date: Date) => new Date(date).toLocaleDateString('pt-BR')
-        },
-    ];
-
-    const handleAddUser = async (user: Omit<User, 'id' | 'profile'>) => {
+    async function getUserById(id: number) {
         try {
             showBackdrop();
-
-            if (selectedUser) {
-                const updatedUser: UserListResponse = {
-                    ...user,
-                    id: selectedUser.id
-                };
-
-                setUserList(prevList => prevList.map(u => u.id === selectedUser.id ? updatedUser : u));
-                showSnackbar(`Usuário ${updatedUser.name} atualizado!`, 5000, 'success');
-                setSelectedUser(null);
-            } else {
-                const newUser: RegisterRequest = {
-                    name: user.name,
-                    email: user.email,
-                    password: user.password,
-                    profile_id: user.profile_id
-                };
-
-                await registerUser(newUser);
-                await getUsers();
-                showSnackbar(`Usuário ${newUser.name} adicionado!`, 5000, 'success');
-            }
+            const user = await userService.findById(id);
+            setSelectedUser(user)
         } catch (error: any) {
-            const message = error.response?.data?.error;
+            const message = error.response?.data?.message || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
+            throw error;
         }
         finally {
             hideBackdrop();
         }
-    };
+    }
 
-    const handleEdit = (user: UserListResponse) => {
-        setSelectedUser(user);
-        setOpenModal(true);
+    async function updateUser(data: UserUpdateRequest) {
+        try {
+            showBackdrop()
+            await userService.update(data);
+            await getUsers();
+        } catch (error: any) {
+            throw error
+        } finally {
+            hideBackdrop();
+        }
+    }
+
+    async function createUser(data: UserCreateRequest) {
+        try {
+            showBackdrop();
+            await userService.create(data);
+            await getUsers();
+        } catch (error: any) {
+            throw error
+        } finally {
+            hideBackdrop();
+        }
+    }
+
+    const handleEdit = async (user: UserListResponse) => {
+        await getUserById(user.id);
+        setIsUpdateUserModalOpen(true);
     };
 
     const handleDelete = (user: UserListResponse) => {
         setUserList(prevList => prevList.filter(u => u.id !== user.id));
         showSnackbar(`Usuário ${user.name} removido!`, 5000, 'success');
-    };
-
-    const handleCloseModal = () => {
-        setOpenModal(false);
-        setSelectedUser(null);
     };
 
     return (
@@ -150,26 +125,32 @@ export default function Users() {
                 <Button
                     variant="outlined"
                     startIcon={<PersonAdd />}
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => setIsCreateUserModalOpen(true)}
                 >
                     Adicionar
                 </Button>
             </Stack>
 
             <DataGrid
-                columns={columns}
                 data={userList}
-                getRowKey={(row) => row.id}
+                rowKey={(row) => row.id}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
 
-            <AddUserModal
-                open={openModal}
+            <CreateUserModal
+                open={isCreateUserModalOpen}
+                onClose={() => setIsCreateUserModalOpen(false)}
+                onSave={createUser}
+                profiles={profiles}
+            />
+
+            <UpdateUserModal
+                open={isUpdateUserModalOpen}
                 user={selectedUser}
-                onClose={handleCloseModal}
-                onSave={handleAddUser}
-                profiles={profiles} // <- CORRIGIDO
+                onClose={() => setIsUpdateUserModalOpen(false)}
+                onSave={updateUser}
+                profiles={profiles}
             />
         </Stack>
     );
