@@ -8,6 +8,7 @@ import Settings from './pages/Settings.page'
 import References from './pages/References.page'
 import ProtectedRoute from './components/ProtectedRoute.component'
 import Projects from './pages/project/Projects.page'
+import Teams from './pages/team/Teams.page'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path='/projetos' element={<ProtectedRoute><MainLayout><Projects /></MainLayout></ProtectedRoute>} />
       <Route path='/configuracoes' element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
       <Route path='/referencias' element={<ProtectedRoute><MainLayout><References /></MainLayout></ProtectedRoute>} />
+      <Route path='/equipes' element={<ProtectedRoute><MainLayout><Teams /></MainLayout></ProtectedRoute>} />
       <Route path='*' element={<Navigate to="/" replace />} />
     </Routes>
   )
