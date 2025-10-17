@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import TeamController from '../controllers/team.controller.js';
+import teamController from '../controllers/team.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -8,15 +8,15 @@ const router = Router();
 router.use(authMiddleware);
 
 // CRUD básico
-router.post('/', TeamController.create);
-router.get('/', TeamController.list);
-router.get('/:id', TeamController.findById);
-router.put('/:id', TeamController.update);
-router.delete('/:id', TeamController.delete);
+router.post('/', teamController.create);
+router.get('/', teamController.list);
+router.get('/:id', teamController.findById);
+router.put('/:id', teamController.update);
+router.delete('/:id', teamController.delete);
 
 // Gestão de membros
-router.get('/:id/members', TeamController.getMembers);
-router.post('/:id/members', TeamController.addMember);
-router.delete('/:id/members/:userId', TeamController.removeMember);
+router.get('/:id/members', teamController.getMembers);
+router.post('/:id/members', teamController.addMember);
+router.delete('/:id/members/:userId', teamController.removeMember);
 
 export default router;

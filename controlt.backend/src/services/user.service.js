@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.config.js";
+import bcrypt from "bcryptjs";
 
 class UserSerivce {
 
@@ -19,6 +20,9 @@ class UserSerivce {
                     }
                 },
                 created_date: true
+            },
+            orderBy: {
+                id: 'asc'
             }
         })
     }
@@ -69,7 +73,7 @@ class UserSerivce {
         });
 
         if (userExists) {
-            throw new Error('Email já  registrado');
+            throw new Error('Email já registrado');
         }
 
         const hash_password = await bcrypt.hash(password, 10);

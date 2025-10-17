@@ -1,19 +1,19 @@
 import { Router } from 'express';
-import RecordedTimeController from '../controllers/recordedTime.controller.js';
+import recordedTimeController from '../controllers/recordedTime.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.post('/', RecordedTimeController.create);
-router.get('/', RecordedTimeController.list);
-router.get('/:id', RecordedTimeController.findById);
-router.put('/:id', RecordedTimeController.update);
-router.delete('/:id', RecordedTimeController.delete);
+router.post('/', recordedTimeController.create);
+router.get('/', recordedTimeController.list);
+router.get('/:id', recordedTimeController.findById);
+router.put('/:id', recordedTimeController.update);
+router.delete('/:id', recordedTimeController.delete);
 
-router.get('/item/:itemId', RecordedTimeController.getTimeByItem);
-router.get('/user/:userId/stats', RecordedTimeController.getTimeByUser);
-router.get('/project/:projectId', RecordedTimeController.getTimeByProject);
+router.get('/item/:itemId', recordedTimeController.getTimeByItem);
+router.get('/user/:userId/stats', recordedTimeController.getTimeByUser);
+router.get('/project/:projectId', recordedTimeController.getTimeByProject);
 
 export default router;

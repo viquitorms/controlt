@@ -14,6 +14,9 @@ class ProjectService {
                 description: true,
                 status: true,
                 created_date: true
+            },
+            orderBy: {
+                id: 'asc'
             }
         })
     }

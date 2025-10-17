@@ -41,7 +41,7 @@ class UserController {
     try {
       const data = req.body;
       const user = await userService.create(data);
-      res.status(201).json(project);
+      res.status(201).json(user);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
