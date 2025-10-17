@@ -7,12 +7,3 @@ export interface LoginResponse {
     email: string,
     profile: Profile
 }
-
-export interface RegisterResponse {
-    id: number,
-    name: string,
-    email: string,
-    profile_id: number,
-    created_date: Date
-    profile?: Profile
-}

@@ -1,7 +1,8 @@
 import { Button, Stack, Typography } from "@mui/material";
+import UpdateIcon from '@mui/icons-material/Update';
 import { useEffect, useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
-import { PersonAdd } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import CreateUserModal from "./CreateUser.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { profileService } from "../../services/profile.service";
@@ -11,10 +12,12 @@ import { userService } from "../../services/user.service";
 import type { UserFindByIdResponse, UserListResponse } from "../../dtos/user/User.res.dto";
 import type { UserCreateRequest, UserUpdateRequest } from "../../dtos/user/User.req.dto";
 import UpdateUserModal from "./UpdateUser.modal";
+import { useAuth } from "../../contexts/Auth.context";
 
 export default function Users() {
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
+    const { isManager } = useAuth();
 
     const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
     const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
@@ -44,7 +47,7 @@ export default function Users() {
             const response = await profileService.getList();
             setProfiles(response);
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Erro ao carregar perfis';
+            const message = error.response?.data?.error || 'Erro ao carregar perfis';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -59,7 +62,7 @@ export default function Users() {
             const list = await userService.list();
             setUserList(list)
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Erro ao carregar usuários';
+            const message = error.response?.data?.error || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -74,7 +77,7 @@ export default function Users() {
             const user = await userService.findById(id);
             setSelectedUser(user)
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Erro ao carregar usuários';
+            const message = error.response?.data?.error || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -83,49 +86,100 @@ export default function Users() {
         }
     }
 
-    async function updateUser(data: UserUpdateRequest) {
+    async function updateUser(data: UserUpdateRequest): Promise<boolean> {
         try {
             showBackdrop()
-            await userService.update(data);
+            const user = await userService.update(data);
             await getUsers();
+            showSnackbar(`Usuário ${user.name} editado com sucesso`, 5000, 'success')
+            return true;
         } catch (error: any) {
-            throw error
+            const message = error.response?.data?.error || 'Erro ao editar usuário';
+            showSnackbar(message, 5000, 'error');
+            return false;
         } finally {
             hideBackdrop();
         }
     }
 
-    async function createUser(data: UserCreateRequest) {
+    async function createUser(data: UserCreateRequest): Promise<boolean> {
         try {
             showBackdrop();
             await userService.create(data);
             await getUsers();
+            showSnackbar(`Usuário ${data.name} criado com sucesso`, 5000, 'success')
+            return true;
         } catch (error: any) {
-            throw error
+            const message = error.response?.data?.error || 'Erro ao criar usuário';
+            showSnackbar(message, 5000, 'error');
+            return false;
         } finally {
             hideBackdrop();
         }
     }
 
-    const handleEdit = async (user: UserListResponse) => {
-        await getUserById(user.id);
-        setIsUpdateUserModalOpen(true);
+    async function deleteUser(id: number, name: string) {
+        try {
+            showBackdrop();
+            await userService.delete(id);
+            await getUsers();
+            showSnackbar(`O usuário ${name} foi deletado`, 5000, 'info');
+        }
+        catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao deletar usuário';
+            showSnackbar(message, 5000, 'error');
+            throw error;
+        }
+        finally {
+            hideBackdrop();
+        }
+    }
+
+
+    const handleCreate = async () => {
+        if (isManager) {
+            setIsCreateUserModalOpen(true);
+        }
+        else {
+            showSnackbar('Seu usuário não tem permissão para criar usuários', 5000, 'warning')
+        }
     };
 
-    const handleDelete = (user: UserListResponse) => {
-        setUserList(prevList => prevList.filter(u => u.id !== user.id));
-        showSnackbar(`Usuário ${user.name} removido!`, 5000, 'success');
+    const handleEdit = async (user: UserListResponse) => {
+        if (isManager) {
+            await getUserById(user.id);
+            setIsUpdateUserModalOpen(true);
+        }
+        else {
+            showSnackbar('Seu usuário não tem permissão para editar usuários', 5000, 'warning')
+        }
     };
+
+    const handleDelete = async (user: UserListResponse) => {
+        await deleteUser(user.id, user.name);
+    };
+
+    const handleUpdateList = async () => {
+        await getUsers();
+        showSnackbar('Lista de usuários atualizada', 5000, 'success')
+    }
 
     return (
         <Stack spacing={2}>
             <Typography variant={'h5'}>Usuários</Typography>
 
-            <Stack direction={'row'} justifyContent={'space-between'}>
+            <Stack direction={'row'} spacing={1}>
                 <Button
                     variant="outlined"
-                    startIcon={<PersonAdd />}
-                    onClick={() => setIsCreateUserModalOpen(true)}
+                    startIcon={<UpdateIcon />}
+                    onClick={handleUpdateList}
+                >
+                    Atualizar
+                </Button>
+                <Button
+                    variant="outlined"
+                    startIcon={<Add />}
+                    onClick={handleCreate}
                 >
                     Adicionar
                 </Button>

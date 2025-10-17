@@ -8,9 +8,9 @@ interface IBackdrop {
 export default function Backdrop({ open, onClose }: IBackdrop) {
     return (
         <MuiBackdrop
-            sx={(theme) => ({
+            sx={() => ({
                 color: '#fff',
-                zIndex: theme.zIndex.drawer + 1
+                zIndex: 9999,
             })}
             open={open}
             onClick={onClose}

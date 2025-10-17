@@ -7,7 +7,7 @@ import type { UserCreateRequest } from "../../dtos/user/User.req.dto";
 interface ICreateUserModal {
 	open: boolean;
 	onClose: () => void;
-	onSave: (user: UserCreateRequest) => void;
+	onSave: (user: UserCreateRequest) => Promise<boolean>;
 	profiles?: Profile[];
 }
 
@@ -25,7 +25,19 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 			profileId !== 0;
 	};
 
-	const handleSave = () => {
+	const clear = () => {
+		setName('');
+		setEmail('');
+		setPassword('');
+		setProfileId(2);
+	}
+
+	const handleClose = async () => {
+		clear();
+		onClose();
+	}
+
+	const handleSave = async () => {
 		if (!isValid()) return;
 
 		const userData: UserCreateRequest = {
@@ -35,15 +47,19 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 			profile_id: profileId,
 		};
 
-		onSave(userData);
-		onClose();
+		const success = await onSave(userData);
+
+		if (success) {
+			clear();
+			onClose();
+		}
 	};
 
 	return (
 		<Dialog
 			open={open}
 			title={'Adicionar Usuário'}
-			onClose={onClose}
+			onClose={handleClose}
 			onConfirm={handleSave}
 			confirmText={'Criar Usuário'}
 			confirmDisabled={!isValid()}

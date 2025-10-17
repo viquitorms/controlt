@@ -9,7 +9,7 @@ interface IUpdateUserModal {
 	open: boolean;
 	user: UserFindByIdResponse | null;
 	onClose: () => void;
-	onSave: (user: UserUpdateRequest) => void;
+	onSave: (user: UserUpdateRequest) => Promise<boolean>;
 	profiles?: Profile[];
 }
 
@@ -39,7 +39,12 @@ export default function UpdateUserModal({ open, user, onClose, onSave, profiles 
 			profileId !== 0;
 	};
 
-	const handleSave = () => {
+	const handleClose = async () => {
+		clear();
+		onClose();
+	}
+
+	const handleSave = async () => {
 		if (!isValid()) return;
 
 		if (!user) return;
@@ -51,16 +56,19 @@ export default function UpdateUserModal({ open, user, onClose, onSave, profiles 
 			profile_id: profileId,
 		};
 
-		onSave(userData);
-		onClose();
-		clear();
+		const success = await onSave(userData);
+
+		if (success) {
+			onClose();
+			clear();
+		}
 	};
 
 	return (
 		<Dialog
 			open={open}
 			title={user ? 'Editar Usuário' : 'Adicionar Usuário'}
-			onClose={onClose}
+			onClose={handleClose}
 			onConfirm={handleSave}
 			confirmText={user ? 'Atualizar' : 'Salvar'}
 			confirmDisabled={!isValid()}
