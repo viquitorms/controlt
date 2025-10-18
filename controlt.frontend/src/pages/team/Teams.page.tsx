@@ -3,13 +3,13 @@ import UpdateIcon from '@mui/icons-material/Update';
 import { useEffect, useState } from "react";
 import DataGrid from "../../components/DataGrid.component";
 import { Add } from "@mui/icons-material";
-import CreateProjectModal from "./CreateTeam.modal";
+import CreateTeamModal from "./CreateTeam.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { useBackdrop } from "../../contexts/Backdrop.context";
-import { projectService } from "../../services/project.service";
-import type { ProjectFindByIdResponse, ProjectListResponse } from "../../dtos/project/Project.res.dto";
-import type { ProjectCreateRequest, ProjectUpdateRequest } from "../../dtos/project/Project.req.dto";
-import UpdateProjectModal from "./UpdateTeam.modal";
+import { teamService } from "../../services/team.service";
+import type { TeamFindByIdResponse, TeamListResponse } from "../../dtos/team/Team.res.dto";
+import type { TeamCreateRequest, TeamUpdateRequest } from "../../dtos/team/Team.req.dto";
+import UpdateTeamModal from "./UpdateTeam.modal";
 import { useAuth } from "../../contexts/Auth.context";
 
 export default function Teams() {
@@ -17,10 +17,10 @@ export default function Teams() {
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { isManager } = useAuth();
 
-    const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
-    const [isUpdateProjectModalOpen, setIsUpdateProjectModalOpen] = useState(false);
-    const [projectList, setProjectList] = useState<ProjectListResponse[]>([]);
-    const [selectedProject, setSelectedProject] = useState<ProjectFindByIdResponse | null>(null);
+    const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
+    const [isUpdateTeamModalOpen, setIsUpdateTeamModalOpen] = useState(false);
+    const [teamList, setTeamList] = useState<TeamListResponse[]>([]);
+    const [selectedTeam, setSelectedTeam] = useState<TeamFindByIdResponse | null>(null);
 
     useEffect(() => {
         onInitialize();
@@ -29,7 +29,7 @@ export default function Teams() {
     async function onInitialize() {
         showBackdrop();
         try {
-            await getProjects();
+            await getTeams();
         } catch (error) {
             showSnackbar('Erro ao carregar dados', 5000, 'error');
         } finally {
@@ -37,13 +37,13 @@ export default function Teams() {
         }
     }
 
-    async function getProjects() {
+    async function getTeams() {
         try {
             showBackdrop();
-            const list = await projectService.list();
-            setProjectList(list)
+            const list = await teamService.list();
+            setTeamList(list)
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar projetos';
+            const message = error.response?.data?.error || 'Erro ao carregar equipes';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -52,13 +52,13 @@ export default function Teams() {
         }
     }
 
-    async function getProjectById(id: number) {
+    async function getTeamById(id: number) {
         try {
             showBackdrop();
-            const project = await projectService.findById(id);
-            setSelectedProject(project)
+            const team = await teamService.findById(id);
+            setSelectedTeam(team)
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar projetos';
+            const message = error.response?.data?.error || 'Erro ao carregar equipes';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -67,12 +67,12 @@ export default function Teams() {
         }
     }
 
-    async function UpdateProject(data: ProjectUpdateRequest): Promise<boolean> {
+    async function UpdateTeam(data: TeamUpdateRequest): Promise<boolean> {
         try {
             showBackdrop()
-            const project = await projectService.update(data);
-            await getProjects();
-            showSnackbar(`Projeto ${project.title} editado com sucesso`, 5000, 'success')
+            const team = await teamService.update(data);
+            await getTeams();
+            showSnackbar(`Equipe ${team.name} editado com sucesso`, 5000, 'success')
             return true;
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao editar projeto';
@@ -83,12 +83,12 @@ export default function Teams() {
         }
     }
 
-    async function CreateProject(data: ProjectCreateRequest): Promise<boolean> {
+    async function CreateTeam(data: TeamCreateRequest): Promise<boolean> {
         try {
             showBackdrop();
-            await projectService.create(data);
-            await getProjects();
-            showSnackbar(`Projeto ${data.title} criado com sucesso`, 5000, 'success')
+            await teamService.create(data);
+            await getTeams();
+            showSnackbar(`Equipe ${data.name} criado com sucesso`, 5000, 'success')
             return true;
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao criar projeto';
@@ -99,11 +99,11 @@ export default function Teams() {
         }
     }
 
-    async function deleteProject(id: number, name: string) {
+    async function deleteTeam(id: number, name: string) {
         try {
             showBackdrop();
-            await projectService.delete(id);
-            await getProjects();
+            await teamService.delete(id);
+            await getTeams();
             showSnackbar(`O projeto ${name} foi deletado`, 5000, 'info');
         }
         catch (error: any) {
@@ -119,35 +119,35 @@ export default function Teams() {
 
     const handleCreate = async () => {
         if (isManager) {
-            setIsCreateProjectModalOpen(true);
+            setIsCreateTeamModalOpen(true);
         }
         else {
-            showSnackbar('Seu projeto não tem permissão para criar projetos', 5000, 'warning')
+            showSnackbar('Seu projeto não tem permissão para criar equipes', 5000, 'warning')
         }
     };
 
-    const handleEdit = async (project: ProjectListResponse) => {
+    const handleEdit = async (team: TeamListResponse) => {
         if (isManager) {
-            await getProjectById(project.id);
-            setIsUpdateProjectModalOpen(true);
+            await getTeamById(team.id);
+            setIsUpdateTeamModalOpen(true);
         }
         else {
-            showSnackbar('Seu projeto não tem permissão para editar projetos', 5000, 'warning')
+            showSnackbar('Seu projeto não tem permissão para editar equipes', 5000, 'warning')
         }
     };
 
-    const handleDelete = async (project: ProjectListResponse) => {
-        await deleteProject(project.id, project.title);
+    const handleDelete = async (team: TeamListResponse) => {
+        await deleteTeam(team.id, team.name);
     };
 
     const handleUpdateList = async () => {
-        await getProjects();
-        showSnackbar('Lista de projetos atualizada', 5000, 'success')
+        await getTeams();
+        showSnackbar('Lista de equipes atualizada', 5000, 'success')
     }
 
     return (
         <Stack spacing={2}>
-            <Typography variant={'h5'}>Projetos</Typography>
+            <Typography variant={'h5'}>Equipes</Typography>
 
             <Stack direction={'row'} spacing={1}>
                 <Button
@@ -167,23 +167,23 @@ export default function Teams() {
             </Stack>
 
             <DataGrid
-                data={projectList}
+                data={teamList}
                 rowKey={(row) => row.id}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
 
-            <CreateProjectModal
-                open={isCreateProjectModalOpen}
-                onClose={() => setIsCreateProjectModalOpen(false)}
-                onSave={CreateProject}
+            <CreateTeamModal
+                open={isCreateTeamModalOpen}
+                onClose={() => setIsCreateTeamModalOpen(false)}
+                onSave={CreateTeam}
             />
 
-            <UpdateProjectModal
-                open={isUpdateProjectModalOpen}
-                project={selectedProject}
-                onClose={() => setIsUpdateProjectModalOpen(false)}
-                onSave={UpdateProject}
+            <UpdateTeamModal
+                open={isUpdateTeamModalOpen}
+                team={selectedTeam}
+                onClose={() => setIsUpdateTeamModalOpen(false)}
+                onSave={UpdateTeam}
             />
         </Stack>
     );

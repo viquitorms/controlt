@@ -1,40 +1,32 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
 import Dialog from "../../components/Dialog.component";
-import type { ProjectFindByIdResponse } from "../../dtos/project/Project.res.dto";
-import type { ProjectUpdateRequest } from "../../dtos/project/Project.req.dto";
+import type { TeamFindByIdResponse } from "../../dtos/team/Team.res.dto";
+import type { TeamUpdateRequest } from "../../dtos/team/Team.req.dto";
 
-interface IUpdateProjectModal {
+interface IUpdateTeamModal {
 	open: boolean;
-	project: ProjectFindByIdResponse | null;
+	team: TeamFindByIdResponse | null;
 	onClose: () => void;
-	onSave: (project: ProjectUpdateRequest) => Promise<boolean>;
+	onSave: (team: TeamUpdateRequest) => Promise<boolean>;
 }
 
-export default function UpdateProjectModal({ open, project, onClose, onSave }: IUpdateProjectModal) {
+export default function UpdateTeamModal({ open, team, onClose, onSave }: IUpdateTeamModal) {
 
-	const [title, setTitle] = useState('');
-	const [description, setDescription] = useState('');
-	const [status, setStatus] = useState('');
+	const [name, setName] = useState('');
 
 	useEffect(() => {
-		if (open && project) {
-			setTitle(project.title || '');
-			setDescription(project.description || '');
-			setStatus(project.status);
+		if (open && team) {
+			setName(team.name || '');
 		}
-	}, [open, project]);
+	}, [open, team]);
 
 	const clear = () => {
-		setTitle('');
-		setDescription('');
-		setStatus('');
+		setName('');
 	};
 
 	const isValid = () => {
-		return title.trim() !== '' &&
-			description.trim() !== '' &&
-			status.trim() !== ''
+		return name.trim() !== ''
 	};
 
 	const handleClose = async () => {
@@ -45,16 +37,14 @@ export default function UpdateProjectModal({ open, project, onClose, onSave }: I
 	const handleSave = async () => {
 		if (!isValid()) return;
 
-		if (!project) return;
+		if (!team) return;
 
-		const projectData: ProjectUpdateRequest = {
-			id: project.id,
-			title: title,
-			description: description,
-			status: status,
+		const teamData: TeamUpdateRequest = {
+			id: team.id,
+			name: name
 		};
 
-		const success = await onSave(projectData);
+		const success = await onSave(teamData);
 
 		if (success) {
 			onClose();
@@ -65,7 +55,7 @@ export default function UpdateProjectModal({ open, project, onClose, onSave }: I
 	return (
 		<Dialog
 			open={open}
-			title={'Editar Projeto'}
+			title={'Editar Equipe'}
 			onClose={handleClose}
 			onConfirm={handleSave}
 			confirmText={'Atualizar'}
@@ -73,23 +63,9 @@ export default function UpdateProjectModal({ open, project, onClose, onSave }: I
 		>
 			<Stack spacing={2} sx={{ mt: 1 }}>
 				<TextField
-					label="Título do Projeto"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-					fullWidth
-					required
-				/>
-				<TextField
-					label="Descrição"
-					value={description}
-					onChange={(e) => setDescription(e.target.value)}
-					fullWidth
-					required
-				/>
-				<TextField
-					label="Status"
-					value={status}
-					onChange={(e) => setStatus(e.target.value)}
+					label="Nome da Equipe"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
 					fullWidth
 					required
 				/>

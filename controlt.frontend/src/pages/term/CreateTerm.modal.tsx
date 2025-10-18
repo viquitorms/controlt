@@ -1,24 +1,27 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
 import Dialog from "../../components/Dialog.component";
-import type { TeamCreateRequest } from "../../dtos/team/Team.req.dto";
+import type { TermCreateRequest } from "../../dtos/term/Term.req.dto";
 
-interface ICreateTeamModal {
+interface ICreateTermModal {
 	open: boolean;
 	onClose: () => void;
-	onSave: (team: TeamCreateRequest) => Promise<boolean>;
+	onSave: (term: TermCreateRequest) => Promise<boolean>;
 }
 
-export default function CreateTeamModal({ open, onClose, onSave }: ICreateTeamModal) {
+export default function CreateTermModal({ open, onClose, onSave }: ICreateTermModal) {
 
 	const [name, setName] = useState('');
+	const [description, setDescription] = useState('');
 
 	const isValid = () => {
-		return name.trim() !== ''
+		return name.trim() !== '' &&
+			description.trim() !== ''
 	};
 
 	const clear = () => {
 		setName('');
+		setDescription('');
 	}
 
 	const handleClose = async () => {
@@ -29,11 +32,12 @@ export default function CreateTeamModal({ open, onClose, onSave }: ICreateTeamMo
 	const handleSave = async () => {
 		if (!isValid()) return;
 
-		const teamData: TeamCreateRequest = {
+		const termData: TermCreateRequest = {
 			name: name,
+			description: description,
 		};
 
-		const success = await onSave(teamData);
+		const success = await onSave(termData);
 
 		if (success) {
 			clear();
@@ -44,17 +48,25 @@ export default function CreateTeamModal({ open, onClose, onSave }: ICreateTeamMo
 	return (
 		<Dialog
 			open={open}
-			title={'Adicionar Equipe'}
+			title={'Adicionar Termo'}
 			onClose={handleClose}
 			onConfirm={handleSave}
-			confirmText={'Criar Equipe'}
+			confirmText={'Criar Termo'}
 			confirmDisabled={!isValid()}
 		>
 			<Stack spacing={2} sx={{ mt: 1 }}>
 				<TextField
-					label="Nome da Equipe"
+					label="Nome"
 					value={name}
 					onChange={(e) => setName(e.target.value)}
+					fullWidth
+					required
+				/>
+				<TextField
+					label="Descrição do termo"
+					type="termo"
+					value={description}
+					onChange={(e) => setDescription(e.target.value)}
 					fullWidth
 					required
 				/>
