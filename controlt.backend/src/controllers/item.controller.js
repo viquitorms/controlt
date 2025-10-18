@@ -1,3 +1,4 @@
+// controllers/item.controller.js
 import ItemService from '../services/item.service.js';
 
 class ItemController {
@@ -116,8 +117,8 @@ class ItemController {
     async updateStatus(req, res) {
         try {
             const { id } = req.params;
-            const { status } = req.body;
-            const item = await ItemService.updateStatus(Number(id), status);
+            const { status_name } = req.body;
+            const item = await ItemService.updateStatus(Number(id), status_name);
             res.json(item);
         } catch (error) {
             res.status(400).json({ error: error.message });

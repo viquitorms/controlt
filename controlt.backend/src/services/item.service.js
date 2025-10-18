@@ -1,3 +1,4 @@
+// services/item.service.js
 import prisma from '../config/prisma.config.js';
 
 class ItemService {
@@ -7,7 +8,7 @@ class ItemService {
      * @returns {Promise<Object>} Item criado
      */
     async create(data) {
-        const { title, description, user_id, project_id, due_date, status } = data;
+        const { title, description, user_id, project_id, due_date, status_name } = data;
 
         if (!title || !user_id) {
             throw new Error('title e user_id são obrigatórios');
@@ -31,12 +32,21 @@ class ItemService {
             }
         }
 
+        // Busca o status pelo nome (padrão: Inbox)
+        const status = await prisma.statusItem.findUnique({
+            where: { name: status_name || 'Inbox' }
+        });
+
+        if (!status) {
+            throw new Error('Status não encontrado');
+        }
+
         return await prisma.item.create({
             data: {
                 title,
                 description,
                 user_id,
-                status: status || 'inbox',
+                status_id: status.id,
                 ...(project_id && { project_id }),
                 ...(due_date && { due_date: new Date(due_date) })
             },
@@ -53,7 +63,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
     }
@@ -64,20 +75,26 @@ class ItemService {
      * @returns {Promise<Array>} Lista de items
      */
     async list(filters = {}) {
-        const { user_id, project_id, status, search } = filters;
+        const { user_id, project_id, status_name, search } = filters;
+
+        const whereClause = {
+            ...(user_id && { user_id: Number(user_id) }),
+            ...(project_id && { project_id: Number(project_id) }),
+            ...(status_name && {
+                status: {
+                    name: status_name
+                }
+            }),
+            ...(search && {
+                OR: [
+                    { title: { contains: search, mode: 'insensitive' } },
+                    { description: { contains: search, mode: 'insensitive' } }
+                ]
+            })
+        };
 
         return await prisma.item.findMany({
-            where: {
-                ...(user_id && { user_id: Number(user_id) }),
-                ...(project_id && { project_id: Number(project_id) }),
-                ...(status && { status }),
-                ...(search && {
-                    OR: [
-                        { title: { contains: search, mode: 'insensitive' } },
-                        { description: { contains: search, mode: 'insensitive' } }
-                    ]
-                })
-            },
+            where: whereClause,
             include: {
                 user: {
                     select: {
@@ -92,11 +109,15 @@ class ItemService {
                         title: true
                     }
                 },
+                status: true,
                 _count: {
                     select: {
                         recorded_time: true
                     }
                 }
+            },
+            orderBy: {
+                created_date: 'desc'
             }
         });
     }
@@ -124,6 +145,7 @@ class ItemService {
                         description: true
                     }
                 },
+                status: true,
                 recorded_time: {
                     include: {
                         user: {
@@ -168,7 +190,7 @@ class ItemService {
             throw new Error('Item não encontrado');
         }
 
-        const { title, description, status, due_date, project_id, user_id } = data;
+        const { title, description, status_name, due_date, project_id, user_id } = data;
 
         if (user_id && user_id !== itemExists.user_id) {
             const userExists = await prisma.user.findUnique({
@@ -190,12 +212,24 @@ class ItemService {
             }
         }
 
+        let status_id = itemExists.status_id;
+        if (status_name) {
+            const status = await prisma.statusItem.findUnique({
+                where: { name: status_name }
+            });
+
+            if (!status) {
+                throw new Error('Status não encontrado');
+            }
+            status_id = status.id;
+        }
+
         return await prisma.item.update({
             where: { id },
             data: {
                 ...(title && { title }),
                 ...(description !== undefined && { description }),
-                ...(status && { status }),
+                ...(status_name && { status_id }),
                 ...(due_date !== undefined && { due_date: due_date ? new Date(due_date) : null }),
                 ...(project_id !== undefined && { project_id }),
                 ...(user_id && { user_id })
@@ -212,7 +246,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
     }
@@ -234,11 +269,11 @@ class ItemService {
         });
 
         if (!itemExists) {
-            throw new Error('Item não encontado');
+            throw new Error('Item não encontrado');
         }
 
         if (itemExists._count.recorded_time > 0) {
-            console.warn(`Item ${id} tem ${itemExists._count.recorded_time} de registros de tempo associados.`);
+            console.warn(`Item ${id} tem ${itemExists._count.recorded_time} registros de tempo associados.`);
         }
 
         await prisma.item.delete({
@@ -255,7 +290,9 @@ class ItemService {
         const items = await prisma.item.findMany({
             where: {
                 user_id: userId,
-                status: 'inbox'
+                status: {
+                    name: 'Inbox'
+                }
             },
             include: {
                 project: {
@@ -263,7 +300,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
 
@@ -281,56 +319,44 @@ class ItemService {
      */
     async processItem(id, data) {
         const item = await prisma.item.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                status: true
+            }
         });
 
         if (!item) {
             throw new Error('Item não encontrado');
         }
 
-        if (item.status !== 'inbox') {
+        if (item.status.name !== 'Inbox') {
             throw new Error('Item já foi processado');
         }
 
         const {
             is_actionable,
-            status,
+            status_name,
             project_id,
             due_date,
             user_id
         } = data;
 
-        if (is_actionable === false) {
-            const newStatus = status || 'reference';
+        const newStatusName = is_actionable === false
+            ? (status_name || 'Referência')
+            : (status_name || 'Próxima Ação');
 
-            return await prisma.item.update({
-                where: { id },
-                data: {
-                    status: newStatus
-                },
-                include: {
-                    user: {
-                        select: {
-                            id: true,
-                            name: true
-                        }
-                    },
-                    project: {
-                        select: {
-                            id: true,
-                            title: true
-                        }
-                    }
-                }
-            });
+        const newStatus = await prisma.statusItem.findUnique({
+            where: { name: newStatusName }
+        });
+
+        if (!newStatus) {
+            throw new Error('Status não encontrado');
         }
-
-        const newStatus = status || 'next_action';
 
         return await prisma.item.update({
             where: { id },
             data: {
-                status: newStatus,
+                status_id: newStatus.id,
                 ...(project_id && { project_id }),
                 ...(due_date && { due_date: new Date(due_date) }),
                 ...(user_id && { user_id })
@@ -347,7 +373,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
     }
@@ -355,10 +382,10 @@ class ItemService {
     /**
      * Atualiza status do item
      * @param {number} id - ID do item
-     * @param {string} status - Novo status
+     * @param {string} status_name - Nome do novo status
      * @returns {Promise<Object>} Item atualizado
      */
-    async updateStatus(id, status) {
+    async updateStatus(id, status_name) {
         const itemExists = await prisma.item.findUnique({
             where: { id }
         });
@@ -367,26 +394,17 @@ class ItemService {
             throw new Error('Item não encontrado');
         }
 
-        const validStatuses = [
-            'inbox',
-            'processing',
-            'next_action',
-            'in_progress',
-            'waiting_for',
-            'scheduled',
-            'someday_maybe',
-            'reference',
-            'completed',
-            'cancelled'
-        ];
+        const status = await prisma.statusItem.findUnique({
+            where: { name: status_name }
+        });
 
-        if (!validStatuses.includes(status)) {
-            throw new Error(`Status inválido. Os status válidos são os seguintes: ${validStatuses.join(', ')}`);
+        if (!status) {
+            throw new Error('Status inválido');
         }
 
         return await prisma.item.update({
             where: { id },
-            data: { status },
+            data: { status_id: status.id },
             include: {
                 user: {
                     select: {
@@ -399,7 +417,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
     }
@@ -418,10 +437,18 @@ class ItemService {
             throw new Error('Item não encontrado');
         }
 
+        const status = await prisma.statusItem.findUnique({
+            where: { name: 'Concluída' }
+        });
+
+        if (!status) {
+            throw new Error('Status "Concluída" não encontrado');
+        }
+
         return await prisma.item.update({
             where: { id },
             data: {
-                status: 'completed'
+                status_id: status.id
             },
             include: {
                 user: {
@@ -435,7 +462,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
     }
@@ -449,7 +477,9 @@ class ItemService {
         const items = await prisma.item.findMany({
             where: {
                 user_id: userId,
-                status: 'next_action'
+                status: {
+                    name: 'Próxima Ação'
+                }
             },
             include: {
                 project: {
@@ -457,7 +487,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
 
@@ -476,7 +507,9 @@ class ItemService {
         const items = await prisma.item.findMany({
             where: {
                 user_id: userId,
-                status: 'waiting_for'
+                status: {
+                    name: 'Aguardando'
+                }
             },
             include: {
                 project: {
@@ -484,7 +517,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
 
@@ -503,7 +537,9 @@ class ItemService {
         const items = await prisma.item.findMany({
             where: {
                 user_id: userId,
-                status: 'scheduled'
+                status: {
+                    name: 'Agendada'
+                }
             },
             include: {
                 project: {
@@ -511,7 +547,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
 
@@ -530,7 +567,9 @@ class ItemService {
         const items = await prisma.item.findMany({
             where: {
                 user_id: userId,
-                status: 'someday_maybe'
+                status: {
+                    name: 'Algum Dia'
+                }
             },
             include: {
                 project: {
@@ -538,7 +577,8 @@ class ItemService {
                         id: true,
                         title: true
                     }
-                }
+                },
+                status: true
             }
         });
 
@@ -563,11 +603,15 @@ class ItemService {
                         title: true
                     }
                 },
+                status: true,
                 _count: {
                     select: {
                         recorded_time: true
                     }
                 }
+            },
+            orderBy: {
+                created_date: 'desc'
             }
         });
     }
@@ -595,11 +639,15 @@ class ItemService {
                         name: true
                     }
                 },
+                status: true,
                 _count: {
                     select: {
                         recorded_time: true
                     }
                 }
+            },
+            orderBy: {
+                created_date: 'desc'
             }
         });
     }
@@ -627,11 +675,15 @@ class ItemService {
             }
         });
 
+        const nextActionStatus = await prisma.statusItem.findUnique({
+            where: { name: 'Próxima Ação' }
+        });
+
         const updatedItem = await prisma.item.update({
             where: { id },
             data: {
                 project_id: project.id,
-                status: 'next_action'
+                status_id: nextActionStatus.id
             },
             include: {
                 project: true,
@@ -640,7 +692,8 @@ class ItemService {
                         id: true,
                         name: true
                     }
-                }
+                },
+                status: true
             }
         });
 
