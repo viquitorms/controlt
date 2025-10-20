@@ -225,5 +225,5 @@ Avalia a capacidade de entrega da equipe comparando o planejado vs realizado.
 
 <p align="center">
   Desenvolvido com ❤️ para o TCC de Sistemas de Informação<br>
-  PUC Minas - 2024
+  PUC Minas - 2s/2025
 </p>
