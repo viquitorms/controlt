@@ -28,10 +28,7 @@
 - [Instalação e Execução](#-instalação-e-execução)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Métricas CMMI](#-métricas-cmmi)
-- [Screenshots](#-screenshots)
-- [Documentação](#-documentação)
 - [Autor](#-autor)
-- [Licença](#-licença)
 
 ## 🎯 Sobre o Projeto
 
@@ -190,9 +187,6 @@ controlt/
 │   │   ├── pages/
 │   │   └── dtos/
 │   └── index.html
-│
-└── docs/
-    └── diagrams/
 ```
 
 ## 📈 Métricas CMMI
@@ -228,12 +222,6 @@ Avalia a capacidade de entrega da equipe comparando o planejado vs realizado.
 - Email: vicmagalhaes20@gmail.com
 
 **Orientador:** Prof. Leonardo Vilela Cardoso
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
 
 <p align="center">
   Desenvolvido com ❤️ para o TCC de Sistemas de Informação<br>
