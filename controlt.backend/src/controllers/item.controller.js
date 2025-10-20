@@ -117,8 +117,8 @@ class ItemController {
     async updateStatus(req, res) {
         try {
             const { id } = req.params;
-            const { status_name } = req.body;
-            const item = await ItemService.updateStatus(Number(id), status_name);
+            const { status_id } = req.body;
+            const item = await ItemService.updateStatus(Number(id), status_id);
             res.json(item);
         } catch (error) {
             res.status(400).json({ error: error.message });

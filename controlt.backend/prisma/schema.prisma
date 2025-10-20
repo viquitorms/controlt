@@ -17,16 +17,17 @@ model Profile {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  name          String         @db.VarChar(255)
-  email         String         @unique @db.VarChar(255)
-  hash_password String         @db.VarChar(255)
-  profile_id    Int
-  created_date  DateTime       @default(now())
-  itens         Item[]
-  recorded_time RecordedTime[]
-  profile       Profile        @relation(fields: [profile_id], references: [id])
-  teams         UserTeam[]
+  id             Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique @db.VarChar(255)
+  hash_password  String         @db.VarChar(255)
+  profile_id     Int
+  created_date   DateTime       @default(now())
+  itens_created  Item[]         @relation("ItemCreator")
+  itens_assigned Item[]         @relation("ItemAssigned")
+  recorded_time  RecordedTime[]
+  profile        Profile        @relation(fields: [profile_id], references: [id])
+  teams          UserTeam[]
 
   @@map("user")
 }
@@ -81,19 +82,22 @@ model StatusItem {
 }
 
 model Item {
-  id            Int            @id @default(autoincrement())
-  title         String         @db.VarChar(255)
-  description   String?
-  due_date      DateTime?
-  project_id    Int?
-  user_id       Int
-  created_date  DateTime       @default(now())
-  updated_date  DateTime       @updatedAt
-  status_id     Int
-  project       Project?       @relation(fields: [project_id], references: [id])
-  status        StatusItem     @relation(fields: [status_id], references: [id])
-  user          User           @relation(fields: [user_id], references: [id])
-  recorded_time RecordedTime[]
+  id              Int            @id @default(autoincrement())
+  title           String         @db.VarChar(255)
+  description     String?
+  due_date        DateTime?
+  priority        Int?           @default(3)
+  project_id      Int?
+  user_id         Int
+  userAssigned_id Int?
+  created_date    DateTime       @default(now())
+  updated_date    DateTime       @updatedAt
+  status_id       Int
+  project         Project?       @relation(fields: [project_id], references: [id])
+  status          StatusItem     @relation(fields: [status_id], references: [id])
+  user            User           @relation("ItemCreator", fields: [user_id], references: [id])
+  assigned        User?          @relation("ItemAssigned", fields: [userAssigned_id], references: [id])
+  recorded_time   RecordedTime[]
 
   @@map("item")
 }

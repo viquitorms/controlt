@@ -8,19 +8,22 @@ class ItemService {
      * @returns {Promise<Object>} Item criado
      */
     async create(data) {
-        const { title, description, user_id, project_id, due_date, status_name } = data;
+        const { title, description, user_id, userAssigned_id, project_id, due_date, status_name } = data;
 
-        if (!title || !user_id) {
-            throw new Error('title e user_id são obrigatórios');
+        if (!title) {
+            throw new Error('O título é obrigatório');
         }
 
-        const userExists = await prisma.user.findUnique({
-            where: { id: user_id }
-        });
+        if (userAssigned_id) {
+            const userExists = await prisma.user.findUnique({
+                where: { id: userAssigned_id }
+            });
 
-        if (!userExists) {
-            throw new Error('Usuário não encontrado');
+            if (!userExists) {
+                throw new Error('Usuário atribuído não encontrado');
+            }
         }
+
 
         if (project_id) {
             const projectExists = await prisma.project.findUnique({
@@ -32,7 +35,6 @@ class ItemService {
             }
         }
 
-        // Busca o status pelo nome (padrão: Inbox)
         const status = await prisma.statusItem.findUnique({
             where: { name: status_name || 'Inbox' }
         });
@@ -46,12 +48,20 @@ class ItemService {
                 title,
                 description,
                 user_id,
+                userAssigned_id: userAssigned_id,
                 status_id: status.id,
                 ...(project_id && { project_id }),
                 ...(due_date && { due_date: new Date(due_date) })
             },
             include: {
                 user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                },
+                assigned: {
                     select: {
                         id: true,
                         name: true,
@@ -75,16 +85,12 @@ class ItemService {
      * @returns {Promise<Array>} Lista de items
      */
     async list(filters = {}) {
-        const { user_id, project_id, status_name, search } = filters;
+        const { user_id, project_id, status_id, search } = filters;
 
         const whereClause = {
+            ...(status_id && { status_id: Number(status_id) }),
             ...(user_id && { user_id: Number(user_id) }),
             ...(project_id && { project_id: Number(project_id) }),
-            ...(status_name && {
-                status: {
-                    name: status_name
-                }
-            }),
             ...(search && {
                 OR: [
                     { title: { contains: search, mode: 'insensitive' } },
@@ -97,6 +103,13 @@ class ItemService {
             where: whereClause,
             include: {
                 user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                },
+                assigned: {
                     select: {
                         id: true,
                         name: true,
@@ -190,7 +203,7 @@ class ItemService {
             throw new Error('Item não encontrado');
         }
 
-        const { title, description, status_name, due_date, project_id, user_id } = data;
+        const { title, description, status_id, due_date, project_id, user_id } = data;
 
         if (user_id && user_id !== itemExists.user_id) {
             const userExists = await prisma.user.findUnique({
@@ -212,16 +225,14 @@ class ItemService {
             }
         }
 
-        let status_id = itemExists.status_id;
-        if (status_name) {
+        if (status_id) {
             const status = await prisma.statusItem.findUnique({
-                where: { name: status_name }
+                where: { id: status_id }
             });
 
             if (!status) {
                 throw new Error('Status não encontrado');
             }
-            status_id = status.id;
         }
 
         return await prisma.item.update({
@@ -229,7 +240,7 @@ class ItemService {
             data: {
                 ...(title && { title }),
                 ...(description !== undefined && { description }),
-                ...(status_name && { status_id }),
+                ...(status_id && { status_id }),
                 ...(due_date !== undefined && { due_date: due_date ? new Date(due_date) : null }),
                 ...(project_id !== undefined && { project_id }),
                 ...(user_id && { user_id })
@@ -320,9 +331,7 @@ class ItemService {
     async processItem(id, data) {
         const item = await prisma.item.findUnique({
             where: { id },
-            include: {
-                status: true
-            }
+            include: { status: true }
         });
 
         if (!item) {
@@ -333,33 +342,15 @@ class ItemService {
             throw new Error('Item já foi processado');
         }
 
-        const {
-            is_actionable,
-            status_name,
-            project_id,
-            due_date,
-            user_id
-        } = data;
-
-        const newStatusName = is_actionable === false
-            ? (status_name || 'Referência')
-            : (status_name || 'Próxima Ação');
-
-        const newStatus = await prisma.statusItem.findUnique({
-            where: { name: newStatusName }
-        });
-
-        if (!newStatus) {
-            throw new Error('Status não encontrado');
-        }
+        const { is_actionable, status_id, due_date, userAssigned_id, priority } = data;
 
         return await prisma.item.update({
             where: { id },
             data: {
-                status_id: newStatus.id,
-                ...(project_id && { project_id }),
+                status_id,
                 ...(due_date && { due_date: new Date(due_date) }),
-                ...(user_id && { user_id })
+                ...(userAssigned_id && { userAssigned_id }),
+                ...(priority && { priority })
             },
             include: {
                 user: {
@@ -385,7 +376,7 @@ class ItemService {
      * @param {string} status_name - Nome do novo status
      * @returns {Promise<Object>} Item atualizado
      */
-    async updateStatus(id, status_name) {
+    async updateStatus(id, status_id) {
         const itemExists = await prisma.item.findUnique({
             where: { id }
         });
@@ -395,7 +386,7 @@ class ItemService {
         }
 
         const status = await prisma.statusItem.findUnique({
-            where: { name: status_name }
+            where: { name: status_id }
         });
 
         if (!status) {

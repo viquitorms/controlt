@@ -21,6 +21,14 @@ class UserSerivce {
                 },
                 created_date: true
             },
+            where: {
+                name: {
+                    not: 'admin'
+                },
+                email: {
+                    not: 'admin@controlt.com'
+                }
+            },
             orderBy: {
                 id: 'asc'
             }

@@ -35,7 +35,7 @@ export const itemService = {
         const params = new URLSearchParams();
         if (filters?.user_id) params.append('user_id', filters.user_id.toString());
         if (filters?.project_id) params.append('project_id', filters.project_id.toString());
-        if (filters?.status_name) params.append('status', filters.status_name);
+        if (filters?.status_id) params.append('status_id', filters.status_id.toString());
         if (filters?.search) params.append('search', filters.search);
 
         const response = await api.get(`/items?${params.toString()}`);
@@ -88,7 +88,7 @@ export const itemService = {
     },
 
     async updateStatus(data: ItemUpdateStatusRequest): Promise<ItemUpdateStatusResponse> {
-        const response = await api.put(`/items/${data.id}/status`, { status: data.status_name });
+        const response = await api.put(`/items/${data.id}/status`, { status: data.status_id });
         return response.data;
     },
 
@@ -111,5 +111,5 @@ export const itemService = {
     async getByProject(projectId: number): Promise<Array<ItemByProjectResponse>> {
         const response = await api.get(`/items/project/${projectId}`);
         return response.data;
-    }
+    },
 };

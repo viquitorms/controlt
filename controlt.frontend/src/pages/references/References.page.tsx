@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 import {
     Box,
@@ -7,37 +7,51 @@ import {
     Stack,
     TextField,
     Typography,
-    Popover
+    Popover,
+    Chip,
 } from "@mui/material";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { itemService } from "../../services/item.service";
 import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
-import { Delete, Edit, Update, FilterList, Clear, AutoMode } from "@mui/icons-material";
-import ProcessItem, { type IConvertToProject } from "./ProcessItem.modal";
-import { type IProcessedItem } from "./ProcessItem.modal";
+import { Delete, Edit, Update, FilterList, Clear, CheckCircle, PlayArrow } from "@mui/icons-material";
+import { useAuth } from "../../contexts/Auth.context";
 import { StatusItemEnum } from "../../enums/StatusItem.enum";
-import ItemStatusChip from "../../components/ItemStatusChip.component";
-import type { IFilter } from "./interfaces/Filter.inbox.interface";
-import { useNavigate } from "react-router-dom";
-import { type UserListResponse } from "../../dtos/user/User.res.dto";
+import type { UserListResponse } from "../../dtos/user/User.res.dto";
+import type { ProjectListResponse } from "../../dtos/project/Project.res.dto";
+import type { StatusItemResponse } from "../../dtos/statusItem/StatusItem.res.dto";
 import { userService } from "../../services/user.service";
-import NotStartedOutlinedIcon from '@mui/icons-material/NotStartedOutlined';
+import { projectService } from "../../services/project.service";
+import { statusItemService } from "../../services/statusItem.service";
+import type { ItemUpdateRequest, ItemUpdateStatusRequest } from "../../dtos/item/Item.req.dto";
+import ReferencesModal from "./References.modal";
+import { useNavigate } from "react-router-dom";
 
-export default function Inbox() {
+interface IFilter {
+    title: string;
+    description: string;
+    priority: string;
+}
+
+export default function References() {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { showSnackbar } = useSnackbar();
-    const navigate = useNavigate();
     const [itemsList, setItemsList] = useState<ItemListResponse[]>([]);
     const [filteredItems, setFilteredItems] = useState<ItemListResponse[]>([]);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [selectedItem, setSelectedItem] = useState<ItemListResponse | null>(null);
-    const [usersList, setUsersList] = useState<UserListResponse[]>([]);
-    const [modalOpen, setProcessModalOpen] = useState(false);
+
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState<ItemListResponse | null>(null);
+    const [users, setUsers] = useState<UserListResponse[]>([]);
+    const [projects, setProjects] = useState<ProjectListResponse[]>([]);
+    const [statuses, setStatuses] = useState<StatusItemResponse[]>([]);
 
     const [filters, setFilters] = useState<IFilter>({
         title: "",
-        description: ""
+        description: "",
+        priority: "",
     });
 
     useEffect(() => {
@@ -50,8 +64,12 @@ export default function Inbox() {
 
     async function onInitialized() {
         try {
-            await getItems();
-            await getUsers();
+            await Promise.all([
+                getItems(),
+                getUsers(),
+                getProjects(),
+                getStatuses(),
+            ]);
         } catch {
             return;
         }
@@ -60,11 +78,14 @@ export default function Inbox() {
     async function getItems() {
         try {
             showBackdrop();
-            const items = await itemService.list({ status_id: StatusItemEnum.Inbox });
+            const items = await itemService.list({
+                status_id: StatusItemEnum.Referencia,
+                user_id: user?.id
+            });
             setItemsList(items);
             setFilteredItems(items);
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar items';
+            const message = error.response?.data?.error || 'Erro ao carregar referências';
             showSnackbar(message, 5000, 'error');
         } finally {
             hideBackdrop();
@@ -73,14 +94,28 @@ export default function Inbox() {
 
     async function getUsers() {
         try {
-            showBackdrop();
             const users = await userService.list();
-            setUsersList(users);
+            setUsers(users);
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar usuários';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
+            console.error('Erro ao carregar usuários');
+        }
+    }
+
+    async function getProjects() {
+        try {
+            const projects = await projectService.list();
+            setProjects(projects);
+        } catch (error: any) {
+            console.error('Erro ao carregar projetos');
+        }
+    }
+
+    async function getStatuses() {
+        try {
+            const statuses = await statusItemService.list();
+            setStatuses(statuses);
+        } catch (error: any) {
+            console.error('Erro ao carregar status');
         }
     }
 
@@ -91,6 +126,40 @@ export default function Inbox() {
             showSnackbar('Item deletado com sucesso', 5000, 'success');
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao deletar item';
+            showSnackbar(message, 5000, 'error');
+        } finally {
+            hideBackdrop();
+        }
+    }
+
+    async function completeItem(id: number) {
+        try {
+            showBackdrop();
+            await itemService.completeItem(id);
+            showSnackbar('Item marcado como concluído!', 5000, 'success');
+            await getItems();
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao concluir item';
+            showSnackbar(message, 5000, 'error');
+        } finally {
+            hideBackdrop();
+        }
+    }
+
+    async function startItem(data: ItemListResponse) {
+        try {
+            showBackdrop();
+
+            const udpateItem: ItemUpdateStatusRequest = {
+                id: data.id,
+                status_id: data.status_id
+            }
+
+            await itemService.updateStatus(udpateItem);
+            showSnackbar('Item iniciado!', 5000, 'success');
+            await getItems();
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao iniciar item';
             showSnackbar(message, 5000, 'error');
         } finally {
             hideBackdrop();
@@ -112,34 +181,63 @@ export default function Inbox() {
             );
         }
 
+        if (filters.priority) {
+            filtered = filtered.filter((item) =>
+                item.priority === Number(filters.priority)
+            );
+        }
+
         setFilteredItems(filtered);
+    }
+
+    function CustomNoRowsOverlay() {
+        return (
+            <Stack height="100%" alignItems="center" justifyContent="center" spacing={1}>
+                <Typography>Nenhum item para exibir.</Typography>
+                <Button
+                    variant="contained"
+                    onClick={() => navigate('/captura')}
+                >
+                    Capturar Itens
+                </Button>
+            </Stack>
+        );
     }
 
     function clearFilters() {
         setFilters({
             title: "",
-            description: ""
+            description: "",
+            priority: "",
         });
         handleCloseFilter();
     }
 
-    const handleUpdate = useCallback(async () => {
+    const handleUpdate = async () => {
         try {
             await getItems();
             showSnackbar("Itens atualizados com sucesso", 3000, 'success');
         } catch {
             return;
         }
-    }, [getItems, showSnackbar]);
+    };
 
     const handleEdit = (row: ItemListResponse) => {
-        setSelectedItem(row);
-        setProcessModalOpen(true);
+        setItemToEdit(row);
+        setEditDialogOpen(true);
     };
 
     const handleDelete = async (data: ItemListResponse) => {
         await deleteItem(data.id);
         await getItems();
+    };
+
+    const handleComplete = async (data: ItemListResponse) => {
+        await completeItem(data.id);
+    };
+
+    const handleStart = async (data: ItemListResponse) => {
+        await startItem(data);
     };
 
     const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -150,14 +248,53 @@ export default function Inbox() {
         setAnchorEl(null);
     };
 
+    const handleSaveEdit = async (data: ItemUpdateRequest) => {
+        try {
+            showBackdrop();
+            await itemService.update(data);
+            showSnackbar('Item atualizado com sucesso!', 5000, 'success');
+            setEditDialogOpen(false);
+            setItemToEdit(null);
+            await getItems();
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao atualizar item';
+            showSnackbar(message, 5000, 'error');
+        } finally {
+            hideBackdrop();
+        }
+    };
+
     const openFilter = Boolean(anchorEl);
 
     const activeFiltersCount = [
         filters.title,
-        filters.description
+        filters.description,
+        filters.priority,
     ].filter(Boolean).length;
 
     const hasActiveFilters = activeFiltersCount > 0;
+
+    const getPriorityColor = (priority: number) => {
+        switch (priority) {
+            case 1: return "error";
+            case 2: return "warning";
+            case 3: return "info";
+            case 4: return "default";
+            case 5: return "default";
+            default: return "default";
+        }
+    };
+
+    const getPriorityLabel = (priority: number) => {
+        switch (priority) {
+            case 1: return "Alta";
+            case 2: return "Média-Alta";
+            case 3: return "Média";
+            case 4: return "Baixa";
+            case 5: return "Muito Baixa";
+            default: return "Não definida";
+        }
+    };
 
     const columns: GridColDef<ItemListResponse>[] = [
         {
@@ -175,17 +312,19 @@ export default function Inbox() {
             flex: 1,
         },
         {
-            field: 'status',
-            headerName: 'Status',
-            width: 150,
-            renderCell: (params) => <ItemStatusChip statusId={params.row.status_id} />
-        },
-        {
-            field: 'created_date',
-            headerName: 'Capturado em',
-            width: 130,
-            valueFormatter: (value) => {
-                return new Date(value as string).toLocaleDateString('pt-BR');
+            field: 'project',
+            headerName: 'Projeto',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => {
+                if (!params.row.project) return '-';
+                return (
+                    <Chip
+                        label={params.row.project.title}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                    />
+                );
             },
         },
         {
@@ -202,9 +341,9 @@ export default function Inbox() {
                         color="primary"
                         size="small"
                         onClick={() => handleEdit(params.row)}
-                        title="Processar item"
+                        title="Editar item"
                     >
-                        <AutoMode fontSize="small" />
+                        <Edit fontSize="small" />
                     </IconButton>
                     <IconButton
                         color="error"
@@ -219,83 +358,18 @@ export default function Inbox() {
         },
     ];
 
-    const handleProcessItem = async (data: IProcessedItem) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.processItem({
-                id: selectedItem.id,
-                is_actionable: data.is_actionable,
-                status_id: data.status_id,
-                due_date: data.due_date,
-                userAssigned_id: data.userAssigned_id,
-                priority: data.priority,
-            });
-
-            showSnackbar('Item processado com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao processar item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
-
-    const handleConvertToProject = async (projectData: IConvertToProject) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.convertToProject({
-                id: selectedItem.id,
-                title: projectData.title,
-                description: projectData.description,
-                status: projectData.status,
-            });
-
-            showSnackbar('Item convertido em projeto com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao converter em projeto';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
-
-    function CustomNoRowsOverlay() {
-        return (
-            <Stack height="100%" alignItems="center" justifyContent="center" spacing={1}>
-                <Typography>Nenhum item para exibir.</Typography>
-                <Button
-                    variant="contained"
-                    onClick={() => navigate('/captura')}
-                >
-                    Capturar Itens
-                </Button>
-            </Stack>
-        );
-    }
-
     return (
         <Stack spacing={2}>
-            <Stack>
-                <Typography variant="h5">Caixa de Entrada</Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Todos os items que você capturou e precisam ser processados
-                </Typography>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Stack>
+                    <Typography variant="h5">Referências</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Referências e conteúdos capturados que servem de constulta
+                    </Typography>
+                </Stack>
             </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
-
                 <Button
                     variant="outlined"
                     startIcon={<Update />}
@@ -341,9 +415,9 @@ export default function Inbox() {
                     horizontal: 'left',
                 }}
             >
-                <Box sx={{ p: 2 }}>
+                <Box sx={{ p: 2, minWidth: 300 }}>
                     <Stack spacing={2}>
-                        <Typography>Filtros</Typography>
+                        <Typography variant="h6">Filtros</Typography>
 
                         <TextField
                             label="Título"
@@ -379,11 +453,14 @@ export default function Inbox() {
 
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={filteredItems || []}
+                    rows={filteredItems}
                     columns={columns}
                     initialState={{
                         pagination: {
                             paginationModel: { page: 0, pageSize: 10 },
+                        },
+                        sorting: {
+                            sortModel: [{ field: 'priority', sort: 'asc' }],
                         },
                     }}
                     pageSizeOptions={[5, 10, 25, 50]}
@@ -395,24 +472,21 @@ export default function Inbox() {
                             backgroundColor: 'action.hover',
                         },
                     }}
-
                     slots={{
                         noRowsOverlay: CustomNoRowsOverlay
                     }}
                 />
-
             </Box>
 
-            <ProcessItem
-                open={modalOpen}
-                item={selectedItem}
+            <ReferencesModal
+                open={editDialogOpen}
+                item={itemToEdit}
+                projects={projects}
                 onClose={() => {
-                    setProcessModalOpen(false);
-                    setSelectedItem(null);
+                    setEditDialogOpen(false);
+                    setItemToEdit(null);
                 }}
-                onProcess={handleProcessItem}
-                onConvertToProject={handleConvertToProject}
-                users={usersList}
+                onSave={handleSaveEdit}
             />
         </Stack>
     );

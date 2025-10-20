@@ -33,10 +33,12 @@ export interface ItemCreateResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
 }
@@ -48,10 +50,13 @@ export interface ItemListResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    priority: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
     _count: {
@@ -66,10 +71,12 @@ export interface ItemFindByIdResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
     recorded_time: ItemRecordedTime[];
@@ -84,10 +91,12 @@ export interface ItemUpdateResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
 }
@@ -101,9 +110,11 @@ export interface ItemInboxResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
+        assigned: ItemUser | null;
         project: ItemProject | null;
         status: ItemStatus;
     }>;
@@ -116,10 +127,12 @@ export interface ItemProcessResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
 }
@@ -131,10 +144,12 @@ export interface ItemUpdateStatusResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
 }
@@ -146,10 +161,12 @@ export interface ItemCompleteResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
 }
@@ -163,9 +180,11 @@ export interface ItemNextActionsResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
+        assigned: ItemUser | null;
         project: ItemProject | null;
         status: ItemStatus;
     }>;
@@ -180,9 +199,11 @@ export interface ItemWaitingForResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
+        assigned: ItemUser | null;
         project: ItemProject | null;
         status: ItemStatus;
     }>;
@@ -197,9 +218,11 @@ export interface ItemScheduledResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
+        assigned: ItemUser | null;
         project: ItemProject | null;
         status: ItemStatus;
     }>;
@@ -214,9 +237,11 @@ export interface ItemSomedayMaybeResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
+        assigned: ItemUser | null;
         project: ItemProject | null;
         status: ItemStatus;
     }>;
@@ -229,9 +254,11 @@ export interface ItemByUserResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
+    assigned: ItemUser | null;
     project: ItemProject | null;
     status: ItemStatus;
     _count: {
@@ -246,10 +273,12 @@ export interface ItemByProjectResponse {
     due_date: Date | null;
     project_id: number | null;
     user_id: number;
+    userAssigned_id: number | null;
     status_id: number;
     created_date: Date;
     updated_date: Date;
     user: ItemUser;
+    assigned: ItemUser | null;
     status: ItemStatus;
     _count: {
         recorded_time: number;
@@ -271,12 +300,14 @@ export interface ItemConvertToProjectResponse {
         due_date: Date | null;
         project_id: number | null;
         user_id: number;
+        userAssigned_id: number | null;
         status_id: number;
         created_date: Date;
         updated_date: Date;
         project: ItemProject;
         user: ItemUser;
+        assigned: ItemUser | null;
         status: ItemStatus;
     };
     message: string;
-} 
+}

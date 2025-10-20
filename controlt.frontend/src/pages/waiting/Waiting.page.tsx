@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 import {
     Box,
@@ -7,37 +7,51 @@ import {
     Stack,
     TextField,
     Typography,
-    Popover
+    Popover,
+    Chip,
 } from "@mui/material";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { itemService } from "../../services/item.service";
 import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
-import { Delete, Edit, Update, FilterList, Clear, AutoMode } from "@mui/icons-material";
-import ProcessItem, { type IConvertToProject } from "./ProcessItem.modal";
-import { type IProcessedItem } from "./ProcessItem.modal";
+import { Delete, Edit, Update, FilterList, Clear, CheckCircle } from "@mui/icons-material";
+import { useAuth } from "../../contexts/Auth.context";
 import { StatusItemEnum } from "../../enums/StatusItem.enum";
-import ItemStatusChip from "../../components/ItemStatusChip.component";
-import type { IFilter } from "./interfaces/Filter.inbox.interface";
-import { useNavigate } from "react-router-dom";
-import { type UserListResponse } from "../../dtos/user/User.res.dto";
+import UpdateWaitingModal from "./UpdateWaiting.modal";
+import type { UserListResponse } from "../../dtos/user/User.res.dto";
+import type { ProjectListResponse } from "../../dtos/project/Project.res.dto";
+import type { StatusItemResponse } from "../../dtos/statusItem/StatusItem.res.dto";
 import { userService } from "../../services/user.service";
-import NotStartedOutlinedIcon from '@mui/icons-material/NotStartedOutlined';
+import { projectService } from "../../services/project.service";
+import { statusItemService } from "../../services/statusItem.service";
+import type { ItemUpdateRequest } from "../../dtos/item/Item.req.dto";
+import { useNavigate } from "react-router-dom";
 
-export default function Inbox() {
+interface IFilter {
+    title: string;
+    description: string;
+    assignedUserName: string;
+}
+
+export default function Waiting() {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { showSnackbar } = useSnackbar();
-    const navigate = useNavigate();
     const [itemsList, setItemsList] = useState<ItemListResponse[]>([]);
     const [filteredItems, setFilteredItems] = useState<ItemListResponse[]>([]);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [selectedItem, setSelectedItem] = useState<ItemListResponse | null>(null);
-    const [usersList, setUsersList] = useState<UserListResponse[]>([]);
-    const [modalOpen, setProcessModalOpen] = useState(false);
+
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState<ItemListResponse | null>(null);
+    const [users, setUsers] = useState<UserListResponse[]>([]);
+    const [projects, setProjects] = useState<ProjectListResponse[]>([]);
+    const [statuses, setStatuses] = useState<StatusItemResponse[]>([]);
 
     const [filters, setFilters] = useState<IFilter>({
         title: "",
-        description: ""
+        description: "",
+        assignedUserName: "",
     });
 
     useEffect(() => {
@@ -50,8 +64,12 @@ export default function Inbox() {
 
     async function onInitialized() {
         try {
-            await getItems();
-            await getUsers();
+            await Promise.all([
+                getItems(),
+                getUsers(),
+                getProjects(),
+                getStatuses(),
+            ]);
         } catch {
             return;
         }
@@ -60,11 +78,14 @@ export default function Inbox() {
     async function getItems() {
         try {
             showBackdrop();
-            const items = await itemService.list({ status_id: StatusItemEnum.Inbox });
+            const items = await itemService.list({
+                status_id: StatusItemEnum.Aguardando,
+                user_id: user?.id
+            });
             setItemsList(items);
             setFilteredItems(items);
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar items';
+            const message = error.response?.data?.error || 'Erro ao carregar itens aguardando';
             showSnackbar(message, 5000, 'error');
         } finally {
             hideBackdrop();
@@ -73,14 +94,28 @@ export default function Inbox() {
 
     async function getUsers() {
         try {
-            showBackdrop();
             const users = await userService.list();
-            setUsersList(users);
+            setUsers(users);
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar usuários';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
+            console.error('Erro ao carregar usuários');
+        }
+    }
+
+    async function getProjects() {
+        try {
+            const projects = await projectService.list();
+            setProjects(projects);
+        } catch (error: any) {
+            console.error('Erro ao carregar projetos');
+        }
+    }
+
+    async function getStatuses() {
+        try {
+            const statuses = await statusItemService.list();
+            setStatuses(statuses);
+        } catch (error: any) {
+            console.error('Erro ao carregar status');
         }
     }
 
@@ -91,6 +126,20 @@ export default function Inbox() {
             showSnackbar('Item deletado com sucesso', 5000, 'success');
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao deletar item';
+            showSnackbar(message, 5000, 'error');
+        } finally {
+            hideBackdrop();
+        }
+    }
+
+    async function completeItem(id: number) {
+        try {
+            showBackdrop();
+            await itemService.completeItem(id);
+            showSnackbar('Item marcado como concluído!', 5000, 'success');
+            await getItems();
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao concluir item';
             showSnackbar(message, 5000, 'error');
         } finally {
             hideBackdrop();
@@ -112,164 +161,14 @@ export default function Inbox() {
             );
         }
 
+        if (filters.assignedUserName) {
+            filtered = filtered.filter((item) =>
+                item.assigned?.name.toLowerCase().includes(filters.assignedUserName.toLowerCase())
+            );
+        }
+
         setFilteredItems(filtered);
     }
-
-    function clearFilters() {
-        setFilters({
-            title: "",
-            description: ""
-        });
-        handleCloseFilter();
-    }
-
-    const handleUpdate = useCallback(async () => {
-        try {
-            await getItems();
-            showSnackbar("Itens atualizados com sucesso", 3000, 'success');
-        } catch {
-            return;
-        }
-    }, [getItems, showSnackbar]);
-
-    const handleEdit = (row: ItemListResponse) => {
-        setSelectedItem(row);
-        setProcessModalOpen(true);
-    };
-
-    const handleDelete = async (data: ItemListResponse) => {
-        await deleteItem(data.id);
-        await getItems();
-    };
-
-    const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseFilter = () => {
-        setAnchorEl(null);
-    };
-
-    const openFilter = Boolean(anchorEl);
-
-    const activeFiltersCount = [
-        filters.title,
-        filters.description
-    ].filter(Boolean).length;
-
-    const hasActiveFilters = activeFiltersCount > 0;
-
-    const columns: GridColDef<ItemListResponse>[] = [
-        {
-            field: 'id',
-            headerName: 'ID',
-        },
-        {
-            field: 'title',
-            headerName: 'Título',
-            flex: 1,
-        },
-        {
-            field: 'description',
-            headerName: 'Descrição',
-            flex: 1,
-        },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 150,
-            renderCell: (params) => <ItemStatusChip statusId={params.row.status_id} />
-        },
-        {
-            field: 'created_date',
-            headerName: 'Capturado em',
-            width: 130,
-            valueFormatter: (value) => {
-                return new Date(value as string).toLocaleDateString('pt-BR');
-            },
-        },
-        {
-            field: "actions",
-            type: "actions",
-            headerName: "Ações",
-            align: "center",
-            headerAlign: "center",
-            sortable: false,
-            disableColumnMenu: true,
-            renderCell: (params: GridRenderCellParams<ItemListResponse>) => (
-                <Stack direction="row" spacing={1}>
-                    <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEdit(params.row)}
-                        title="Processar item"
-                    >
-                        <AutoMode fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                        color="error"
-                        size="small"
-                        onClick={() => handleDelete(params.row)}
-                        title="Deletar item"
-                    >
-                        <Delete fontSize="small" />
-                    </IconButton>
-                </Stack>
-            ),
-        },
-    ];
-
-    const handleProcessItem = async (data: IProcessedItem) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.processItem({
-                id: selectedItem.id,
-                is_actionable: data.is_actionable,
-                status_id: data.status_id,
-                due_date: data.due_date,
-                userAssigned_id: data.userAssigned_id,
-                priority: data.priority,
-            });
-
-            showSnackbar('Item processado com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao processar item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
-
-    const handleConvertToProject = async (projectData: IConvertToProject) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.convertToProject({
-                id: selectedItem.id,
-                title: projectData.title,
-                description: projectData.description,
-                status: projectData.status,
-            });
-
-            showSnackbar('Item convertido em projeto com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao converter em projeto';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
 
     function CustomNoRowsOverlay() {
         return (
@@ -285,17 +184,198 @@ export default function Inbox() {
         );
     }
 
+    function clearFilters() {
+        setFilters({
+            title: "",
+            description: "",
+            assignedUserName: "",
+        });
+        handleCloseFilter();
+    }
+
+    const handleUpdate = async () => {
+        try {
+            await getItems();
+            showSnackbar("Itens atualizados com sucesso", 3000, 'success');
+        } catch {
+            return;
+        }
+    };
+
+    const handleEdit = (row: ItemListResponse) => {
+        setItemToEdit(row);
+        setEditDialogOpen(true);
+    };
+
+    const handleDelete = async (data: ItemListResponse) => {
+        await deleteItem(data.id);
+        await getItems();
+    };
+
+    const handleComplete = async (data: ItemListResponse) => {
+        await completeItem(data.id);
+    };
+
+    const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseFilter = () => {
+        setAnchorEl(null);
+    };
+
+    const handleSaveEdit = async (data: ItemUpdateRequest) => {
+        try {
+            showBackdrop();
+            await itemService.update(data);
+            showSnackbar('Item atualizado com sucesso!', 5000, 'success');
+            setEditDialogOpen(false);
+            setItemToEdit(null);
+            await getItems();
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao atualizar item';
+            showSnackbar(message, 5000, 'error');
+        } finally {
+            hideBackdrop();
+        }
+    };
+
+    const openFilter = Boolean(anchorEl);
+
+    const activeFiltersCount = [
+        filters.title,
+        filters.description,
+        filters.assignedUserName,
+    ].filter(Boolean).length;
+
+    const hasActiveFilters = activeFiltersCount > 0;
+
+    const columns: GridColDef<ItemListResponse>[] = [
+        {
+            field: 'id',
+            headerName: 'ID',
+        },
+        {
+            field: 'title',
+            headerName: 'Título',
+            flex: 1
+        },
+        {
+            field: 'description',
+            headerName: 'Descrição',
+            flex: 1,
+        },
+        {
+            field: 'assigned',
+            headerName: 'Responsável',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => {
+                const assignedUser = params.row.assigned;
+                if (!assignedUser) {
+                    return <Chip label="Não atribuído" size="small" color="default" />;
+                }
+                return (
+                    <Chip label={assignedUser.name} size="small" color="default" />
+                );
+            },
+        },
+        {
+            field: 'due_date',
+            headerName: 'Prazo',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => {
+                if (!params.row.due_date) {
+                    return <Chip label="Sem prazo" size="small" variant="outlined" />;
+                }
+                const dueDate = new Date(params.row.due_date);
+                const now = new Date();
+                const isOverdue = dueDate < now;
+
+                return (
+                    <Chip
+                        label={dueDate.toLocaleDateString('pt-BR')}
+                        size="small"
+                        color={isOverdue ? "error" : "default"}
+                        variant={isOverdue ? "filled" : "outlined"}
+                    />
+                );
+            },
+        },
+        {
+            field: 'created_date',
+            headerName: 'Delegado em',
+            flex: 1,
+            valueFormatter: (value) => {
+                return new Date(value as string).toLocaleDateString('pt-BR');
+            },
+        },
+        {
+            field: 'project',
+            headerName: 'Projeto',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => {
+                if (!params.row.project) return '-';
+                return (
+                    <Chip
+                        label={params.row.project.title}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                    />
+                );
+            },
+        },
+        {
+            field: "actions",
+            type: "actions",
+            headerName: "Ações",
+            align: "center",
+            headerAlign: "center",
+            sortable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => (
+                <Stack direction="row" spacing={1}>
+                    <IconButton
+                        color="success"
+                        size="small"
+                        onClick={() => handleComplete(params.row)}
+                        title="Marcar como concluída"
+                    >
+                        <CheckCircle fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={() => handleEdit(params.row)}
+                        title="Editar item"
+                    >
+                        <Edit fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                        color="error"
+                        size="small"
+                        onClick={() => handleDelete(params.row)}
+                        title="Deletar item"
+                    >
+                        <Delete fontSize="small" />
+                    </IconButton>
+                </Stack>
+            ),
+        },
+    ];
+
     return (
         <Stack spacing={2}>
-            <Stack>
-                <Typography variant="h5">Caixa de Entrada</Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Todos os items que você capturou e precisam ser processados
-                </Typography>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Stack>
+                    <Typography variant="h5">Aguardando</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Itens delegados que você está aguardando conclusão
+                    </Typography>
+                </Stack>
             </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
-
                 <Button
                     variant="outlined"
                     startIcon={<Update />}
@@ -341,9 +421,9 @@ export default function Inbox() {
                     horizontal: 'left',
                 }}
             >
-                <Box sx={{ p: 2 }}>
+                <Box sx={{ p: 2, minWidth: 300 }}>
                     <Stack spacing={2}>
-                        <Typography>Filtros</Typography>
+                        <Typography variant="h6">Filtros</Typography>
 
                         <TextField
                             label="Título"
@@ -365,6 +445,16 @@ export default function Inbox() {
                             placeholder="Buscar por descrição..."
                         />
 
+                        <TextField
+                            label="Responsável"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            value={filters.assignedUserName}
+                            onChange={(e) => setFilters({ ...filters, assignedUserName: e.target.value })}
+                            placeholder="Buscar por responsável..."
+                        />
+
                         <Stack direction="row" spacing={1} justifyContent="flex-end">
                             <Button onClick={clearFilters} color="inherit">
                                 Limpar
@@ -379,11 +469,14 @@ export default function Inbox() {
 
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={filteredItems || []}
+                    rows={filteredItems}
                     columns={columns}
                     initialState={{
                         pagination: {
                             paginationModel: { page: 0, pageSize: 10 },
+                        },
+                        sorting: {
+                            sortModel: [{ field: 'due_date', sort: 'asc' }],
                         },
                     }}
                     pageSizeOptions={[5, 10, 25, 50]}
@@ -395,24 +488,23 @@ export default function Inbox() {
                             backgroundColor: 'action.hover',
                         },
                     }}
-
                     slots={{
                         noRowsOverlay: CustomNoRowsOverlay
                     }}
                 />
-
             </Box>
 
-            <ProcessItem
-                open={modalOpen}
-                item={selectedItem}
+            <UpdateWaitingModal
+                open={editDialogOpen}
+                item={itemToEdit}
+                users={users}
+                projects={projects}
+                statuses={statuses}
                 onClose={() => {
-                    setProcessModalOpen(false);
-                    setSelectedItem(null);
+                    setEditDialogOpen(false);
+                    setItemToEdit(null);
                 }}
-                onProcess={handleProcessItem}
-                onConvertToProject={handleConvertToProject}
-                users={usersList}
+                onSave={handleSaveEdit}
             />
         </Stack>
     );

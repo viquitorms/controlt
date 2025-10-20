@@ -1,20 +1,28 @@
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
-import { Home, Settings, ExitToApp, TableChartRounded, Groups, Person } from '@mui/icons-material';
+import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
+import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFilled, HourglassBottom, KeyboardDoubleArrowRight, CalendarToday, Inbox } from '@mui/icons-material';
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
-import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 import { authService } from '../services/auth.service';
+import { useAuth } from '../contexts/Auth.context';
 
 const drawerWidth = 240;
 
 export default function Sidebar() {
     const navigate = useNavigate();
+    const { isManager } = useAuth();
+
+    const actionList = [
+        { text: 'Iniciar Captura', icon: <PlayCircleFilled />, path: '/captura' },
+        { text: 'Caixa de Entrada', icon: <Inbox />, path: '/caixadeentrada' },
+        { text: 'Aguardando', icon: <HourglassBottom />, path: '/aguardando' },
+        { text: 'Agendado', icon: <CalendarToday />, path: '/agendado' },
+        { text: 'Próximas Ações', icon: <KeyboardDoubleArrowRight />, path: '/proximasacoes' },
+        { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
+    ];
 
     const navigationList = [
-        { text: 'Caixa de Entrada', icon: <Home />, path: '/caixadeentrada' },
         { text: 'Projetos', icon: <TableChartRounded />, path: '/projetos' },
-        { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
-        { text: 'Termos', icon: <SpellcheckIcon />, path: '/termos' },
+        // { text: 'Termos', icon: <SpellcheckIcon />, path: '/termos' },
         { text: 'Usuários', icon: <Person />, path: '/usuarios' },
         { text: 'Equipes', icon: <Groups />, path: '/equipes' }
     ];
@@ -51,16 +59,45 @@ export default function Sidebar() {
             </Toolbar>
 
             <Stack display={'flex'} flexDirection={'column'} justifyContent={'space-between'} height={'100%'}>
-                <List>
-                    {navigationList.map((item) => (
-                        <ListItem key={item.text} disablePadding>
-                            <ListItemButton onClick={() => handleNavigate(item)}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+                <Stack display={'flex'} flexDirection={'column'} gap={2}>
+                    <Stack>
+                        <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>GTD</Typography>
+                        <List>
+                            {actionList.map((item) => (
+                                <ListItem key={item.text} disablePadding>
+                                    <ListItemButton onClick={() => handleNavigate(item)}>
+                                        <ListItemIcon>{item.icon}</ListItemIcon>
+                                        <ListItemText primary={item.text} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Stack>
+
+                    {
+                        isManager &&
+                        <>
+                            <Divider />
+
+                            <Stack>
+                                <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Organização</Typography>
+                                <List>
+                                    {navigationList.map((item) => (
+                                        <ListItem key={item.text} disablePadding>
+                                            <ListItemButton onClick={() => handleNavigate(item)}>
+                                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                                <ListItemText primary={item.text} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Stack>
+                        </>
+                    }
+
+
+                </Stack>
+
                 <List>
                     {configurationList.map((item) => (
                         <ListItem key={item.text} disablePadding>
