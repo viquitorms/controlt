@@ -218,7 +218,7 @@ Avalia a capacidade de entrega da equipe comparando o planejado vs realizado.
 **Victor Magalhães de Souza**
 
 - GitHub: [@viquitorms](https://github.com/viquitorms)
-- LinkedIn: [Victor Magalhães](https://linkedin.com/in/victormagalhaes)
+- LinkedIn: [Victor Magalhães](https://linkedin.com/in/victormagalhaesdesouza)
 - Email: vicmagalhaes20@gmail.com
 
 **Orientador:** Prof. Leonardo Vilela Cardoso
