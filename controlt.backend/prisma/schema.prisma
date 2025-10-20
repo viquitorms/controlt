@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(100)
+  users User[]
+
+  @@map("profile")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique @db.VarChar(255)
+  hash_password  String         @db.VarChar(255)
+  profile_id     Int
+  created_date   DateTime       @default(now())
+  itens_created  Item[]         @relation("ItemCreator")
+  itens_assigned Item[]         @relation("ItemAssigned")
+  recorded_time  RecordedTime[]
+  profile        Profile        @relation(fields: [profile_id], references: [id])
+  teams          UserTeam[]
+
+  @@map("user")
+}
+
+model Team {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  created_date DateTime   @default(now())
+  users        UserTeam[]
+
+  @@map("team")
+}
+
+model UserTeam {
+  user_id Int
+  team_id Int
+  team    Team @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, team_id])
+  @@map("user_team")
+}
+
+model Project {
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(255)
+  description  String?
+  status       String   @db.VarChar(50)
+  created_date DateTime @default(now())
+  itens        Item[]
+
+  @@map("project")
+}
+
+model Term {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  description  String?
+  created_date DateTime @default(now())
+  updated_date DateTime @updatedAt
+
+  @@map("term")
+}
+
+model StatusItem {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(50)
+  color String @db.VarChar(20)
+  items Item[]
+
+  @@map("status_item")
+}
+
+model Item {
+  id              Int            @id @default(autoincrement())
+  title           String         @db.VarChar(255)
+  description     String?
+  due_date        DateTime?
+  priority        Int?           @default(3)
+  project_id      Int?
+  user_id         Int
+  userAssigned_id Int?
+  created_date    DateTime       @default(now())
+  updated_date    DateTime       @updatedAt
+  status_id       Int
+  project         Project?       @relation(fields: [project_id], references: [id])
+  status          StatusItem     @relation(fields: [status_id], references: [id])
+  user            User           @relation("ItemCreator", fields: [user_id], references: [id])
+  assigned        User?          @relation("ItemAssigned", fields: [userAssigned_id], references: [id])
+  recorded_time   RecordedTime[]
+
+  @@map("item")
+}
+
+model RecordedTime {
+  id               Int      @id @default(autoincrement())
+  minutes_duration Int
+  register_date    DateTime @default(now())
+  item_id          Int
+  user_id          Int
+  item             Item     @relation(fields: [item_id], references: [id])
+  user             User     @relation(fields: [user_id], references: [id])
+
+  @@map("recorded_time")
+}

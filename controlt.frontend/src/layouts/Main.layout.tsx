@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/Sidebar.component';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     return (
