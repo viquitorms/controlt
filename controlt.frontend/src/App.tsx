@@ -14,6 +14,7 @@ import Waiting from './pages/waiting/Waiting.page'
 import NextActions from './pages/nextActions/NextAction.page'
 import Scheduled from './pages/scheduled/Scheduled.page'
 import References from './pages/references/References.page'
+import Someday from './pages/someday/Someday.page'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path='/aguardando' element={<ProtectedRoute><MainLayout><Waiting /></MainLayout></ProtectedRoute>} />
       <Route path='/agendado' element={<ProtectedRoute><MainLayout><Scheduled /></MainLayout></ProtectedRoute>} />
       <Route path='/referencias' element={<ProtectedRoute><MainLayout><References /></MainLayout></ProtectedRoute>} />
+      <Route path='/algumdia' element={<ProtectedRoute><MainLayout><Someday /></MainLayout></ProtectedRoute>} />
       <Route path='/usuarios' element={<ProtectedRoute><MainLayout><Users /></MainLayout></ProtectedRoute>} />
       <Route path='/projetos' element={<ProtectedRoute><MainLayout><Projects /></MainLayout></ProtectedRoute>} />
       <Route path='/configuracoes' element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
