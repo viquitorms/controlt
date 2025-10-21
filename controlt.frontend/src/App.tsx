@@ -8,13 +8,14 @@ import Settings from './pages/Settings.page'
 import ProtectedRoute from './components/ProtectedRoute.component'
 import Projects from './pages/project/Projects.page'
 import Teams from './pages/team/Teams.page'
-import Terms from './pages/term/Terms.page'
 import CaptureItem from './pages/capture/CaptureItem.page'
 import Waiting from './pages/waiting/Waiting.page'
 import NextActions from './pages/nextActions/NextAction.page'
 import Scheduled from './pages/scheduled/Scheduled.page'
 import References from './pages/references/References.page'
 import Someday from './pages/someday/Someday.page'
+import Finished from './pages/finished/Finished.page'
+import Archived from './pages/archived/Archived.page'
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
       <Route path='/agendado' element={<ProtectedRoute><MainLayout><Scheduled /></MainLayout></ProtectedRoute>} />
       <Route path='/referencias' element={<ProtectedRoute><MainLayout><References /></MainLayout></ProtectedRoute>} />
       <Route path='/algumdia' element={<ProtectedRoute><MainLayout><Someday /></MainLayout></ProtectedRoute>} />
+      <Route path='/concluidos' element={<ProtectedRoute><MainLayout><Finished /></MainLayout></ProtectedRoute>} />
+      <Route path='/deletados' element={<ProtectedRoute><MainLayout><Archived /></MainLayout></ProtectedRoute>} />
       <Route path='/usuarios' element={<ProtectedRoute><MainLayout><Users /></MainLayout></ProtectedRoute>} />
       <Route path='/projetos' element={<ProtectedRoute><MainLayout><Projects /></MainLayout></ProtectedRoute>} />
       <Route path='/configuracoes' element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />

@@ -128,8 +128,6 @@ export default function ProcessItem({
 
     const handleClassificationChange = (value: number) => {
         setStatusId(value);
-
-        // Reset campos dependentes
         if (value !== StatusItemEnum.Aguardando) setAssignedUser(undefined);
         if (value !== StatusItemEnum.Agendada) setDueDate("");
     };

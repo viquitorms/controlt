@@ -36,7 +36,6 @@ export default function StepDetails({
         }
     };
 
-    // 👇 ADICIONAR: Handler para mudança de usuário
     const handleUserChange = (userId: number) => {
         const selectedUser = users.find(u => u.id === userId);
         if (selectedUser) {
@@ -48,7 +47,6 @@ export default function StepDetails({
         <Stack spacing={3}>
             <Typography variant="h6">Detalhes Adicionais</Typography>
 
-            {/* Prioridade */}
             <FormControl fullWidth>
                 <InputLabel>Prioridade</InputLabel>
                 <Select
@@ -89,7 +87,6 @@ export default function StepDetails({
                 </Select>
             </FormControl>
 
-            {/* Data (para agendadas) */}
             {classification === StatusItemEnum.Agendada && (
                 <TextField
                     label="Data/Hora"
@@ -98,19 +95,17 @@ export default function StepDetails({
                     required
                     value={dueDate}
                     onChange={(e) => onDueDateChange(e.target.value)}
-                    InputLabelProps={{ shrink: true }}  // 👈 ADICIONAR
                     helperText="Defina quando esta tarefa deve ser realizada"
                 />
             )}
 
-            {/* Usuário Atribuído (para delegadas) */}
             {classification === StatusItemEnum.Aguardando && (
                 <FormControl fullWidth required>
                     <InputLabel>Delegar para</InputLabel>
                     <Select
-                        value={assignedUser?.id || ""}  // 👈 USAR ID ao invés do objeto
+                        value={assignedUser?.id || ""}
                         label="Delegar para"
-                        onChange={(e) => handleUserChange(Number(e.target.value))}  // 👈 USAR HANDLER
+                        onChange={(e) => handleUserChange(Number(e.target.value))}
                     >
                         {users.map((user) => (
                             <MenuItem key={user.id} value={user.id}>
@@ -128,7 +123,6 @@ export default function StepDetails({
                 </FormControl>
             )}
 
-            {/* Resumo */}
             <Alert severity="success">
                 <Typography variant="body2" fontWeight="bold">
                     Resumo do Processamento:

@@ -412,9 +412,9 @@ export default function Someday() {
         <Stack spacing={2}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Stack>
-                    <Typography variant="h5">Agendados</Typography>
+                    <Typography variant="h5">Algum dia talvez</Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Tarefas que você deve agendou para uma data específica
+                        Tarefas que não possuem prioridades e que serão feitas algum dia ou talvez não serão feitas
                     </Typography>
                 </Stack>
             </Stack>

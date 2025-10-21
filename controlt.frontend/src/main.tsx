@@ -10,17 +10,21 @@ import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from './contexts/Snackbar.context.tsx';
 import { BackdropProvider } from './contexts/Backdrop.context.tsx';
 import { AuthProvider } from './contexts/Auth.context.tsx';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <SnackbarProvider>
-        <BackdropProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </BackdropProvider>
-      </SnackbarProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'pt-br'}>
+        <SnackbarProvider>
+          <BackdropProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </BackdropProvider>
+        </SnackbarProvider>
+      </LocalizationProvider>
     </BrowserRouter>
   </StrictMode>
 )

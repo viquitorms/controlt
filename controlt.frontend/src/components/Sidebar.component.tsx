@@ -1,5 +1,6 @@
 import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
-import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFilled, HourglassBottom, KeyboardDoubleArrowRight, CalendarToday, Inbox, DateRange } from '@mui/icons-material';
+import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFilled, HourglassBottom, KeyboardDoubleArrowRight, CalendarToday, Inbox, DateRange, CheckCircleOutline } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
@@ -19,6 +20,8 @@ export default function Sidebar() {
         { text: 'Próximas Ações', icon: <KeyboardDoubleArrowRight />, path: '/proximasacoes' },
         { text: 'Algum dia talvez', icon: <DateRange />, path: '/algumdia' },
         { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
+        { text: 'Concluídos', icon: <CheckCircleOutline />, path: '/referencias' },
+        { text: 'Deletados', icon: <DeleteIcon />, path: '/deletados' },
     ];
 
     const navigationList = [
