@@ -103,13 +103,13 @@ model Item {
 }
 
 model RecordedTime {
-  id               Int      @id @default(autoincrement())
-  minutes_duration Int
-  register_date    DateTime @default(now())
-  item_id          Int
-  user_id          Int
-  item             Item     @relation(fields: [item_id], references: [id])
-  user             User     @relation(fields: [user_id], references: [id])
+  id        Int       @id @default(autoincrement())
+  startedAt DateTime
+  endedAt   DateTime?
+  item_id   Int
+  user_id   Int
+  item      Item      @relation(fields: [item_id], references: [id])
+  user      User      @relation(fields: [user_id], references: [id])
 
   @@map("recorded_time")
 }

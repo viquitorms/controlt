@@ -1,125 +1,105 @@
-import RecordedTimeService from '../services/recordedTime.service.js';
+import recordedTimeService from "../services/recordedTime.service.js";
 
 class RecordedTimeController {
-    /**
-     * Registra tempo
-     * @param {Request} req
-     * @param {Response} res
-     */
+    async findAll(req, res) {
+        try {
+            const recordedTimes = await recordedTimeService.findAll();
+            res.status(200).json(recordedTimes);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
     async create(req, res) {
         try {
-            const data = req.body;
-            const record = await RecordedTimeService.create(data);
-            res.status(201).json(record);
+            const newRecordedTime = await recordedTimeService.create(req.body);
+            res.status(201).json(newRecordedTime);
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
-    /**
-     * Lista registros de tempo
-     * @param {Request} req
-     * @param {Response} res
-     */
-    async list(req, res) {
-        try {
-            const filters = req.query;
-            const records = await RecordedTimeService.list(filters);
-            res.json(records);
-        } catch (error) {
-            res.status(400).json({ error: error.message });
-        }
-    }
-
-    /**
-     * Busca registro por ID
-     * @param {Request} req
-     * @param {Response} res
-     */
-    async findById(req, res) {
-        try {
-            const { id } = req.params;
-            const record = await RecordedTimeService.findById(Number(id));
-            res.json(record);
-        } catch (error) {
-            res.status(404).json({ error: error.message });
-        }
-    }
-
-    /**
-     * Atualiza registro
-     * @param {Request} req
-     * @param {Response} res
-     */
     async update(req, res) {
         try {
-            const { id } = req.params;
-            const data = req.body;
-            const record = await RecordedTimeService.update(Number(id), data);
-            res.json(record);
+            const updatedRecordedTime = await recordedTimeService.update(
+                req.params.id,
+                req.body
+            );
+            res.status(200).json(updatedRecordedTime);
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
-    /**
-     * Deleta registro
-     * @param {Request} req
-     * @param {Response} res
-     */
-    async delete(req, res) {
+    async remove(req, res) {
         try {
-            const { id } = req.params;
-            await RecordedTimeService.delete(Number(id));
+            await recordedTimeService.remove(req.params.id);
             res.status(204).send();
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     /**
-     * Tempo total por item
-     * @param {Request} req
-     * @param {Response} res
+     * Controller para iniciar o rastreamento de tempo.
+     * Espera { itemId } no corpo da requisição.
+     * Usa req.user.id para o usuário.
      */
-    async getTimeByItem(req, res) {
+    async startTracking(req, res) {
         try {
-            const { itemId } = req.params;
-            const data = await RecordedTimeService.getTimeByItem(Number(itemId));
-            res.json(data);
+            const { itemId } = req.body;
+            const userId = req.user.id;
+
+            if (!itemId) {
+                return res.status(400).json({ message: 'itemId é obrigatório' });
+            }
+
+            const newRecord = await recordedTimeService.startTracking(itemId, userId);
+            res.status(201).json(newRecord);
         } catch (error) {
-            res.status(404).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     /**
-     * Tempo total por usuário
-     * @param {Request} req
-     * @param {Response} res
+     * Controller para parar o rastreamento de tempo.
+     * Espera { itemId } no corpo da requisição.
+     * Usa req.user.id para o usuário.
      */
-    async getTimeByUser(req, res) {
+    async stopTracking(req, res) {
         try {
-            const { userId } = req.params;
-            const { start_date, end_date } = req.query;
-            const data = await RecordedTimeService.getTimeByUser(Number(userId), { start_date, end_date });
-            res.json(data);
+            const { itemId } = req.body;
+            const userId = req.user.id; // Vem do auth middleware
+
+            if (!itemId) {
+                return res.status(400).json({ message: 'itemId é obrigatório' });
+            }
+
+            const stoppedRecord = await recordedTimeService.stopTracking(itemId, userId);
+
+            if (!stoppedRecord) {
+                // Isso não é um erro, apenas significa que nenhum timer ativo foi encontrado
+                return res
+                    .status(200)
+                    .json({ message: 'Nenhum temporizador ativo encontrado para este item.' });
+            }
+
+            res.status(200).json(stoppedRecord);
         } catch (error) {
-            res.status(404).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     /**
-     * Tempo total por projeto
-     * @param {Request} req
-     * @param {Response} res
+     * Controller para obter o temporizador ativo para o usuário.
      */
-    async getTimeByProject(req, res) {
+    async getActiveTracking(req, res) {
         try {
-            const { projectId } = req.params;
-            const data = await RecordedTimeService.getTimeByProject(Number(projectId));
-            res.json(data);
+            const userId = req.user.id;
+            const activeRecord = await recordedTimeService.getActiveTracking(userId);
+            res.status(200).json(activeRecord); // Será nulo se nada estiver ativo
         } catch (error) {
-            res.status(404).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 }
