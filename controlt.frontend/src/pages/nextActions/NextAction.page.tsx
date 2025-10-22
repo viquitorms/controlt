@@ -14,7 +14,7 @@ import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { itemService } from "../../services/item.service";
 import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
-import { Delete, Edit, Update, FilterList, Clear, CheckCircle, PlayArrow } from "@mui/icons-material";
+import { Delete, Edit, Update, FilterList, Clear, CheckCircle, PlayArrow, Stop } from "@mui/icons-material";
 import { useAuth } from "../../contexts/Auth.context";
 import { StatusItemEnum } from "../../enums/StatusItem.enum";
 import type { UserListResponse } from "../../dtos/user/User.res.dto";
@@ -26,6 +26,7 @@ import { statusItemService } from "../../services/statusItem.service";
 import type { ItemUpdateRequest, ItemUpdateStatusRequest } from "../../dtos/item/Item.req.dto";
 import NextActionsModal from "./NextAction.modal";
 import { useNavigate } from "react-router-dom";
+import { recordedTimeService } from "../../services/recordedTime.service";
 
 interface IFilter {
     title: string;
@@ -48,6 +49,8 @@ export default function NextActions() {
     const [projects, setProjects] = useState<ProjectListResponse[]>([]);
     const [statuses, setStatuses] = useState<StatusItemResponse[]>([]);
 
+    const [activeTrackingId, setActiveTrackingId] = useState<number | null>(null);
+
     const [filters, setFilters] = useState<IFilter>({
         title: "",
         description: "",
@@ -69,6 +72,7 @@ export default function NextActions() {
                 getUsers(),
                 getProjects(),
                 getStatuses(),
+                getActiveTimer(),
             ]);
         } catch {
             return;
@@ -119,6 +123,17 @@ export default function NextActions() {
         }
     }
 
+    async function getActiveTimer() {
+        try {
+            const activeTimer = await recordedTimeService.getActiveTracking();
+            if (activeTimer) {
+                setActiveTrackingId(activeTimer.itemId);
+            }
+        } catch (error: any) {
+            console.error('Erro ao buscar timer ativo', error);
+        }
+    }
+
     async function deleteItem(id: number) {
         try {
             showBackdrop();
@@ -145,6 +160,29 @@ export default function NextActions() {
             hideBackdrop();
         }
     }
+
+    const handleStartTracking = async (itemId: number) => {
+        try {
+            await recordedTimeService.startTracking(itemId);
+            setActiveTrackingId(itemId);
+            showSnackbar('Rastreamento de tempo iniciado!', 5000, 'success');
+        } catch (error) {
+            showSnackbar('Falha ao iniciar rastreamento.', 5000, 'error');
+            console.error(error);
+        }
+    };
+
+    const handleStopTracking = async (itemId: number) => {
+        try {
+            await recordedTimeService.stopTracking(itemId);
+            setActiveTrackingId(null);
+            showSnackbar('Rastreamento de tempo parado!', 5000, 'info');
+            await getItems();
+        } catch (error) {
+            showSnackbar('Falha ao parar rastreamento.', 5000, 'error');
+            console.error(error);
+        }
+    };
 
     async function startItem(data: ItemListResponse) {
         try {
@@ -297,6 +335,47 @@ export default function NextActions() {
     };
 
     const columns: GridColDef<ItemListResponse>[] = [
+        {
+            field: "track",
+            type: "actions",
+            headerName: "Track",
+            width: 80,
+            align: "center",
+            headerAlign: "center",
+            sortable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams<ItemListResponse>) => {
+                const itemId = params.row.id as number;
+                const isThisItemActive = activeTrackingId === itemId;
+
+                return (
+                    <>
+                        {isThisItemActive ? (
+                            <IconButton
+                                color="error"
+                                size="small"
+                                onClick={() => handleStopTracking(itemId)}
+                                aria-label="Parar rastreamento"
+                                title="Parar rastreamento"
+                            >
+                                <Stop fontSize="small" />
+                            </IconButton>
+                        ) : (
+                            <IconButton
+                                color="primary"
+                                size="small"
+                                onClick={() => handleStartTracking(itemId)}
+                                aria-label="Iniciar rastreamento"
+                                title="Iniciar rastreamento"
+                                disabled={activeTrackingId !== null}
+                            >
+                                <PlayArrow fontSize="small" />
+                            </IconButton>
+                        )}
+                    </>
+                );
+            },
+        },
         {
             field: 'id',
             headerName: 'ID',
