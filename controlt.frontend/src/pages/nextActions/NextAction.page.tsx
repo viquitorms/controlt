@@ -482,15 +482,6 @@ export default function NextActions() {
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack>
-                    <Typography variant="h5">Próximas Ações</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Tarefas que você deve executar quando possível
-                    </Typography>
-                </Stack>
-            </Stack>
-
             <Stack direction="row" spacing={1} alignItems="center">
                 <Button
                     variant="outlined"

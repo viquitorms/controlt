@@ -67,7 +67,6 @@ export default function CaptureItem() {
     return (
         <>
             <Stack spacing={2}>
-                <Typography variant="h5">Capturar Itens</Typography>
                 <Card variant="outlined">
                     <CardContent>
                         <Stack spacing={2}>

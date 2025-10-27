@@ -410,14 +410,6 @@ export default function Someday() {
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack>
-                    <Typography variant="h5">Algum dia talvez</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Tarefas que não possuem prioridades e que serão feitas algum dia ou talvez não serão feitas
-                    </Typography>
-                </Stack>
-            </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
                 <Button

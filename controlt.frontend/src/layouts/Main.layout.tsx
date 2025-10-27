@@ -1,13 +1,24 @@
-import { Box } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar.component';
+import type { ReactNode } from 'react';
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+interface IMainLayout {
+    title: string,
+    description?: string,
+    children: ReactNode
+}
+
+export default function MainLayout({ title, description, children }: IMainLayout) {
     return (
         <Box sx={{ display: 'flex' }}>
             <Sidebar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Stack component="main" sx={{ flexGrow: 1, p: 2 }} spacing={2}>
+                <Stack>
+                    <Typography variant="h5">{title}</Typography>
+                    <Typography variant="body2" color="text.secondary">{description}</Typography>
+                </Stack>
                 {children}
-            </Box>
-        </Box>
+            </Stack>
+        </Box >
     );
 }

@@ -1,12 +1,7 @@
-import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 
-interface IProtectedRoute {
-    children: ReactNode;
-}
-
-export default function ProtectedRoute({ children }: IProtectedRoute) {
+const ProtectedRoute = () => {
 
     const isAuthenticated = authService.isAuthenticated();
 
@@ -14,5 +9,7 @@ export default function ProtectedRoute({ children }: IProtectedRoute) {
         return <Navigate to="/" replace />;
     }
 
-    return <>{children}</>;
+    return <Outlet />;
 }
+
+export default ProtectedRoute;

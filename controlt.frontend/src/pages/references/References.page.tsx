@@ -23,7 +23,7 @@ import type { StatusItemResponse } from "../../dtos/statusItem/StatusItem.res.dt
 import { userService } from "../../services/user.service";
 import { projectService } from "../../services/project.service";
 import { statusItemService } from "../../services/statusItem.service";
-import type { ItemUpdateRequest, ItemUpdateStatusRequest } from "../../dtos/item/Item.req.dto";
+import type { ItemUpdateRequest } from "../../dtos/item/Item.req.dto";
 import ReferencesModal from "./References.modal";
 import { useNavigate } from "react-router-dom";
 
@@ -47,7 +47,6 @@ export default function References() {
     const [users, setUsers] = useState<UserListResponse[]>([]);
     const [projects, setProjects] = useState<ProjectListResponse[]>([]);
     const [statuses, setStatuses] = useState<StatusItemResponse[]>([]);
-
     const [filters, setFilters] = useState<IFilter>({
         title: "",
         description: "",
@@ -132,40 +131,6 @@ export default function References() {
         }
     }
 
-    async function completeItem(id: number) {
-        try {
-            showBackdrop();
-            await itemService.completeItem(id);
-            showSnackbar('Item marcado como concluído!', 5000, 'success');
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao concluir item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    }
-
-    async function startItem(data: ItemListResponse) {
-        try {
-            showBackdrop();
-
-            const udpateItem: ItemUpdateStatusRequest = {
-                id: data.id,
-                status_id: data.status_id
-            }
-
-            await itemService.updateStatus(udpateItem);
-            showSnackbar('Item iniciado!', 5000, 'success');
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao iniciar item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    }
-
     function applyFilters() {
         let filtered = [...itemsList];
 
@@ -230,15 +195,7 @@ export default function References() {
     const handleDelete = async (data: ItemListResponse) => {
         await deleteItem(data.id);
         await getItems();
-    };
-
-    const handleComplete = async (data: ItemListResponse) => {
-        await completeItem(data.id);
-    };
-
-    const handleStart = async (data: ItemListResponse) => {
-        await startItem(data);
-    };
+    }
 
     const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -273,28 +230,6 @@ export default function References() {
     ].filter(Boolean).length;
 
     const hasActiveFilters = activeFiltersCount > 0;
-
-    const getPriorityColor = (priority: number) => {
-        switch (priority) {
-            case 1: return "error";
-            case 2: return "warning";
-            case 3: return "info";
-            case 4: return "default";
-            case 5: return "default";
-            default: return "default";
-        }
-    };
-
-    const getPriorityLabel = (priority: number) => {
-        switch (priority) {
-            case 1: return "Alta";
-            case 2: return "Média-Alta";
-            case 3: return "Média";
-            case 4: return "Baixa";
-            case 5: return "Muito Baixa";
-            default: return "Não definida";
-        }
-    };
 
     const columns: GridColDef<ItemListResponse>[] = [
         {
@@ -360,14 +295,6 @@ export default function References() {
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack>
-                    <Typography variant="h5">Referências</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Referências e conteúdos capturados que servem de constulta
-                    </Typography>
-                </Stack>
-            </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
                 <Button

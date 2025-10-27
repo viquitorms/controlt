@@ -276,13 +276,6 @@ export default function Inbox() {
 
     return (
         <Stack spacing={2}>
-            <Stack>
-                <Typography variant="h5">Caixa de Entrada</Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Todos os items que você capturou e precisam ser processados
-                </Typography>
-            </Stack>
-
             <Stack direction="row" spacing={1} alignItems="center">
 
                 <Button

@@ -166,7 +166,6 @@ export default function Users() {
 
     return (
         <Stack spacing={2}>
-            <Typography variant={'h5'}>Usuários</Typography>
 
             <Stack direction={'row'} spacing={1}>
                 <Button

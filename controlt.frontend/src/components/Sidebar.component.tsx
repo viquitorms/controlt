@@ -20,7 +20,7 @@ export default function Sidebar() {
         { text: 'Próximas Ações', icon: <KeyboardDoubleArrowRight />, path: '/proximasacoes' },
         { text: 'Algum dia talvez', icon: <DateRange />, path: '/algumdia' },
         { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
-        { text: 'Concluídos', icon: <CheckCircleOutline />, path: '/referencias' },
+        { text: 'Concluídos', icon: <CheckCircleOutline />, path: '/concluidos' },
         { text: 'Deletados', icon: <DeleteIcon />, path: '/deletados' },
     ];
 

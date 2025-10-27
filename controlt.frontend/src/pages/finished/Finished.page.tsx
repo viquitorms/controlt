@@ -271,14 +271,6 @@ export default function Finished() {
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack>
-                    <Typography variant="h5">Aguardando</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Itens delegados que você está aguardando conclusão
-                    </Typography>
-                </Stack>
-            </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
                 <Button

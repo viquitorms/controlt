@@ -225,14 +225,6 @@ export default function Archived() {
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack>
-                    <Typography variant="h5">Deletados</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Itens que foram deletados
-                    </Typography>
-                </Stack>
-            </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
                 <Button

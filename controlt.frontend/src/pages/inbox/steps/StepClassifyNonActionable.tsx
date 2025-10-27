@@ -25,7 +25,7 @@ export default function StepClassifyNonActionable({ classification, onChange }: 
                         control={<Radio />}
                         label={
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Delete fontSize="small" />
+                                <Delete fontSize="small" color="error" />
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
                                         Descartar
