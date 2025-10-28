@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import Backdrop from '../components/Backdrop.component';
+import Backdrop from '../components/ui/Backdrop.component';
 import { useBackdrop as useBackdropHook } from '../hooks/useBackdrop.hook';
 
 interface BackdropContextType {

@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { ProjectCreateRequest } from "../../dtos/project/Project.req.dto";
 
 interface ICreateProjectModal {

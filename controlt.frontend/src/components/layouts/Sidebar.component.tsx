@@ -3,8 +3,8 @@ import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFille
 import DeleteIcon from '@mui/icons-material/Delete';
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/auth.service';
-import { useAuth } from '../contexts/Auth.context';
+import { authService } from '../../services/auth.service';
+import { useAuth } from '../../contexts/Auth.context';
 
 const drawerWidth = 240;
 

@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { ProjectFindByIdResponse } from "../../dtos/project/Project.res.dto";
 import type { ProjectUpdateRequest } from "../../dtos/project/Project.req.dto";
 

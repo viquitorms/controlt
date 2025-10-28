@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { authService } from '../services/auth.service';
+import { authService } from '../../services/auth.service';
 
 const ProtectedRoute = () => {
 

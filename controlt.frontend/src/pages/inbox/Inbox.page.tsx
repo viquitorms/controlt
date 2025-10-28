@@ -17,7 +17,7 @@ import { Update, FilterList, Clear, AutoMode } from "@mui/icons-material";
 import ProcessItem, { type IConvertToProject } from "./ProcessItem.modal";
 import { type IProcessedItem } from "./ProcessItem.modal";
 import { StatusItemEnum } from "../../enums/StatusItem.enum";
-import ItemStatusChip from "../../components/ItemStatusChip.component";
+import ItemStatusChip from "../../components/features/chip/ItemStatusChip.component";
 import type { IFilter } from "./interfaces/Filter.inbox.interface";
 import { useNavigate } from "react-router-dom";
 import { type UserListResponse } from "../../dtos/user/User.res.dto";
@@ -25,6 +25,7 @@ import { userService } from "../../services/user.service";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import PopoverFilter from "../../components/features/popover/PopoverFilter.component";
 
 export default function Inbox() {
     const { showBackdrop, hideBackdrop } = useBackdrop();
@@ -52,6 +53,7 @@ export default function Inbox() {
         applyFilters();
     }, [filters, itemsList]);
 
+    {/** Inicializa a página */ }
     async function onInitialized() {
         try {
             await getItems();
@@ -61,6 +63,7 @@ export default function Inbox() {
         }
     }
 
+    {/** Carrega a lista de itens */ }
     async function getItems() {
         try {
             showBackdrop();
@@ -75,6 +78,7 @@ export default function Inbox() {
         }
     }
 
+    {/** Carrega a lista de usuários */ }
     async function getUsers() {
         try {
             showBackdrop();
@@ -88,6 +92,7 @@ export default function Inbox() {
         }
     }
 
+    {/** Aplica os filtros selecionados no popover */ }
     function applyFilters() {
         let filtered = [...itemsList];
 
@@ -115,15 +120,7 @@ export default function Inbox() {
         setFilteredItems(filtered);
     }
 
-    function clearFilters() {
-        setFilters({
-            title: "",
-            description: "",
-            captured_date: null
-        });
-        handleCloseFilter();
-    }
-
+    {/** Atualiza os dados */ }
     const handleUpdate = useCallback(async () => {
         try {
             await getItems();
@@ -133,15 +130,18 @@ export default function Inbox() {
         }
     }, [getItems, showSnackbar]);
 
-    const handleEdit = (row: ItemListResponse) => {
+    {/** Abre o wizard de processamento */ }
+    const handleOpenWizard = (row: ItemListResponse) => {
         setSelectedItem(row);
         setProcessModalOpen(true);
     };
 
+    {/** Abre o filtro */ }
     const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
+    {/** Fecha o filtro */ }
     const handleCloseFilter = () => {
         setAnchorEl(null);
     };
@@ -198,7 +198,7 @@ export default function Inbox() {
                     <IconButton
                         color="primary"
                         size="small"
-                        onClick={() => handleEdit(params.row)}
+                        onClick={() => handleOpenWizard(params.row)}
                         title="Processar item"
                     >
                         <AutoMode fontSize="small" />
@@ -260,6 +260,7 @@ export default function Inbox() {
         }
     };
 
+    {/** Renderização de mensagem quando não houver items no grid*/ }
     function CustomNoRowsOverlay() {
         return (
             <Stack height="100%" alignItems="center" justifyContent="center" spacing={1}>
@@ -276,6 +277,8 @@ export default function Inbox() {
 
     return (
         <Stack spacing={2}>
+
+            {/** Toolbar */}
             <Stack direction="row" spacing={1} alignItems="center">
 
                 <Button
@@ -310,61 +313,10 @@ export default function Inbox() {
                 </Typography>
             </Stack>
 
-            <Popover
-                open={openFilter}
-                anchorEl={anchorEl}
-                onClose={handleCloseFilter}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <Box sx={{ p: 2 }}>
-                    <Stack spacing={2}>
-                        <Typography>Filtros</Typography>
+            {/** Filtro */}
+            <PopoverFilter anchorEl={anchorEl} open={openFilter} onClose={handleCloseFilter} onApply={applyFilters} />
 
-                        <TextField
-                            label="Título"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            value={filters.title}
-                            onChange={(e) => setFilters({ ...filters, title: e.target.value })}
-                            placeholder="Buscar por título..."
-                        />
-
-                        <TextField
-                            label="Descrição"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            value={filters.description}
-                            onChange={(e) => setFilters({ ...filters, description: e.target.value })}
-                            placeholder="Buscar por descrição..."
-                        />
-
-                        <DatePicker
-                            label="Descrição"
-                            value={filters.captured_date}
-                            onChange={(e) => setFilters({ ...filters, captured_date: e })}
-                        />
-
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
-                            <Button onClick={clearFilters} color="inherit">
-                                Limpar
-                            </Button>
-                            <Button onClick={handleCloseFilter} variant="contained">
-                                Aplicar
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Box>
-            </Popover>
-
+            {/** DataGrid */}
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
                     rows={filteredItems || []}
@@ -391,6 +343,7 @@ export default function Inbox() {
 
             </Box>
 
+            {/** Wizard */}
             <ProcessItem
                 open={modalOpen}
                 item={selectedItem}

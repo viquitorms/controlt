@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
 import type { TermFindByIdResponse } from "../../dtos/term/Term.res.dto";
 import type { TermUpdateRequest } from "../../dtos/term/Term.req.dto";

@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import Sidebar from '../components/Sidebar.component';
+import Sidebar from './Sidebar.component';
 import type { ReactNode } from 'react';
 
 interface IMainLayout {

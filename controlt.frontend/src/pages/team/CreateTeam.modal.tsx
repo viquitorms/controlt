@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { TeamCreateRequest } from "../../dtos/team/Team.req.dto";
 
 interface ICreateTeamModal {

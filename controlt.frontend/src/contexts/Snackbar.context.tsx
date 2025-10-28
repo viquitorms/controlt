@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import Snackbar from "../components/Snackbar.component";
+import Snackbar from "../components/ui/Snackbar.component";
 import type { AlertColor } from "@mui/material";
 
 interface ISnackbar {

@@ -1,6 +1,6 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
 import type { UserCreateRequest } from "../../dtos/user/User.req.dto";
 

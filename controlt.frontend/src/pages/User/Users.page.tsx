@@ -1,7 +1,7 @@
 import { Button, Stack, Typography } from "@mui/material";
 import UpdateIcon from '@mui/icons-material/Update';
 import { useEffect, useState } from "react";
-import DataGrid from "../../components/DataGrid.component";
+import DataGrid from "../../components/ui/DataGrid.component";
 import { Add } from "@mui/icons-material";
 import CreateUserModal from "./CreateUser.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";

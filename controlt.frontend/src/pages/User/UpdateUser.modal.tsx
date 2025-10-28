@@ -1,6 +1,6 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/Dialog.component";
+import Dialog from "../../components/ui/Dialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
 import type { UserFindByIdResponse } from "../../dtos/user/User.res.dto";
 import type { UserUpdateRequest } from "../../dtos/user/User.req.dto";

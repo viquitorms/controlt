@@ -1,5 +1,5 @@
 import { Chip } from "@mui/material";
-import { StatusItemEnum, StatusItemName } from "../enums/StatusItem.enum";
+import { StatusItemEnum, StatusItemName } from "../../../enums/StatusItem.enum";
 
 interface IItemStatusChip {
     statusId: number;
