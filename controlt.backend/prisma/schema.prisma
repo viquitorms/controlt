@@ -23,11 +23,12 @@ model User {
   hash_password  String         @db.VarChar(255)
   profile_id     Int
   created_date   DateTime       @default(now())
-  itens_created  Item[]         @relation("ItemCreator")
-  itens_assigned Item[]         @relation("ItemAssigned")
   recorded_time  RecordedTime[]
   profile        Profile        @relation(fields: [profile_id], references: [id])
   teams          UserTeam[]
+  tasks_assigned Task[]         @relation("TaskAssigned")
+  items_created  Item[]         @relation("ItemCreator")
+  tasks          Task[]
 
   @@map("user")
 }
@@ -52,14 +53,23 @@ model UserTeam {
 }
 
 model Project {
-  id           Int      @id @default(autoincrement())
-  title        String   @db.VarChar(255)
+  id           Int           @id @default(autoincrement())
+  title        String        @db.VarChar(255)
   description  String?
-  status       String   @db.VarChar(50)
-  created_date DateTime @default(now())
-  itens        Item[]
+  status_id    Int
+  status       StatusProject @relation(fields: [status_id], references: [id])
+  created_date DateTime      @default(now())
+  tasks        Task[]
 
   @@map("project")
+}
+
+model StatusProject {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(50)
+  projects Project[]
+
+  @@map("status_project")
 }
 
 model Term {
@@ -72,43 +82,73 @@ model Term {
   @@map("term")
 }
 
-model StatusItem {
+model StatusTask {
   id    Int    @id @default(autoincrement())
   name  String @unique @db.VarChar(50)
-  color String @db.VarChar(20)
-  items Item[]
+  tasks Task[]
 
-  @@map("status_item")
+  @@map("status_task")
 }
 
 model Item {
-  id              Int            @id @default(autoincrement())
-  title           String         @db.VarChar(255)
-  description     String?
-  due_date        DateTime?
-  priority        Int?           @default(3)
-  project_id      Int?
-  user_id         Int
-  userAssigned_id Int?
-  created_date    DateTime       @default(now())
-  updated_date    DateTime       @updatedAt
-  status_id       Int
-  project         Project?       @relation(fields: [project_id], references: [id])
-  status          StatusItem     @relation(fields: [status_id], references: [id])
-  user            User           @relation("ItemCreator", fields: [user_id], references: [id])
-  assigned        User?          @relation("ItemAssigned", fields: [userAssigned_id], references: [id])
-  recorded_time   RecordedTime[]
+  id            Int            @id @default(autoincrement())
+  title         String         @db.VarChar(255)
+  note          String?
+  created_date  DateTime       @default(now())
+  created_by_id Int
+  created_by    User           @relation("ItemCreator", fields: [created_by_id], references: [id])
+  tasks         Task[]
+  recorded_time RecordedTime[]
 
   @@map("item")
+}
+
+model PriorityTask {
+  id    Int    @id @default(autoincrement())
+  level Int    @unique
+  name  String @db.VarChar(50)
+  tasks Task[]
+
+  @@map("priority_task")
+}
+
+model Task {
+  id             Int            @id @default(autoincrement())
+  item_id        Int
+  item           Item           @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  title          String         @db.VarChar(255)
+  description    String?
+  due_date       DateTime?
+  priority_id    Int?           @default(3)
+  priority       PriorityTask?  @relation(fields: [priority_id], references: [id])
+  project_id     Int?
+  project        Project?       @relation(fields: [project_id], references: [id])
+  created_date   DateTime       @default(now())
+  started_at     DateTime?
+  completed_at   DateTime?
+  status_id      Int
+  status         StatusTask     @relation(fields: [status_id], references: [id])
+  created_by_id  Int
+  created_by     User           @relation(fields: [created_by_id], references: [id])
+  assigned_to_id Int?
+  assigned_to    User?          @relation("TaskAssigned", fields: [assigned_to_id], references: [id])
+  recorded_time  RecordedTime[]
+
+  @@index([status_id])
+  @@index([assigned_to_id])
+  @@index([created_date])
+  @@map("task")
 }
 
 model RecordedTime {
   id        Int       @id @default(autoincrement())
   startedAt DateTime
   endedAt   DateTime?
-  item_id   Int
+  item_id   Int?
+  task_id   Int?
   user_id   Int
-  item      Item      @relation(fields: [item_id], references: [id])
+  item      Item?     @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  task      Task?     @relation(fields: [task_id], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [user_id], references: [id])
 
   @@map("recorded_time")

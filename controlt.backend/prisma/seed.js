@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando seed...');
 
+  // Criar perfis de usuário
   const profileManager = await prisma.profile.upsert({
     where: { id: 1 },
     update: {},
@@ -27,25 +28,26 @@ async function main() {
 
   console.log('✅ Perfis criados:', profileManager.name, profileEmployee.name);
 
-  const statuses = [
-    { name: 'Inbox', color: '#94A3B8' },
-    { name: 'Processando', color: '#3B82F6' },
-    { name: 'Próxima Ação', color: '#8B5CF6' },
-    { name: 'Em Andamento', color: '#F59E0B' },
-    { name: 'Aguardando', color: '#A855F7' },
-    { name: 'Agendada', color: '#EC4899' },
-    { name: 'Algum Dia', color: '#6366F1' },
-    { name: 'Concluída', color: '#10B981' },
-    { name: 'Cancelada', color: '#EF4444' },
-    { name: 'Arquivada', color: '#6B7280' },
-    { name: 'Bloqueada', color: '#DC2626' },
-    { name: 'Em Revisão', color: '#0EA5E9' },
-    { name: 'Referência', color: '#14B8A6' },
-    { name: 'Projeto', color: '#8B5CF6' },
+  // Criar status de projetos
+  const statuses_task = [
+    { name: 'Inbox' },
+    { name: 'Processando' },
+    { name: 'Próxima Ação' },
+    { name: 'Em Andamento' },
+    { name: 'Aguardando' },
+    { name: 'Agendada' },
+    { name: 'Algum Dia' },
+    { name: 'Concluída' },
+    { name: 'Cancelada' },
+    { name: 'Arquivada' },
+    { name: 'Bloqueada' },
+    { name: 'Em Revisão' },
+    { name: 'Referência' },
+    { name: 'Projeto' },
   ];
 
-  for (const status of statuses) {
-    await prisma.statusItem.upsert({
+  for (const status of statuses_task) {
+    await prisma.statusTask.upsert({
       where: { name: status.name },
       update: {},
       create: status,
@@ -54,6 +56,41 @@ async function main() {
 
   console.log('✅ Status de projetos criados');
 
+  // Criar status de projetos
+  const statuses_project = [
+    { name: 'Não iniciado' },
+    { name: 'Em Andamento' },
+    { name: 'Concluído' },
+  ];
+
+  for (const status of statuses_project) {
+    await prisma.statusProject.upsert({
+      where: { name: status.name },
+      update: {},
+      create: status,
+    });
+  }
+
+  console.log('✅ Status de projetos criados');
+
+  // Criar prioridades de tarefas
+  const priority_task = [
+    { level: 1, name: 'Alta' },
+    { level: 2, name: 'Média' },
+    { level: 3, name: 'Baixa' },
+  ];
+
+  for (const priority of priority_task) {
+    await prisma.priorityTask.upsert({
+      where: { level: priority.level, name: priority.name },
+      update: {},
+      create: priority,
+    });
+  }
+
+  console.log('✅ Prioridades de tarefas criadas');
+
+  // Criar usuário admin
   const hashPassword = await bcrypt.hash('admin', 10);
 
   const admin = await prisma.user.upsert({

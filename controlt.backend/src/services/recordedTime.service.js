@@ -1,5 +1,3 @@
-// SUBSTITUIR O CONTEÚDO INTEIRO DESTE ARQUIVO
-
 import prisma from "../config/prisma.config.js";
 
 class RecordedTimeService {
