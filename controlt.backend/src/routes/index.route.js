@@ -8,6 +8,7 @@ import recordedTimeRoutes from "./recordedTime.route.js";
 import itemRoutes from "./item.route.js";
 import profileRoutes from "./profile.route.js";
 import statusItemRoutes from "./statusItem.route.js";
+import taskRoutes from "./task.route.js"
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/recorded-time', recordedTimeRoutes);
 router.use('/items', itemRoutes);
 router.use('/profiles', profileRoutes);
 router.use('/status-item', statusItemRoutes);
+router.use('/tasks', taskRoutes);
 
 export default router;

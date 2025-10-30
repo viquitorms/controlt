@@ -8,9 +8,9 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async list(req, res) {
+  async findAll(req, res) {
     try {
-      const users = await UserService.list();
+      const users = await UserService.findAll();
       res.json(users);
     } catch (error) {
       res.status(400).json({ error: error.message });

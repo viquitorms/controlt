@@ -1,37 +1,36 @@
-// controllers/item.controller.js
-import ItemService from '../services/item.service.js';
+import TaskService from '../services/task.service.js';
 
-class ItemController {
+class TaskController {
     /**
-     * Cria um novo item
+     * Cria um novo task
      * @param {Request} req
      * @param {Response} res
      */
     async create(req, res) {
         try {
-            const item = await ItemService.create(req.body);
-            res.status(201).json(item);
+            const task = await TaskService.create(req.body);
+            res.status(201).json(task);
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
 
     /**
-     * Lista items com filtros
+     * Lista tasks com filtros
      * @param {Request} req
      * @param {Response} res
      */
     async findAll(req, res) {
         try {
-            const items = await ItemService.findAll(req.query);
-            res.status(200).json(items);
+            const tasks = await TaskService.findAll(req.query);
+            res.status(200).json(tasks);
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
 
     /**
-     * Busca item por ID
+     * Busca task por ID
      * @param {Request} req
      * @param {Response} res
      */
@@ -41,15 +40,15 @@ class ItemController {
             if (isNaN(id)) {
                 return res.status(400).json({ error: 'ID inválido.' });
             }
-            const item = await ItemService.findById(id);
-            res.status(200).json(item);
+            const task = await TaskService.findById(id);
+            res.status(200).json(task);
         } catch (error) {
             res.status(404).json({ error: error.message });
         }
     }
 
     /**
-     * Atualiza um item
+     * Atualiza um task
      * @param {Request} req
      * @param {Response} res
      */
@@ -59,15 +58,15 @@ class ItemController {
             if (isNaN(id)) {
                 return res.status(400).json({ error: 'ID inválido.' });
             }
-            const updatedItem = await ItemService.update(id, req.body);
-            res.status(200).json(updatedItem);
+            const updatedTask = await TaskService.update(id, req.body);
+            res.status(200).json(updatedTask);
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
 
     /**
-     * Deleta um item
+     * Deleta um task
      * @param {Request} req
      * @param {Response} res
      */
@@ -77,7 +76,7 @@ class ItemController {
             if (isNaN(id)) {
                 return res.status(400).json({ error: 'ID inválido.' });
             }
-            await ItemService.delete(id);
+            await TaskService.delete(id);
             res.status(204).send();
         } catch (error) {
             res.status(400).json({ error: error.message });
@@ -85,4 +84,4 @@ class ItemController {
     }
 }
 
-export default new ItemController();
+export default new TaskController();

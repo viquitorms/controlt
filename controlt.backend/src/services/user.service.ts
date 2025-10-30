@@ -1,13 +1,14 @@
-import prisma from "../config/prisma.config.js";
+import prisma from "../config/prisma.config.js"; // Se este arquivo for .js, mantenha. Se for .ts, mude a extensão.
 import bcrypt from "bcryptjs";
+import CreateUserDto from "../dtos/user/createUser.dto"; // .ts é opcional no import
+import UpdateUserDto from "../dtos/user/updateUser.dto";
+import { UserResponse } from "../types/user.type";
 
-class UserSerivce {
-
+class UserService {
     /**
-     * Lista todos os usuários
-     * @returns 
+     * Lista todos os usuários, exceto o admin.
      */
-    async list() {
+    async findAll(): Promise<UserResponse[]> {
         return await prisma.user.findMany({
             select: {
                 id: true,
@@ -32,15 +33,13 @@ class UserSerivce {
             orderBy: {
                 id: 'asc'
             }
-        })
+        });
     }
 
     /**
-     * Encontra um usuário pelo ID
-     * @param {*} id 
-     * @returns 
+     * Encontra um usuário pelo ID.
      */
-    async findById(id) {
+    async findById(id: number): Promise<UserResponse> {
         const user = await prisma.user.findUnique({
             where: { id },
             select: {
@@ -55,7 +54,7 @@ class UserSerivce {
                 },
                 created_date: true
             }
-        })
+        });
 
         if (!user) {
             throw new Error('Usuário não encontrado');
@@ -65,28 +64,22 @@ class UserSerivce {
     }
 
     /**
-     * Cria um novo usuário
-     * @param {Object} data - Dados do usuário
-     * @returns {Promise<Object>} Usuário criado
+     * Cria um novo usuário.
      */
-    async create(data) {
+    async create(data: CreateUserDto): Promise<UserResponse> {
         const { name, email, password, profile_id } = data;
-
-        if (!name || !email || !password) {
-            throw new Error('Nome, email e senha são obrigatórios');
-        }
 
         const userExists = await prisma.user.findUnique({
             where: { email }
         });
 
         if (userExists) {
-            throw new Error('Email já registrado');
+            throw new Error(`O email '${email}' já está registrado.`);
         }
 
         const hash_password = await bcrypt.hash(password, 10);
 
-        return await prisma.user.create({
+        const newUser = await prisma.user.create({
             data: {
                 name,
                 email,
@@ -106,42 +99,55 @@ class UserSerivce {
                 created_date: true
             }
         });
+
+        return newUser;
     }
 
     /**
-     * Atualiza um usuário
-     * @param {*} id 
-     * @param {*} data 
-     * @returns 
+     * Atualiza um usuário.
      */
-    async update(id, data) {
-        const { name, email, profile_id } = data;
+    async update(id: number, data: UpdateUserDto): Promise<UserResponse> {
+        const { name, email, profile_id, password } = data;
 
-        return await prisma.user.update({
+        const dataToUpdate: any = {
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(profile_id && { profile_id }),
+        };
+
+        if (password) {
+            dataToUpdate.hash_password = await bcrypt.hash(password, 10);
+        }
+
+        const updatedUser = await prisma.user.update({
             where: { id },
-            data: {
-                ...(name && { name }),
-                ...(email && { email }),
-                ...(profile_id && { profile_id })
-            },
+            data: dataToUpdate,
             select: {
                 id: true,
                 name: true,
                 email: true,
-                profile: true
+                profile: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                created_date: true
             }
         });
+
+        return updatedUser;
     }
 
     /**
-     * Deleta um usuário
-     * @param {*} id 
+     * Deleta um usuário.
      */
-    async delete(id) {
+    async delete(id: number): Promise<void> {
+        await this.findById(id);
         await prisma.user.delete({
             where: { id }
         });
     }
 }
 
-export default new UserSerivce();
+export default new UserService();
