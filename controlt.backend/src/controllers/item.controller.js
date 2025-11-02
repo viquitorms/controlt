@@ -7,7 +7,7 @@ class ItemController {
      * @param {Request} req
      * @param {Response} res
      */
-    async create(req, res) {
+    static async create(req, res) {
         try {
             const item = await ItemService.create(req.body);
             res.status(201).json(item);
@@ -21,7 +21,7 @@ class ItemController {
      * @param {Request} req
      * @param {Response} res
      */
-    async findAll(req, res) {
+    static async findAll(req, res) {
         try {
             const items = await ItemService.findAll(req.query);
             res.status(200).json(items);
@@ -35,7 +35,7 @@ class ItemController {
      * @param {Request} req
      * @param {Response} res
      */
-    async findById(req, res) {
+    static async findById(req, res) {
         try {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
@@ -53,7 +53,7 @@ class ItemController {
      * @param {Request} req
      * @param {Response} res
      */
-    async update(req, res) {
+    static async update(req, res) {
         try {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
@@ -71,7 +71,7 @@ class ItemController {
      * @param {Request} req
      * @param {Response} res
      */
-    async delete(req, res) {
+    static async delete(req, res) {
         try {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
@@ -85,4 +85,4 @@ class ItemController {
     }
 }
 
-export default new ItemController();
+export default ItemController;

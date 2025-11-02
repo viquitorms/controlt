@@ -1,4 +1,4 @@
-import authService from "../services/auth.service.js";
+import authService from "../services/auth.service.ts";
 
 class AuthController {
 
@@ -7,7 +7,7 @@ class AuthController {
      * @param {*} req 
      * @param {*} res 
      */
-    async login(req, res) {
+    static async login(req, res) {
         try {
             const data = req.body;
             const result = await authService.Login(data);
@@ -18,4 +18,4 @@ class AuthController {
     }
 }
 
-export default new AuthController();
+export default AuthController;

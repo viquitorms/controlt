@@ -1,3 +1,4 @@
+import { Profile } from "@prisma/client";
 import prisma from "../config/prisma.config.js";
 
 class ProfileService {
@@ -6,7 +7,7 @@ class ProfileService {
      * Lista todos os usuários
      * @returns 
      */
-    async list() {
+    async list(): Promise<Profile[]> {
         return await prisma.profile.findMany({
             select: {
                 id: true,

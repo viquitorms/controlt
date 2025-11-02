@@ -1,9 +1,11 @@
+import { User } from '@prisma/client';
 import prisma from '../config/prisma.config.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { hash } from 'crypto';
 
 class AuthService {
-    async Login(data) {
+    static async Login(data: any): Promise<{ token: string; user: any }> {
         const { email, password } = data;
 
         const user = await prisma.user.findUnique({
@@ -21,13 +23,18 @@ class AuthService {
             throw new Error('Usuário não encontrado ou senha inválida');
         }
 
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT secret is not configured');
+        }
+
         const token = jwt.sign(
             {
                 name: user.name,
                 email: user.email,
                 profile_id: user.profile.id
             },
-            process.env.JWT_SECRET,
+            secret,
             { expiresIn: '1d' }
         );
 
@@ -37,10 +44,13 @@ class AuthService {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                profile: user.profile // Retorna o objeto profile na resposta, mas não no token
+                profile: {
+                    id: user.profile.id,
+                    name: user.profile.name
+                }
             }
         };
     }
 }
 
-export default new AuthService()
+export default AuthService;

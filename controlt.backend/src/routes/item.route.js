@@ -1,29 +1,19 @@
 import { Router } from 'express';
 import itemController from '../controllers/item.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { validateDto } from '../middlewares/validateDto.middleware.js';
+import CreateItemDto from '../dtos/item/createItem.dto.js';
+import FilterItemDto from '../dtos/item/filterItem.dto.js';
+import UpdateItemDto from '../dtos/item/updateItem.dto.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.post('/', itemController.create);
-router.get('/', itemController.list);
+router.post('/', validateDto(CreateItemDto), itemController.create);
+router.get('/', validateDto(FilterItemDto), itemController.findAll);
 router.get('/:id', itemController.findById);
-router.put('/:id', itemController.update);
+router.put('/:id', validateDto(UpdateItemDto), itemController.update);
 router.delete('/:id', itemController.delete);
-
-router.get('/inbox/:userId', itemController.getInbox);
-router.get('/next-actions/:userId', itemController.getNextActions);
-router.get('/waiting/:userId', itemController.getWaitingFor);
-router.get('/scheduled/:userId', itemController.getScheduled);
-router.get('/someday/:userId', itemController.getSomedayMaybe);
-
-router.put('/:id/process', itemController.processItem);
-router.put('/:id/status', itemController.updateStatus);
-router.put('/:id/complete', itemController.completeItem);
-router.post('/:id/convert-to-project', itemController.convertToProject);
-
-router.get('/user/:userId', itemController.getByUser);
-router.get('/project/:projectId', itemController.getByProject);
 
 export default router;

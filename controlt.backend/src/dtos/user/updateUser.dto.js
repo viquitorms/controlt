@@ -1,9 +1,8 @@
-import { IsOptional, IsString, IsEmail, IsInt, MinLength } from "class-validator";
+import { IsOptional, IsString, IsEmail, IsInt, MinLength, isString } from "class-validator";
 import { Type } from "class-transformer";
 
 export default class UpdateUserDto {
-    @IsOptional()
-    @IsString()
+    @isString()
     name;
 
     @IsOptional()
@@ -11,7 +10,7 @@ export default class UpdateUserDto {
     email;
 
     @IsOptional()
-    @IsString()
+    @isString()
     @MinLength(6, { message: "A senha deve ter no mínimo 6 caracteres" })
     password;
 

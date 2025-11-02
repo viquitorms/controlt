@@ -1,24 +1,19 @@
-// SUBSTITUIR O CONTEÚDO INTEIRO DESTE ARQUIVO
-
 import { Router } from 'express';
-import recordedTimeController from '../controllers/recordedTime.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { validateDto } from '../middlewares/validateDto.middleware.js';
+import StartTimerDto from '../dtos/recordedTime/startTimer.dto.js';
+import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto.js';
+import recordedTimeController from '../controllers/recordedTime.controller.js';
 
 const router = Router();
 
-// Aplica o middleware de autenticação a todas as rotas deste arquivo
 router.use(authMiddleware);
 
-// Rotas de tracking (sem o prefixo /recorded-time)
-router.post('/start', recordedTimeController.startTracking);
-router.post('/stop', recordedTimeController.stopTracking);
-router.get('/active', recordedTimeController.getActiveTracking);
+router.post("/start", validateDto(StartTimerDto), recordedTimeController.startTracking);
+router.post("/stop", recordedTimeController.stopTracking);
 
-// Rotas genéricas (sem o prefixo /recorded-time)
-// O prefixo /recorded-time já foi definido no index.route.js
-router.get('/', recordedTimeController.findAll);
-router.post('/', recordedTimeController.create);
-router.put('/:id', recordedTimeController.update);
-router.delete('/:id', recordedTimeController.remove);
+router.get("/", validateDto(FilterRecordedTimeDto), recordedTimeController.findAll);
+router.get("/active", recordedTimeController.getActiveTracking);
+router.delete("/:id", recordedTimeController.deleteTracking);
 
 export default router;

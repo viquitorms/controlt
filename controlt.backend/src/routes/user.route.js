@@ -13,7 +13,7 @@ router.use(authMiddleware);
 router.post("/", validateDto(CreateUserDto), userController.create);
 router.put("/:id", validateDto(UpdateUserDto), userController.update);
 
-router.get("/", userController.find);
+router.get("/", userController.findAll);
 router.get("/:id", userController.findById);
 router.delete("/:id", userController.delete);
 

@@ -2,7 +2,18 @@ import prisma from "../config/prisma.config.js"; // Se este arquivo for .js, man
 import bcrypt from "bcryptjs";
 import CreateUserDto from "../dtos/user/createUser.dto"; // .ts é opcional no import
 import UpdateUserDto from "../dtos/user/updateUser.dto";
-import { UserResponse } from "../types/user.type";
+import { User } from "@prisma/client";
+
+interface UserResponse {
+    id: number;
+    name: string;
+    email: string;
+    profile: {
+        id: number;
+        name: string;
+    };
+    created_date: Date;
+}
 
 class UserService {
     /**
@@ -39,7 +50,7 @@ class UserService {
     /**
      * Encontra um usuário pelo ID.
      */
-    async findById(id: number): Promise<UserResponse> {
+    async findById(id: number): Promise<UserResponse | null> {
         const user = await prisma.user.findUnique({
             where: { id },
             select: {

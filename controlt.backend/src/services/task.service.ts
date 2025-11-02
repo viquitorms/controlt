@@ -1,82 +1,77 @@
-import prisma from '../config/prisma.config.js'; // Ajuste a extensão se o config virar .ts
-import { Item, Prisma, Task } from '@prisma/client';
-import CreateItemDto from '../dtos/item/createItem.dto.js';
-import ItemFilterDto from '../dtos/item/filterItem.dto.js';
-import UpdateItemDto from '../dtos/item/updateItem.dto.js';
-import CreateTaskDto from '../dtos/tasks/createTask.dto.js';
+/**
+ * @author viquitorms
+ * @version 2025-11-01 20:30:12
+ * @description Service simples para a lógica de negócio de Tasks.
+ */
+import prisma from "../config/prisma.config.js";
+import { Task, Prisma } from "@prisma/client";
+import CreateTaskDto from "../dtos/task/createTask.dto.js";
+import UpdateTaskDto from "../dtos/task/updateTask.dto.js";
+import TaskFilterDto from "../dtos/task/filterTask.dto.js";
 
 class TaskService {
+    /**
+     * Cria uma nova tarefa.
+     */
     public async create(data: CreateTaskDto): Promise<Task> {
-
-        const userExists = await prisma.user.findUnique({ where: { id: data.created_by_id } });
-
-        if (!userExists) {
-            throw new Error('Usuário criador não encontrado.');
-        }
-
         return prisma.task.create({
             data: {
-                item_id: data.item_id,
-                title: data.title,
-                description: data.description,
-                due_date: data.due_date,
-                priority_id: data.priority_id,
-                project_id: data.project_id,
-                status_id: data.status_id,
-                created_by_id: data.created_by_id,
-                assigned_to_id: data.assigned_to_id,
+                ...data,
+                item_id: Number(data.item_id),
+                status_id: Number(data.status_id),
+                created_by_id: Number(data.created_by_id),
+                priority_id: data.priority_id ? Number(data.priority_id) : undefined,
+                project_id: data.project_id ? Number(data.project_id) : undefined,
+                assigned_to_id: data.assigned_to_id ? Number(data.assigned_to_id) : undefined,
             },
         });
     }
 
-    public async findAll(filters: ItemFilterDto): Promise<Item[]> {
-        const { title, created_by_id, created_date_from, created_date_to, page = 1, limit = 10 } = filters;
+    /**
+     * Lista tarefas com filtros.
+     */
+    public async findAll(filters: TaskFilterDto): Promise<Task[]> {
+        const { page = 1, limit = 20, ...whereClause } = filters;
 
-        const where: Prisma.ItemWhereInput = {
-            ...(created_by_id && { created_by_id: Number(created_by_id) }),
-            ...(title && { title: { contains: title, mode: 'insensitive' } }),
-            ...(created_date_from && { created_date: { gte: new Date(created_date_from) } }),
-            ...(created_date_to && { created_date: { lte: new Date(created_date_to) } }),
-        };
-
-        return prisma.item.findMany({
-            where,
-            include: {
-                created_by: { select: { id: true, name: true } },
-                _count: { select: { tasks: true } },
-            },
+        return prisma.task.findMany({
+            where: whereClause,
             skip: (Number(page) - 1) * Number(limit),
             take: Number(limit),
-            orderBy: { created_date: 'desc' },
+            orderBy: { created_date: "desc" },
         });
     }
 
-    public async findById(id: number): Promise<Item> {
-        const item = await prisma.item.findUnique({
-            where: { id },
-            include: {
-                created_by: { select: { id: true, name: true } },
-                tasks: true,
-                recorded_time: true,
-            },
-        });
-
-        if (!item) {
-            throw new Error('Item não encontrado');
-        }
-        return item;
+    /**
+     * Busca uma tarefa por ID.
+     */
+    public async findById(id: number): Promise<Task> {
+        const task = await prisma.task.findUnique({ where: { id } });
+        if (!task) throw new Error("Tarefa não encontrada.");
+        return task;
     }
 
-    public async update(id: number, data: UpdateItemDto): Promise<Item> {
+    /**
+     * Atualiza uma tarefa.
+     */
+    public async update(id: number, data: UpdateTaskDto): Promise<Task> {
         await this.findById(id);
-        return prisma.item.update({
+        return prisma.task.update({
             where: { id },
-            data,
+            data: data,
         });
     }
 
+    /**
+     * Deleta uma tarefa.
+     */
     public async delete(id: number): Promise<void> {
-        await prisma.item.delete({ where: { id } });
+        const task = await this.findById(id);
+
+        if (!task) {
+            throw new Error("Tarefa não encontrada.");
+        }
+
+        await prisma.task.delete({ where: { id } });
     }
 }
 

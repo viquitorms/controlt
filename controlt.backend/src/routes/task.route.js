@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { validateDto } from "../middlewares/validateDto.middleware.js";
-import TaskFilterDto from "../dtos/tasks/filterTask.dto.js";
-import CreateTaskDto from "../dtos/tasks/createTask.dto.js";
-import UpdateTaskDto from "../dtos/tasks/updateTask.dto.js";
+import TaskFilterDto from "../dtos/task/filterTask.dto.js";
+import CreateTaskDto from "../dtos/task/createTask.dto.js";
+import UpdateTaskDto from "../dtos/task/updateTask.dto.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import taskController from "../controllers/task.controller.js";
 
