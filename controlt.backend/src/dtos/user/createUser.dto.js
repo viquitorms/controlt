@@ -1,4 +1,5 @@
-import { IsString, IsEmail, MinLength } from "class-validator";
+import { IsEmail, IsString, IsInt, MinLength } from "class-validator";
+import { Type } from "class-transformer";
 
 export default class CreateUserDto {
     @IsString()
@@ -8,6 +9,10 @@ export default class CreateUserDto {
     email;
 
     @IsString()
-    @MinLength(6)
+    @MinLength(6, { message: "A senha deve ter no mínimo 6 caracteres" })
     password;
+
+    @IsInt()
+    @Type(() => Number)
+    profile_id;
 }
