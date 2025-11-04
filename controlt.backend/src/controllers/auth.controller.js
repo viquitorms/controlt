@@ -1,12 +1,6 @@
 import authService from "../services/auth.service.ts";
 
 class AuthController {
-
-    /**
-     * Realiza o login do usuário
-     * @param {*} req 
-     * @param {*} res 
-     */
     static async login(req, res) {
         try {
             const data = req.body;

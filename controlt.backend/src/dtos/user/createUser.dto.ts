@@ -3,16 +3,16 @@ import { Type } from "class-transformer";
 
 export default class CreateUserDto {
     @IsString()
-    name;
+    name: string;
 
     @IsEmail()
-    email;
+    email: string;
 
     @IsString()
     @MinLength(6, { message: "A senha deve ter no mínimo 6 caracteres" })
-    password;
+    password: string;
 
     @IsInt()
     @Type(() => Number)
-    profile_id;
+    profile_id: number;
 }

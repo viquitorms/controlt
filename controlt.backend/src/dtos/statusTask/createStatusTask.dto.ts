@@ -7,5 +7,5 @@ export default class CreateStatusTaskDto {
      * @example "In Progress"
      */
     @IsString()
-    name;
+    name: string;
 }

@@ -1,7 +1,7 @@
-import prisma from '../config/prisma.config'
+import prisma from '../config/prisma.config.js'
 import { Prisma, RecordedTime } from '@prisma/client';
-import StartTimerDto from '../dtos/recordedTime/startTimer.dto';
-import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto';
+import StartTimerDto from '../dtos/recordedTime/startTimer.dto.js';
+import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto.js';
 
 class RecordedTimeService {
 

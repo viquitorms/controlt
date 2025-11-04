@@ -7,7 +7,7 @@ export default class FilterProjectDto {
      */
     @IsOptional()
     @IsString()
-    title;
+    title: string;
 
     /**
      * @type {number | undefined}
@@ -15,7 +15,7 @@ export default class FilterProjectDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 
     /**
      * @type {number | undefined}
@@ -23,7 +23,7 @@ export default class FilterProjectDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    page;
+    page: number;
 
     /**
      * @type {number | undefined}
@@ -31,5 +31,5 @@ export default class FilterProjectDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    limit;
+    limit: number;
 }

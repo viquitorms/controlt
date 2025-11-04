@@ -1,5 +1,5 @@
 import { PriorityTask } from "@prisma/client";
-import CreatePriorityTaskDto from "../dtos/priorityTask/createPriorityTask.dto";
+import CreatePriorityTaskDto from "../dtos/priorityTask/createPriorityTask.dto.js";
 import prisma from "../config/prisma.config.js"
 
 class PriorityTaskService {

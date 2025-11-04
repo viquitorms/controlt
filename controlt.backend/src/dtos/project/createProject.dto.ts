@@ -8,7 +8,7 @@ export default class CreateProjectDto {
      * @example "Lançamento do App ControlT V2"
      */
     @IsString()
-    title;
+    title: string;
 
     /**
      * Uma descrição mais detalhada do objetivo do projeto.
@@ -16,7 +16,7 @@ export default class CreateProjectDto {
      */
     @IsOptional()
     @IsString()
-    description;
+    description: string;
 
     /**
      * O ID do status inicial do projeto (ex: 1="Planejamento").
@@ -24,5 +24,5 @@ export default class CreateProjectDto {
      */
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 }

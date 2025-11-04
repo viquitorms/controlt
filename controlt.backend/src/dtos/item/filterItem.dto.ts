@@ -11,7 +11,7 @@ export default class ItemFilterDto {
      */
     @IsOptional()
     @IsString()
-    title;
+    title: string;
 
     /**
      * @type {number | undefined}
@@ -19,21 +19,21 @@ export default class ItemFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    created_by_id;
+    created_by_id: number;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsDateString()
-    created_date_from;
+    created_date_from: string;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsDateString()
-    created_date_to;
+    created_date_to: string;
 
     /**
      * @type {number | undefined}
@@ -41,7 +41,7 @@ export default class ItemFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    page;
+    page: number;
 
     /**
      * @type {number | undefined}
@@ -49,5 +49,5 @@ export default class ItemFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    limit;
+    limit: number;
 }

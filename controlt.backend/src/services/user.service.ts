@@ -1,7 +1,7 @@
 import prisma from "../config/prisma.config.js"; // Se este arquivo for .js, mantenha. Se for .ts, mude a extensão.
 import bcrypt from "bcryptjs";
-import CreateUserDto from "../dtos/user/createUser.dto"; // .ts é opcional no import
-import UpdateUserDto from "../dtos/user/updateUser.dto";
+import CreateUserDto from "../dtos/user/createUser.dto.js";
+import UpdateUserDto from "../dtos/user/updateUser.dto.js";
 import { User } from "@prisma/client";
 
 interface UserResponse {

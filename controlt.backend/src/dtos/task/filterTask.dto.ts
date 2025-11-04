@@ -12,7 +12,7 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 
     /**
      * @type {number | undefined}
@@ -20,7 +20,7 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    priority_id;
+    priority_id: number;
 
     /**
      * @type {number | undefined}
@@ -28,7 +28,7 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    project_id;
+    project_id: number;
 
     /**
      * @type {number | undefined}
@@ -36,21 +36,21 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    assigned_to_id;
+    assigned_to_id: number;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsDateString()
-    due_date_from;
+    due_date_from: string;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsDateString()
-    due_date_to;
+    due_date_to: string;
 
     /**
      * @type {number | undefined}
@@ -58,7 +58,7 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    page;
+    page: number;
 
     /**
      * @type {number | undefined}
@@ -66,5 +66,5 @@ export default class TaskFilterDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    limit;
+    limit: number;
 }

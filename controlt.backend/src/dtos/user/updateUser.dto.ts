@@ -2,20 +2,20 @@ import { IsOptional, IsString, IsEmail, IsInt, MinLength, isString } from "class
 import { Type } from "class-transformer";
 
 export default class UpdateUserDto {
-    @isString()
-    name;
+    @IsString()
+    name: string;
 
     @IsOptional()
     @IsEmail()
-    email;
+    email: string;
 
     @IsOptional()
-    @isString()
+    @IsString()
     @MinLength(6, { message: "A senha deve ter no mínimo 6 caracteres" })
-    password;
+    password: string;
 
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    profile_id;
+    profile_id: number;
 }

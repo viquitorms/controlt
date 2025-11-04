@@ -12,14 +12,14 @@ export default class CreateTaskDto {
      */
     @IsInt()
     @Type(() => Number)
-    item_id;
+    item_id: number;
 
     /**
      * O título da tarefa. Pode ser o mesmo do item ou um mais específico.
      * @type {string}
      */
     @IsString()
-    title;
+    title: string;
 
     /**
      * Descrição detalhada da tarefa.
@@ -27,7 +27,7 @@ export default class CreateTaskDto {
      */
     @IsOptional()
     @IsString()
-    description;
+    description: string;
 
     /**
      * Data de vencimento da tarefa.
@@ -36,7 +36,7 @@ export default class CreateTaskDto {
      */
     @IsOptional()
     @IsDateString()
-    due_date;
+    due_date: string;
 
     /**
      * ID da prioridade da tarefa (ex: 1=Baixa, 3=Alta).
@@ -45,7 +45,7 @@ export default class CreateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    priority_id;
+    priority_id: number;
 
     /**
      * ID do projeto ao qual a tarefa pertence.
@@ -54,7 +54,7 @@ export default class CreateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    project_id;
+    project_id: number;
 
     /**
      * ID do status inicial da tarefa (ex: 1="To Do").
@@ -62,7 +62,7 @@ export default class CreateTaskDto {
      */
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 
     /**
      * ID do usuário que criou a tarefa.
@@ -70,7 +70,7 @@ export default class CreateTaskDto {
      */
     @IsInt()
     @Type(() => Number)
-    created_by_id;
+    created_by_id: number;
 
     /**
      * ID do usuário a quem a tarefa foi atribuída.
@@ -79,5 +79,5 @@ export default class CreateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    assigned_to_id;
+    assigned_to_id: number;
 }

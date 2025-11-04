@@ -12,7 +12,7 @@ export default class CreateItemDto {
      * @example "Ligar para o contador sobre o imposto de renda"
      */
     @IsString()
-    title;
+    title: string;
 
     /**
      * Notas adicionais ou detalhes sobre o item.
@@ -21,7 +21,7 @@ export default class CreateItemDto {
      */
     @IsOptional()
     @IsString()
-    note;
+    note: string;
 
     /**
      * O ID do usuário que criou o item.
@@ -29,5 +29,5 @@ export default class CreateItemDto {
      */
     @IsInt()
     @Type(() => Number)
-    created_by_id;
+    created_by_id: number;
 }

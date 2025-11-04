@@ -7,14 +7,14 @@ export default class UpdateProjectDto {
      */
     @IsOptional()
     @IsString()
-    title;
+    title: string;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsString()
-    description;
+    description: string;
 
     /**
      * @type {number | undefined}
@@ -22,5 +22,5 @@ export default class UpdateProjectDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 }

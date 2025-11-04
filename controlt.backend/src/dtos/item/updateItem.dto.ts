@@ -11,7 +11,7 @@ export default class UpdateItemDto {
      */
     @IsOptional()
     @IsString()
-    title;
+    title: string;
 
     /**
      * As novas notas para o item.
@@ -19,5 +19,5 @@ export default class UpdateItemDto {
      */
     @IsOptional()
     @IsString()
-    note;
+    note: string;
 }

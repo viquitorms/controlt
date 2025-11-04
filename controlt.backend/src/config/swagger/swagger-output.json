@@ -1,0 +1,2212 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ControlT API",
+    "description": "API do sistema ControlT"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Bearer token para autenticação"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Autenticar usuário",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Credenciais de login",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Credenciais inválidas"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Criar novo usuário",
+        "description": "Cria um novo usuário no sistema",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo usuário",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Listar todos os usuários",
+        "description": "Retorna uma lista de todos os usuários cadastrados",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuários"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Atualizar usuário",
+        "description": "Atualiza os dados de um usuário existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados do usuário",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Buscar usuário por ID",
+        "description": "Retorna os dados de um usuário específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Deletar usuário",
+        "description": "Remove um usuário do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário deletado com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/projects": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Criar novo projeto",
+        "description": "Cria um novo projeto no sistema",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo projeto",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateProject"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Projeto criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Listar projetos com filtros",
+        "description": "Retorna uma lista de projetos com filtros opcionais",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Filtros de busca",
+            "schema": {
+              "$ref": "#/definitions/FilterProject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de projetos"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Buscar projeto por ID",
+        "description": "Retorna os dados de um projeto específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do projeto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projeto encontrado"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Projeto não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Atualizar projeto",
+        "description": "Atualiza os dados de um projeto existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do projeto"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados do projeto",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateProject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projeto atualizado com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Projeto não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Deletar projeto",
+        "description": "Remove um projeto do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do projeto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projeto deletado com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Projeto não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/tasks/": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Listar tarefas com filtros",
+        "description": "Retorna uma lista de tarefas com filtros opcionais",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Filtros de busca",
+            "schema": {
+              "$ref": "#/definitions/FilterTask"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tarefas"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Criar nova tarefa",
+        "description": "Cria uma nova tarefa no sistema",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados da nova tarefa",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTask"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Tarefa criada com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Buscar tarefa por ID",
+        "description": "Retorna os dados de uma tarefa específica",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da tarefa"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarefa encontrada"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Tarefa não encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Atualizar tarefa",
+        "description": "Atualiza os dados de uma tarefa existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da tarefa"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados da tarefa",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateTask"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarefa atualizada com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Tarefa não encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Deletar tarefa",
+        "description": "Remove uma tarefa do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da tarefa"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarefa deletada com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Tarefa não encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/items": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Criar novo item",
+        "description": "Cria um novo item no sistema",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo item",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Item criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Listar itens com filtros",
+        "description": "Retorna uma lista de itens com filtros opcionais",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Filtros de busca",
+            "schema": {
+              "$ref": "#/definitions/ItemFilter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de itens"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Buscar item por ID",
+        "description": "Retorna os dados de um item específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do item"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item encontrado"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Item não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Atualizar item",
+        "description": "Atualiza os dados de um item existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do item"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados do item",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item atualizado com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Item não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Deletar item",
+        "description": "Remove um item do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do item"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item deletado com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Item não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams": {
+      "post": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Criar nova equipe",
+        "description": "Cria uma nova equipe no sistema",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados da nova equipe",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Equipe criada com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Listar todas as equipes",
+        "description": "Retorna uma lista de todas as equipes",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de equipes"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Buscar equipe por ID",
+        "description": "Retorna os dados de uma equipe específica",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Equipe encontrada"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe não encontrada",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Atualizar equipe",
+        "description": "Atualiza os dados de uma equipe existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados da equipe",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Equipe atualizada com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe não encontrada",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Deletar equipe",
+        "description": "Remove uma equipe do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Equipe deletada com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe não encontrada",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams/{id}/members": {
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Listar membros da equipe",
+        "description": "Retorna todos os membros de uma equipe específica",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de membros"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe não encontrada",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Adicionar membro à equipe",
+        "description": "Adiciona um novo membro a uma equipe",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "example": "any"
+                }
+              }
+            },
+            "description": "ID do usuário a ser adicionado",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membro adicionado com sucesso"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe ou usuário não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams/{id}/members/{userId}": {
+      "delete": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Remover membro da equipe",
+        "description": "Remove um membro de uma equipe",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da equipe"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário a ser removido"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membro removido com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Equipe ou usuário não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/terms": {
+      "post": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Criar novo termo",
+        "description": "Cria um novo termo no sistema",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo termo",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Termo criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Listar todos os termos",
+        "description": "Retorna uma lista de todos os termos",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de termos"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/terms/search/{name}": {
+      "get": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Buscar termo por nome",
+        "description": "Busca termos pelo nome",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Nome do termo"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Termo(s) encontrado(s)"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Termo não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/terms/{id}": {
+      "get": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Buscar termo por ID",
+        "description": "Retorna os dados de um termo específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do termo"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Termo encontrado"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Termo não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Atualizar termo",
+        "description": "Atualiza os dados de um termo existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do termo"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados atualizados do termo",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Termo atualizado com sucesso"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Termo não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Terms"
+        ],
+        "summary": "Deletar termo",
+        "description": "Remove um termo do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do termo"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Termo deletado com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Termo não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/profiles": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Listar todos os perfis",
+        "description": "Retorna uma lista de todos os perfis de usuário",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de perfis"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/priority-tasks": {
+      "post": {
+        "tags": [
+          "Priority Tasks"
+        ],
+        "summary": "Criar nova prioridade de tarefa",
+        "description": "Cria uma nova prioridade de tarefa no sistema",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados da nova prioridade",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreatePriorityTask"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Prioridade criada com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Priority Tasks"
+        ],
+        "summary": "Listar todas as prioridades",
+        "description": "Retorna uma lista de todas as prioridades de tarefas",
+        "responses": {
+          "200": {
+            "description": "Lista de prioridades"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/status-projects": {
+      "post": {
+        "tags": [
+          "Status Project"
+        ],
+        "summary": "Criar novo status de projeto",
+        "description": "Cria um novo status de projeto no sistema",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo status",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateStatusProject"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Status criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Status Project"
+        ],
+        "summary": "Listar todos os status de projeto",
+        "description": "Retorna uma lista de todos os status de projeto",
+        "responses": {
+          "200": {
+            "description": "Lista de status de projeto"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/status-tasks": {
+      "post": {
+        "tags": [
+          "Status Task"
+        ],
+        "summary": "Criar novo status de tarefa",
+        "description": "Cria um novo status de tarefa no sistema",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo status",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateStatusTask"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Status criado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Status Task"
+        ],
+        "summary": "Listar todos os status de tarefa",
+        "description": "Retorna uma lista de todos os status de tarefa",
+        "responses": {
+          "200": {
+            "description": "Lista de status de tarefa"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/recorded-time/start": {
+      "post": {
+        "tags": [
+          "Recorded Time"
+        ],
+        "summary": "Iniciar timer",
+        "description": "Inicia um novo timer de registro de tempo",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados para iniciar o timer",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StartTimer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Timer iniciado com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação ou timer já ativo",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/recorded-time/stop": {
+      "post": {
+        "tags": [
+          "Recorded Time"
+        ],
+        "summary": "Parar timer",
+        "description": "Para o timer ativo do usuário",
+        "responses": {
+          "200": {
+            "description": "Timer parado com sucesso"
+          },
+          "400": {
+            "description": "Nenhum timer ativo encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/recorded-time": {
+      "get": {
+        "tags": [
+          "Recorded Time"
+        ],
+        "summary": "Listar registros de tempo com filtros",
+        "description": "Retorna uma lista de registros de tempo com filtros opcionais",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Filtros de busca",
+            "schema": {
+              "$ref": "#/definitions/FilterRecordedTime"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de registros de tempo"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/recorded-time/active": {
+      "get": {
+        "tags": [
+          "Recorded Time"
+        ],
+        "summary": "Obter timer ativo",
+        "description": "Retorna o timer ativo do usuário, se existir",
+        "responses": {
+          "200": {
+            "description": "Timer ativo encontrado ou null"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/recorded-time/{id}": {
+      "delete": {
+        "tags": [
+          "Recorded Time"
+        ],
+        "summary": "Deletar registro de tempo",
+        "description": "Remove um registro de tempo do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do registro de tempo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro deletado com sucesso"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Registro não encontrado",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "password": {
+          "type": "string",
+          "example": "exemplo"
+        }
+      }
+    },
+    "CreateItem": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "note": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "created_by_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "FilterItem": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "created_by_id": {
+          "type": "number",
+          "example": 1
+        },
+        "created_date_from": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "created_date_to": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "page": {
+          "type": "number",
+          "example": 1
+        },
+        "limit": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "UpdateItem": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "note": {
+          "type": "string",
+          "example": "exemplo"
+        }
+      }
+    },
+    "CreatePriorityTask": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "exemplo"
+        }
+      }
+    },
+    "CreateProject": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "description": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "status_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "FilterProject": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "status_id": {
+          "type": "number",
+          "example": 1
+        },
+        "page": {
+          "type": "number",
+          "example": 1
+        },
+        "limit": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "UpdateProject": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "description": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "status_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "FilterRecordedTime": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "number",
+          "example": 1
+        },
+        "item_id": {
+          "type": "number",
+          "example": 1
+        },
+        "task_id": {
+          "type": "number",
+          "example": 1
+        },
+        "date_from": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "date_to": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "page": {
+          "type": "number",
+          "example": 1
+        },
+        "limit": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "StartTimer": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "number",
+          "example": 1
+        },
+        "task_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "CreateStatusProject": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "exemplo"
+        }
+      }
+    },
+    "CreateStatusTask": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "exemplo"
+        }
+      }
+    },
+    "CreateTask": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "number",
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "description": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "due_date": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "priority_id": {
+          "type": "number",
+          "example": 1
+        },
+        "project_id": {
+          "type": "number",
+          "example": 1
+        },
+        "status_id": {
+          "type": "number",
+          "example": 1
+        },
+        "created_by_id": {
+          "type": "number",
+          "example": 1
+        },
+        "assigned_to_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "FilterTask": {
+      "type": "object",
+      "properties": {
+        "status_id": {
+          "type": "number",
+          "example": 1
+        },
+        "priority_id": {
+          "type": "number",
+          "example": 1
+        },
+        "project_id": {
+          "type": "number",
+          "example": 1
+        },
+        "assigned_to_id": {
+          "type": "number",
+          "example": 1
+        },
+        "due_date_from": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "due_date_to": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "page": {
+          "type": "number",
+          "example": 1
+        },
+        "limit": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "UpdateTask": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "description": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "due_date": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "priority_id": {
+          "type": "number",
+          "example": 1
+        },
+        "project_id": {
+          "type": "number",
+          "example": 1
+        },
+        "status_id": {
+          "type": "number",
+          "example": 1
+        },
+        "assigned_to_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "CreateUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "email": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "password": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "profile_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "UpdateUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "email": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "password": {
+          "type": "string",
+          "example": "exemplo"
+        },
+        "profile_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    }
+  }
+}

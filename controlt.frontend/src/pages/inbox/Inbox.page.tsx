@@ -301,7 +301,6 @@ export default function Inbox() {
                     <Button
                         variant="text"
                         startIcon={<Clear />}
-                        onClick={clearFilters}
                         color="error"
                     >
                         Limpar

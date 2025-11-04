@@ -11,21 +11,21 @@ export default class UpdateTaskDto {
      */
     @IsOptional()
     @IsString()
-    title;
+    title: string;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsString()
-    description;
+    description: string;
 
     /**
      * @type {string | undefined}
      */
     @IsOptional()
     @IsDateString()
-    due_date;
+    due_date: string;
 
     /**
      * @type {number | undefined}
@@ -33,7 +33,7 @@ export default class UpdateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    priority_id;
+    priority_id: number;
 
     /**
      * @type {number | undefined}
@@ -41,7 +41,7 @@ export default class UpdateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    project_id;
+    project_id: number;
 
     /**
      * @type {number | undefined}
@@ -49,7 +49,7 @@ export default class UpdateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    status_id;
+    status_id: number;
 
     /**
      * @type {number | undefined}
@@ -57,5 +57,5 @@ export default class UpdateTaskDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    assigned_to_id;
+    assigned_to_id: number;
 }

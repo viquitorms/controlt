@@ -1,4 +1,4 @@
-import { isString } from "class-validator";
+import { IsString, isString } from "class-validator";
 
 export default class CreateStatusProjectDto {
     /**
@@ -6,6 +6,6 @@ export default class CreateStatusProjectDto {
      * @type {string}
      * @example "Em Andamento"
      */
-    @isString()
-    name;
+    @IsString()
+    name: string;
 }
