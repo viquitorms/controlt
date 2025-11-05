@@ -96,6 +96,7 @@ model Item {
   note          String?
   created_date  DateTime       @default(now())
   created_by_id Int
+  is_processed  Boolean        @default(false)
   created_by    User           @relation("ItemCreator", fields: [created_by_id], references: [id])
   tasks         Task[]
   recorded_time RecordedTime[]

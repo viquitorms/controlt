@@ -4,16 +4,14 @@
   "description": "API do sistema ControlT",
   "main": "src/server.js",
   "scripts": {
-    "dev": "npm run swagger && tsx watch src/server.js",
+    "dev": "tsx watch src/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
     "prisma:client": "npm i @prisma/client",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "seed": "node prisma/seed.js",
-    "generate-schemas": "node scripts/generate-schemas.js",
-    "swagger": "npm run generate-schemas && node src/config/swagger/swagger-generate.js"
+    "seed": "node prisma/seed.js"
   },
   "repository": {
     "type": "git",
@@ -36,10 +34,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "reflect-metadata": "^0.2.2",
-    "swagger-autogen": "^2.23.7",
-    "swagger-ui-express": "^5.0.1",
-    "ts-morph": "^27.0.2"
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",

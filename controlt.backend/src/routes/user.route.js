@@ -15,7 +15,7 @@ router.post("/", validateDto(CreateUserDto), (req, res, next) => {
     #swagger.tags = ['Users']
     #swagger.summary = 'Criar novo usuário'
     #swagger.description = 'Cria um novo usuário no sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados do novo usuário',
@@ -39,7 +39,7 @@ router.put("/:id", validateDto(UpdateUserDto), (req, res, next) => {
     #swagger.tags = ['Users']
     #swagger.summary = 'Atualizar usuário'
     #swagger.description = 'Atualiza os dados de um usuário existente'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do usuário',
@@ -69,7 +69,7 @@ router.get("/", (req, res, next) => {
     #swagger.tags = ['Users']
     #swagger.summary = 'Listar todos os usuários'
     #swagger.description = 'Retorna uma lista de todos os usuários cadastrados'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de usuários'
     }
@@ -83,7 +83,7 @@ router.get("/:id", (req, res, next) => {
     #swagger.tags = ['Users']
     #swagger.summary = 'Buscar usuário por ID'
     #swagger.description = 'Retorna os dados de um usuário específico'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do usuário',
@@ -107,7 +107,7 @@ router.delete("/:id", (req, res, next) => {
     #swagger.tags = ['Users']
     #swagger.summary = 'Deletar usuário'
     #swagger.description = 'Remove um usuário do sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do usuário',

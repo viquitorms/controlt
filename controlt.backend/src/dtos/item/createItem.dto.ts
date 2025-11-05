@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsInt } from "class-validator";
+import { IsString, IsOptional, IsInt, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 
 /**
@@ -30,4 +30,8 @@ export default class CreateItemDto {
     @IsInt()
     @Type(() => Number)
     created_by_id: number;
+
+    @IsBoolean()
+    @Type(() => Boolean)
+    is_processed: boolean;
 }

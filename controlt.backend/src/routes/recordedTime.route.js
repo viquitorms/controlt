@@ -15,7 +15,7 @@ router.post("/start", validateDto(StartTimerDto), (req, res, next) => {
     #swagger.tags = ['Recorded Time']
     #swagger.summary = 'Iniciar timer'
     #swagger.description = 'Inicia um novo timer de registro de tempo'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados para iniciar o timer',
@@ -39,14 +39,14 @@ router.post("/stop", (req, res, next) => {
     #swagger.tags = ['Recorded Time']
     #swagger.summary = 'Parar timer'
     #swagger.description = 'Para o timer ativo do usuário'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Timer parado com sucesso'
     }
     #swagger.responses[400] = {
       description: 'Nenhum timer ativo encontrado',
       schema: { $ref: '#/definitions/ErrorResponse' }
-    }
+    }Dto
   */
   return RecordedTimeController.stop(req, res, next);
 });
@@ -57,7 +57,7 @@ router.get("/", validateDto(FilterRecordedTimeDto), (req, res, next) => {
     #swagger.tags = ['Recorded Time']
     #swagger.summary = 'Listar registros de tempo com filtros'
     #swagger.description = 'Retorna uma lista de registros de tempo com filtros opcionais'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['query'] = {
       in: 'query',
       description: 'Filtros de busca',
@@ -76,7 +76,7 @@ router.get("/active", (req, res, next) => {
     #swagger.tags = ['Recorded Time']
     #swagger.summary = 'Obter timer ativo'
     #swagger.description = 'Retorna o timer ativo do usuário, se existir'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Timer ativo encontrado ou null'
     }
@@ -90,7 +90,7 @@ router.delete("/:id", (req, res, next) => {
     #swagger.tags = ['Recorded Time']
     #swagger.summary = 'Deletar registro de tempo'
     #swagger.description = 'Remove um registro de tempo do sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do registro de tempo',

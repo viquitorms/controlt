@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
     #swagger.tags = ['Profiles']
     #swagger.summary = 'Listar todos os perfis'
     #swagger.description = 'Retorna uma lista de todos os perfis de usuário'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de perfis'
     }

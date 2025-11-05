@@ -78,7 +78,7 @@ export default function Scheduled() {
     async function getItems() {
         try {
             showBackdrop();
-            const items = await itemService.list({
+            const items = await itemService.findAll({
                 status_id: StatusItemEnum.Agendada,
                 user_id: user?.id
             });

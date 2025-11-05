@@ -6,30 +6,33 @@ import UpdateItemDto from '../dtos/item/updateItem.dto.js';
 
 class ItemService {
     public async create(data: CreateItemDto): Promise<Item> {
-        const { title, note, created_by_id } = data;
 
-        const userExists = await prisma.user.findUnique({ where: { id: created_by_id } });
+        const userExists = await prisma.user.findUnique({ where: { id: data.created_by_id } });
         if (!userExists) {
             throw new Error('Usuário criador não encontrado.');
         }
 
         return prisma.item.create({
             data: {
-                title,
-                note,
-                created_by_id,
+                title: data.title,
+                note: data.note,
+                created_by_id: data.created_by_id,
+                is_processed: data.is_processed,
             },
         });
     }
 
     public async findAll(filters: ItemFilterDto): Promise<Item[]> {
-        const { title, created_by_id, created_date_from, created_date_to, page = 1, limit = 10 } = filters;
+        const page = Number(filters.page || 1);
+        const limit = Number(filters.limit || 10);
 
         const where: Prisma.ItemWhereInput = {
-            ...(created_by_id && { created_by_id: Number(created_by_id) }),
-            ...(title && { title: { contains: title, mode: 'insensitive' } }),
-            ...(created_date_from && { created_date: { gte: new Date(created_date_from) } }),
-            ...(created_date_to && { created_date: { lte: new Date(created_date_to) } }),
+            ...(filters.created_by_id && { created_by_id: Number(filters.created_by_id) }),
+            ...(filters.title && { title: { contains: filters.title, mode: 'insensitive' } }),
+            ...(filters.created_date_from && { created_date: { gte: new Date(filters.created_date_from) } }),
+            ...(filters.created_date_to && { created_date: { lte: new Date(filters.created_date_to) } }),
+            ...(filters.note && { note: { contains: filters.note, mode: 'insensitive' } }),
+            ...(filters.is_processed !== undefined && { is_processed: String(filters.is_processed) === 'true' }),
         };
 
         return prisma.item.findMany({
@@ -38,8 +41,8 @@ class ItemService {
                 created_by: { select: { id: true, name: true } },
                 _count: { select: { tasks: true } },
             },
-            skip: (Number(page) - 1) * Number(limit),
-            take: Number(limit),
+            skip: (page - 1) * limit,
+            take: limit,
             orderBy: { created_date: 'desc' },
         });
     }

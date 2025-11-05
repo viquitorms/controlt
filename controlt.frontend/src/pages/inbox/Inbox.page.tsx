@@ -1,57 +1,39 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 import {
     Box,
     Button,
     IconButton,
     Stack,
-    TextField,
     Typography,
-    Popover
 } from "@mui/material";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { itemService } from "../../services/item.service";
-import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
-import { Update, FilterList, Clear, AutoMode } from "@mui/icons-material";
-import ProcessItem, { type IConvertToProject } from "./ProcessItem.modal";
-import { type IProcessedItem } from "./ProcessItem.modal";
-import { StatusItemEnum } from "../../enums/StatusItem.enum";
-import ItemStatusChip from "../../components/features/chip/ItemStatusChip.component";
-import type { IFilter } from "./interfaces/Filter.inbox.interface";
+import type { Item } from "../../dtos/item/Item.res.dto";
+import { Update, AutoMode } from "@mui/icons-material";
+import ProcessItem from "./ProcessItem.modal";
 import { useNavigate } from "react-router-dom";
 import { type UserListResponse } from "../../dtos/user/User.res.dto";
 import { userService } from "../../services/user.service";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker"
-import { Dayjs } from "dayjs";
-import dayjs from "dayjs";
-import PopoverFilter from "../../components/features/popover/PopoverFilter.component";
+import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
+import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
+import { taskService } from "../../services/task.service";
+import { projectService } from "../../services/project.service";
 
 export default function Inbox() {
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
-    const [itemsList, setItemsList] = useState<ItemListResponse[]>([]);
-    const [filteredItems, setFilteredItems] = useState<ItemListResponse[]>([]);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [selectedItem, setSelectedItem] = useState<ItemListResponse | null>(null);
+    const [itemsList, setItemsList] = useState<Item[]>([]);
+    const [filteredItems, setFilteredItems] = useState<Item[]>([]);
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [usersList, setUsersList] = useState<UserListResponse[]>([]);
     const [modalOpen, setProcessModalOpen] = useState(false);
-    const [capturedDate, setCapturedDate] = useState<Dayjs | null>(dayjs(''));
-
-    const [filters, setFilters] = useState<IFilter>({
-        title: "",
-        description: "",
-        captured_date: null,
-    });
 
     useEffect(() => {
         onInitialized();
     }, []);
-
-    useEffect(() => {
-        applyFilters();
-    }, [filters, itemsList]);
 
     {/** Inicializa a página */ }
     async function onInitialized() {
@@ -67,7 +49,7 @@ export default function Inbox() {
     async function getItems() {
         try {
             showBackdrop();
-            const items = await itemService.list({ status_id: StatusItemEnum.Inbox });
+            const items = await itemService.findAll({ is_processed: false });
             setItemsList(items);
             setFilteredItems(items);
         } catch (error: any) {
@@ -92,71 +74,23 @@ export default function Inbox() {
         }
     }
 
-    {/** Aplica os filtros selecionados no popover */ }
-    function applyFilters() {
-        let filtered = [...itemsList];
-
-        if (filters.title.trim()) {
-            filtered = filtered.filter((item) =>
-                item.title.toLowerCase().includes(filters.title.toLowerCase())
-            );
-        }
-
-        if (filters.description) {
-            filtered = filtered.filter((item) =>
-                item.description?.toLowerCase().includes(filters.description.toLowerCase())
-            );
-        }
-
-        if (filters.captured_date) {
-            const filterDate = dayjs(filters.captured_date);
-
-            filtered = filtered.filter((item) => {
-                const itemDate = dayjs(item.created_date);
-                return itemDate.isSame(filterDate, 'day');
-            });
-        }
-
-        setFilteredItems(filtered);
-    }
-
     {/** Atualiza os dados */ }
-    const handleUpdate = useCallback(async () => {
+    const handleUpdate = async () => {
         try {
             await getItems();
             showSnackbar("Itens atualizados com sucesso", 3000, 'success');
         } catch {
             return;
         }
-    }, [getItems, showSnackbar]);
+    };
 
     {/** Abre o wizard de processamento */ }
-    const handleOpenWizard = (row: ItemListResponse) => {
+    const handleOpenWizard = (row: Item) => {
         setSelectedItem(row);
         setProcessModalOpen(true);
     };
 
-    {/** Abre o filtro */ }
-    const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    {/** Fecha o filtro */ }
-    const handleCloseFilter = () => {
-        setAnchorEl(null);
-    };
-
-    const openFilter = Boolean(anchorEl);
-
-    const activeFiltersCount = [
-        filters.title,
-        filters.description,
-        filters.captured_date
-    ].filter(Boolean).length;
-
-    const hasActiveFilters = activeFiltersCount > 0;
-
-    const columns: GridColDef<ItemListResponse>[] = [
+    const columns: GridColDef<Item>[] = [
         {
             field: 'id',
             headerName: 'ID',
@@ -167,15 +101,9 @@ export default function Inbox() {
             flex: 1,
         },
         {
-            field: 'description',
-            headerName: 'Descrição',
+            field: 'note',
+            headerName: 'Nota',
             flex: 1,
-        },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 150,
-            renderCell: (params) => <ItemStatusChip statusId={params.row.status_id} />
         },
         {
             field: 'created_date',
@@ -186,6 +114,15 @@ export default function Inbox() {
             },
         },
         {
+            field: 'created_by',
+            headerName: 'Criado por',
+            width: 150,
+            valueFormatter: (value) => {
+                const user = value as { id: number; name: string; };
+                return user?.name || '—';
+            },
+        },
+        {
             field: "actions",
             type: "actions",
             headerName: "Ações",
@@ -193,7 +130,7 @@ export default function Inbox() {
             headerAlign: "center",
             sortable: false,
             disableColumnMenu: true,
-            renderCell: (params: GridRenderCellParams<ItemListResponse>) => (
+            renderCell: (params: GridRenderCellParams<Item>) => (
                 <Stack direction="row" spacing={1}>
                     <IconButton
                         color="primary"
@@ -208,20 +145,25 @@ export default function Inbox() {
         },
     ];
 
-    const handleProcessItem = async (data: IProcessedItem) => {
+    const handleProcessItem = async (data: CreateTaskDto) => {
         if (!selectedItem) return;
 
         try {
             showBackdrop();
 
-            await itemService.processItem({
-                id: selectedItem.id,
-                is_actionable: data.is_actionable,
-                status_id: data.status_id,
+            await taskService.create({
+                item_id: selectedItem.id,
+                title: data.title,
+                description: data.description,
                 due_date: data.due_date,
-                userAssigned_id: data.userAssigned_id,
-                priority: data.priority,
+                priority_id: data.priority_id,
+                project_id: data.project_id,
+                status_id: data.status_id,
+                created_by_id: data.created_by_id,
+                assigned_to_id: data.assigned_to_id
             });
+
+            await itemService.update(selectedItem.id, { is_processed: true });
 
             showSnackbar('Item processado com sucesso!', 5000, 'success');
             setProcessModalOpen(false);
@@ -235,18 +177,19 @@ export default function Inbox() {
         }
     };
 
-    const handleConvertToProject = async (projectData: IConvertToProject) => {
+    const handleConvertToProject = async (projectData: CreateProjectDto) => {
         if (!selectedItem) return;
 
         try {
             showBackdrop();
 
-            await itemService.convertToProject({
-                id: selectedItem.id,
+            await projectService.create({
                 title: projectData.title,
                 description: projectData.description,
-                status: projectData.status,
+                status_id: projectData.status_id,
             });
+
+            await itemService.update(selectedItem.id, { is_processed: true });
 
             showSnackbar('Item convertido em projeto com sucesso!', 5000, 'success');
             setProcessModalOpen(false);
@@ -289,36 +232,15 @@ export default function Inbox() {
                     Atualizar
                 </Button>
 
-                <Button
-                    variant={hasActiveFilters ? "contained" : "outlined"}
-                    startIcon={<FilterList />}
-                    onClick={handleOpenFilter}
-                >
-                    Filtrar {hasActiveFilters && `(${activeFiltersCount})`}
-                </Button>
-
-                {hasActiveFilters && (
-                    <Button
-                        variant="text"
-                        startIcon={<Clear />}
-                        color="error"
-                    >
-                        Limpar
-                    </Button>
-                )}
-
                 <Typography variant="body2" color="text.secondary" sx={{ ml: 'auto !important' }}>
                     {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'itens'}
                 </Typography>
             </Stack>
 
-            {/** Filtro */}
-            <PopoverFilter anchorEl={anchorEl} open={openFilter} onClose={handleCloseFilter} onApply={applyFilters} />
-
             {/** DataGrid */}
-            <Box sx={{ height: 600, width: '100%' }}>
+            <Box sx={{ height: '80vh', width: '100%' }}>
                 <DataGrid
-                    rows={filteredItems || []}
+                    rows={itemsList || []}
                     columns={columns}
                     initialState={{
                         pagination: {

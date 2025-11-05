@@ -14,7 +14,7 @@ router.post("/", validateDto(CreateStatusTaskDto), (req, res, next) => {
     #swagger.tags = ['Status Task']
     #swagger.summary = 'Criar novo status de tarefa'
     #swagger.description = 'Cria um novo status de tarefa no sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados do novo status',
@@ -38,7 +38,7 @@ router.get("/", (req, res, next) => {
     #swagger.tags = ['Status Task']
     #swagger.summary = 'Listar todos os status de tarefa'
     #swagger.description = 'Retorna uma lista de todos os status de tarefa'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de status de tarefa'
     }

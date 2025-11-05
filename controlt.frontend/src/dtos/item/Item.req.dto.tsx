@@ -1,52 +1,23 @@
-export interface ItemCreateRequest {
+export interface CreateItemDto {
     title: string;
-    description?: string;
-    user_id: number;
-    userAssigned_id?: number;
-    project_id?: number;
-    due_date?: Date;
-    status_name?: string;
+    note: string;
+    created_by_id: number;
+    is_processed: boolean;
 }
 
-export interface ItemUpdateRequest {
-    id: number;
+export interface ItemFilterDto {
     title?: string;
-    description?: string;
-    status_id?: number;
-    priority: number;
-    due_date?: string;
-    project_id?: number;
-    user_id?: number;
-    userAssigned_id?: number;
+    created_by_id?: number;
+    created_date_from?: string;
+    created_date_to?: string;
+    page?: number;
+    limit?: number;
+    note?: string;
+    is_processed?: boolean;
 }
 
-export interface ItemListFilters {
-    user_id?: number;
-    userAssigned_id?: number;
-    project_id?: number;
-    status_id?: number;
-    search?: string;
-}
-
-export interface ItemProcessRequest {
-    id: number;
-    is_actionable: boolean;
-    status_id: number;
-    project_id?: number;
-    due_date?: string;
-    user_id?: number;
-    userAssigned_id?: number;
-    priority?: number;
-}
-
-export interface ItemUpdateStatusRequest {
-    id: number;
-    status_id: number;
-}
-
-export interface ItemConvertToProjectRequest {
-    id: number;
+export interface UpdateItemDto {
     title?: string;
-    description?: string | null;
-    status?: string;
+    note?: string;
+    is_processed?: boolean;
 }

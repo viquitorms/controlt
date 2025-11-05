@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { IsString, IsOptional, IsBoolean } from "class-validator";
 
 /**
  * @class UpdateItemDto
@@ -20,4 +21,9 @@ export default class UpdateItemDto {
     @IsOptional()
     @IsString()
     note: string;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    is_processed: boolean;
 }

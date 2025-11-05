@@ -12,7 +12,7 @@ router.post('/', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Criar novo termo'
     #swagger.description = 'Cria um novo termo no sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados do novo termo',
@@ -35,7 +35,7 @@ router.get('/', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Listar todos os termos'
     #swagger.description = 'Retorna uma lista de todos os termos'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de termos'
     }
@@ -49,7 +49,7 @@ router.get('/search/:name', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Buscar termo por nome'
     #swagger.description = 'Busca termos pelo nome'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['name'] = {
       in: 'path',
       description: 'Nome do termo',
@@ -73,7 +73,7 @@ router.get('/:id', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Buscar termo por ID'
     #swagger.description = 'Retorna os dados de um termo específico'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do termo',
@@ -97,7 +97,7 @@ router.put('/:id', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Atualizar termo'
     #swagger.description = 'Atualiza os dados de um termo existente'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do termo',
@@ -126,7 +126,7 @@ router.delete('/:id', (req, res, next) => {
     #swagger.tags = ['Terms']
     #swagger.summary = 'Deletar termo'
     #swagger.description = 'Remove um termo do sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID do termo',

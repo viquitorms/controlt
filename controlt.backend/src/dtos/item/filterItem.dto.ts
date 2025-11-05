@@ -1,4 +1,4 @@
-import { IsOptional, IsInt, IsDateString, IsString } from "class-validator";
+import { IsOptional, IsInt, IsDateString, IsString, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 
 /**
@@ -50,4 +50,16 @@ export default class ItemFilterDto {
     @IsInt()
     @Type(() => Number)
     limit: number;
+
+    /**
+    * @type {string | undefined}
+    */
+    @IsOptional()
+    @IsString()
+    note: string;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    is_processed: boolean;
 }

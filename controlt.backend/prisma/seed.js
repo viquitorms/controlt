@@ -28,10 +28,8 @@ async function main() {
 
   console.log('✅ Perfis criados:', profileManager.name, profileEmployee.name);
 
-  // Criar status de projetos
+  // Criar status de tarefas
   const statuses_task = [
-    { name: 'Inbox' },
-    { name: 'Processando' },
     { name: 'Próxima Ação' },
     { name: 'Em Andamento' },
     { name: 'Aguardando' },
@@ -43,7 +41,6 @@ async function main() {
     { name: 'Bloqueada' },
     { name: 'Em Revisão' },
     { name: 'Referência' },
-    { name: 'Projeto' },
   ];
 
   for (const status of statuses_task) {
@@ -54,7 +51,7 @@ async function main() {
     });
   }
 
-  console.log('✅ Status de projetos criados');
+  console.log('✅ Status de tarefas criados');
 
   // Criar status de projetos
   const statuses_project = [

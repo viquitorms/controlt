@@ -82,7 +82,7 @@ export default function NextActions() {
     async function getItems() {
         try {
             showBackdrop();
-            const items = await itemService.list({
+            const items = await itemService.findAll({
                 status_id: StatusItemEnum.ProximaAcao,
                 user_id: user?.id
             });

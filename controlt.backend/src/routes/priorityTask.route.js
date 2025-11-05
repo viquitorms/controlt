@@ -14,7 +14,7 @@ router.post("/", validateDto(CreatePriorityTaskDto), (req, res, next) => {
     #swagger.tags = ['Priority Tasks']
     #swagger.summary = 'Criar nova prioridade de tarefa'
     #swagger.description = 'Cria uma nova prioridade de tarefa no sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados da nova prioridade',
@@ -38,7 +38,7 @@ router.get("/", (req, res, next) => {
     #swagger.tags = ['Priority Tasks']
     #swagger.summary = 'Listar todas as prioridades'
     #swagger.description = 'Retorna uma lista de todas as prioridades de tarefas'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de prioridades'
     }

@@ -13,37 +13,25 @@ import {
     Box,
 } from "@mui/material";
 import { HelpOutline } from "@mui/icons-material";
-import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
+import type { Item } from "../../dtos/item/Item.res.dto";
 import type { UserListResponse } from "../../dtos/user/User.res.dto";
 import StepActionable from "./steps/StepActionable";
 import StepClassifyActionable from "./steps/StepClassifyActionable";
 import StepClassifyNonActionable from "./steps/StepClassifyNonActionable";
 import StepDetails from "./steps/StepDetails";
 import { getStatusName, StatusItemEnum } from "../../enums/StatusItem.enum";
+import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
+import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
 
 interface IProcessItemProps {
     open: boolean;
-    item: ItemListResponse | null;
+    item: Item | null;
     users: UserListResponse[];
     onClose: () => void;
-    onProcess: (data: IProcessedItem) => Promise<void>;
-    onConvertToProject?: (data: IConvertToProject) => Promise<void>;
+    onProcess: (data: CreateTaskDto) => Promise<void>;
+    onConvertToProject?: (data: CreateProjectDto) => Promise<void>;
 }
 
-export interface IProcessedItem {
-    is_actionable: boolean;
-    status_id: number;
-    due_date?: string;
-    userAssigned_id?: number;
-    project_id?: number;
-    priority?: number;
-}
-
-export interface IConvertToProject {
-    title: string;
-    description?: string | null;
-    status: string;
-}
 
 const steps = ["É Acionável?", "Status do Item", "Detalhes"];
 
@@ -97,16 +85,20 @@ export default function ProcessItem({
         if (statusId === StatusItemEnum.Projeto) {
             await onConvertToProject?.({
                 title: item.title,
-                description: item.description,
-                status: "active",
+                description: item.note || undefined,
+                status_id: 1,
             });
         } else {
-            const processedData: IProcessedItem = {
-                is_actionable: isActionable || false,
+            const processedData: CreateTaskDto = {
+                item_id: item.id,
+                title: item.title,
+                description: item.note || "",
+                due_date: dueDate,
+                priority_id: priority,
+                project_id: undefined,
                 status_id: statusId,
-                due_date: dueDate || undefined,
-                userAssigned_id: assignedUser?.id,
-                priority: priority,
+                created_by_id: item.created_by_id,
+                assigned_to_id: assignedUser ? assignedUser.id : undefined,
             };
 
             await onProcess(processedData);
@@ -199,7 +191,6 @@ export default function ProcessItem({
                             </Step>
                         ))}
                     </Stepper>
-
                     {renderStep()}
                 </Box>
             </DialogContent>

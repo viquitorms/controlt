@@ -12,7 +12,7 @@ router.post('/', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Criar nova equipe'
     #swagger.description = 'Cria uma nova equipe no sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['body'] = {
       in: 'body',
       description: 'Dados da nova equipe',
@@ -35,7 +35,7 @@ router.get('/', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Listar todas as equipes'
     #swagger.description = 'Retorna uma lista de todas as equipes'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.responses[200] = {
       description: 'Lista de equipes'
     }
@@ -49,7 +49,7 @@ router.get('/:id', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Buscar equipe por ID'
     #swagger.description = 'Retorna os dados de uma equipe específica'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
@@ -73,7 +73,7 @@ router.put('/:id', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Atualizar equipe'
     #swagger.description = 'Atualiza os dados de uma equipe existente'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
@@ -102,7 +102,7 @@ router.delete('/:id', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Deletar equipe'
     #swagger.description = 'Remove uma equipe do sistema'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
@@ -126,7 +126,7 @@ router.get('/:id/members', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Listar membros da equipe'
     #swagger.description = 'Retorna todos os membros de uma equipe específica'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
@@ -150,7 +150,7 @@ router.post('/:id/members', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Adicionar membro à equipe'
     #swagger.description = 'Adiciona um novo membro a uma equipe'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
@@ -179,7 +179,7 @@ router.delete('/:id/members/:userId', (req, res, next) => {
     #swagger.tags = ['Teams']
     #swagger.summary = 'Remover membro da equipe'
     #swagger.description = 'Remove um membro de uma equipe'
-    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.security = []
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'ID da equipe',
