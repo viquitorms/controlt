@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsInt, IsDateString } from "class-validator";
+import { IsString, IsOptional, IsInt, IsDateString, IsDate } from "class-validator";
 import { Type } from "class-transformer";
 
 /**
@@ -35,8 +35,9 @@ export default class CreateTaskDto {
      * @example "2025-12-31T23:59:59.000Z"
      */
     @IsOptional()
-    @IsDateString()
-    due_date: string;
+    @Type(() => Date)
+    @IsDate()
+    due_date?: Date;
 
     /**
      * ID da prioridade da tarefa (ex: 1=Baixa, 3=Alta).

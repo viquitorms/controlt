@@ -1,4 +1,4 @@
-import prisma from '../config/prisma.config.js'; // Ajuste a extensão se o config virar .ts
+import prisma from '../config/prisma.config.js';
 import { Item, Prisma } from '@prisma/client';
 import CreateItemDto from '../dtos/item/createItem.dto.js';
 import ItemFilterDto from '../dtos/item/filterItem.dto.js';

@@ -1,8 +1,3 @@
-/**
- * @author viquitorms
- * @version 2025-11-01 20:30:12
- * @description Service simples para a lógica de negócio de Tasks.
- */
 import prisma from "../config/prisma.config.js";
 import { Task, Prisma } from "@prisma/client";
 import CreateTaskDto from "../dtos/task/createTask.dto.js";

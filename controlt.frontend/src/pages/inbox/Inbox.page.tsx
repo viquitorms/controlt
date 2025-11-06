@@ -155,7 +155,7 @@ export default function Inbox() {
                 item_id: selectedItem.id,
                 title: data.title,
                 description: data.description,
-                due_date: data.due_date,
+                due_date: data.due_date ? new Date(data.due_date).toISOString() : undefined,
                 priority_id: data.priority_id,
                 project_id: data.project_id,
                 status_id: data.status_id,
