@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { HelpOutline } from "@mui/icons-material";
 import type { Item } from "../../dtos/item/Item.res.dto";
-import type { UserListResponse } from "../../dtos/user/User.res.dto";
+import type { User } from "../../dtos/user/User.res.dto";
 import StepActionable from "./steps/StepActionable";
 import StepClassifyActionable from "./steps/StepClassifyActionable";
 import StepClassifyNonActionable from "./steps/StepClassifyNonActionable";
@@ -26,7 +26,7 @@ import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
 interface IProcessItemProps {
     open: boolean;
     item: Item | null;
-    users: UserListResponse[];
+    users: User[];
     onClose: () => void;
     onProcess: (data: CreateTaskDto) => Promise<void>;
     onConvertToProject?: (data: CreateProjectDto) => Promise<void>;
@@ -47,7 +47,7 @@ export default function ProcessItem({
     const [isActionable, setIsActionable] = useState<boolean | null>(null);
     const [statusId, setStatusId] = useState<number>(0);
     const [dueDate, setDueDate] = useState<string>("");
-    const [assignedUser, setAssignedUser] = useState<UserListResponse | undefined>();
+    const [assignedUser, setAssignedUser] = useState<User | undefined>();
     const [priority, setPriority] = useState<number>(3);
 
     const handleNext = () => {

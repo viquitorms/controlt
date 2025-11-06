@@ -14,7 +14,7 @@ import type { Item } from "../../dtos/item/Item.res.dto";
 import { Update, AutoMode } from "@mui/icons-material";
 import ProcessItem from "./ProcessItem.modal";
 import { useNavigate } from "react-router-dom";
-import { type UserListResponse } from "../../dtos/user/User.res.dto";
+import { type User } from "../../dtos/user/User.res.dto";
 import { userService } from "../../services/user.service";
 import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
 import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
@@ -28,7 +28,7 @@ export default function Inbox() {
     const [itemsList, setItemsList] = useState<Item[]>([]);
     const [filteredItems, setFilteredItems] = useState<Item[]>([]);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [usersList, setUsersList] = useState<UserListResponse[]>([]);
+    const [usersList, setUsersList] = useState<User[]>([]);
     const [modalOpen, setProcessModalOpen] = useState(false);
 
     useEffect(() => {
@@ -64,7 +64,7 @@ export default function Inbox() {
     async function getUsers() {
         try {
             showBackdrop();
-            const users = await userService.list();
+            const users = await userService.findAll();
             setUsersList(users);
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao carregar usuários';

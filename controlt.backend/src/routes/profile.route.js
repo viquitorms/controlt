@@ -7,16 +7,6 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/', (req, res, next) => {
-  /* 
-    #swagger.path = '/profiles'
-    #swagger.tags = ['Profiles']
-    #swagger.summary = 'Listar todos os perfis'
-    #swagger.description = 'Retorna uma lista de todos os perfis de usuário'
-    #swagger.security = []
-    #swagger.responses[200] = {
-      description: 'Lista de perfis'
-    }
-  */
   return profileController.list(req, res, next);
 });
 

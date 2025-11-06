@@ -1,16 +1,16 @@
 import { Alert, Chip, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
-import type { UserListResponse } from "../../../dtos/user/User.res.dto";
+import type { User } from "../../../dtos/user/User.res.dto";
 import { StatusItemEnum } from "../../../enums/StatusItem.enum";
 
 interface IStepDetailsProps {
     classification: number;
     priority: number;
     dueDate: string;
-    assignedUser: UserListResponse | undefined;
-    users: UserListResponse[];
+    assignedUser: User | undefined;
+    users: User[];
     onPriorityChange: (value: number) => void;
     onDueDateChange: (value: string) => void;
-    onAssignedUserChange: (user: UserListResponse) => void;
+    onAssignedUserChange: (user: User) => void;
     getStatusName: () => string;
 }
 

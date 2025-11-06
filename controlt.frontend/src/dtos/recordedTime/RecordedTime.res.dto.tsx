@@ -1,12 +1,8 @@
-import type { ItemListResponse } from '../item/Item.res.dto';
-
-export interface RecordedTimeResponse {
+export interface RecordedTime {
     id: number;
-    startedAt: string;
-    endedAt: string | null;
-    itemId: number;
-    userId: number;
-    createdAt: string;
-    updatedAt: string;
-    item?: ItemListResponse;
+    startedAt: Date;
+    endedAt: Date | null;
+    item_id: number | null;
+    task_id: number | null;
+    user_id: number;
 }

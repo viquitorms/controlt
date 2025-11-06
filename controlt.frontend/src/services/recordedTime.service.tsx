@@ -1,24 +1,34 @@
-// controlt.frontend/src/services/recordedTime.service.tsx
-import api from '../config/Axios';
-import type { IStartTrackingRequest, IStopTrackingRequest } from '../dtos/recordedTime/RecordeTime.req.dto';
-import type { RecordedTimeResponse } from '../dtos/recordedTime/RecordedTime.res.dto';
+import api from "../config/Axios";
+import type {
+    StartTimerDto,
+    FilterRecordedTimeDto,
+} from "../dtos/recordedTime/RecordeTime.req.dto.tsx";
+import type { RecordedTime } from "../dtos/recordedTime/RecordedTime.res.dto";
 
 export const recordedTimeService = {
-    async startTracking(id: number): Promise<RecordedTimeResponse> {
-        const data: IStartTrackingRequest = { id: id };
-        const response = await api.post<RecordedTimeResponse>('/recorded-time/start', data);
-        return response.data;
+    async start(data: StartTimerDto): Promise<RecordedTime> {
+        const response = await api.post("/recorded-time/start", data);
+        return response.data as RecordedTime;
     },
 
-    async stopTracking(id: number): Promise<RecordedTimeResponse> {
-        const data: IStopTrackingRequest = { id: id };
-        const response = await api.post<RecordedTimeResponse>('/recorded-time/stop', data);
-        return response.data;
+    async stop(): Promise<RecordedTime> {
+        const response = await api.post("/recorded-time/stop");
+        return response.data as RecordedTime;
     },
 
-    async getActiveTracking(): Promise<RecordedTimeResponse | null> {
-        const response = await api.get<RecordedTimeResponse | null>('/recorded-time/active');
-        return response.data;
-    }
-}
+    async findAll(filters?: FilterRecordedTimeDto): Promise<RecordedTime[]> {
+        const response = await api.get("/recorded-time", {
+            params: filters,
+        });
+        return response.data as RecordedTime[];
+    },
 
+    async getActiveTimer(): Promise<RecordedTime | null> {
+        const response = await api.get("/recorded-time/active");
+        return response.data as RecordedTime | null;
+    },
+
+    async remove(id: number): Promise<void> {
+        await api.delete(`/recorded-time/${id}`);
+    },
+};

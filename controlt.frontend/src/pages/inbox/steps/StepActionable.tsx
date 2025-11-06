@@ -1,5 +1,4 @@
-import { Alert, Box, FormControl, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
-import { HelpOutline } from "@mui/icons-material";
+import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 
 interface IStepActionableProps {
     isActionable: boolean | null;

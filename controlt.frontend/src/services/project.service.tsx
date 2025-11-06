@@ -3,8 +3,8 @@ import type {
     CreateProjectDto,
     UpdateProjectDto,
     FilterProjectDto,
-} from "../dtos/project/Project.req.dto";
-import type { Project } from "../dtos/project/Project.res.dto";
+} from "../dtos/project/Project.req.dto.tsx";
+import type { Project } from "../dtos/project/Project.res.dto.tsx";
 
 export const projectService = {
     async create(data: CreateProjectDto): Promise<Project> {
