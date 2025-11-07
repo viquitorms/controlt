@@ -16,8 +16,17 @@ import References from './pages/references/References.page'
 import Someday from './pages/someday/Someday.page'
 import Finished from './pages/finished/Finished.page'
 import Archived from './pages/archived/Archived.page'
+import { useEffect } from 'react'
+import { useInitialize } from './contexts/Initialized.context'
 
 function App() {
+
+  const { refresh } = useInitialize();
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
   return (
     <Routes>
       <Route path='/' element={<Login />} />

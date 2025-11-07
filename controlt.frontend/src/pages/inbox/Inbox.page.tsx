@@ -20,10 +20,12 @@ import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
 import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
 import { taskService } from "../../services/task.service";
 import { projectService } from "../../services/project.service";
+import { useInitialize } from "../../contexts/Initialized.context";
 
 export default function Inbox() {
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { showSnackbar } = useSnackbar();
+    const { statusTasks, priorities, statusProjects } = useInitialize();
     const navigate = useNavigate();
     const [itemsList, setItemsList] = useState<Item[]>([]);
     const [filteredItems, setFilteredItems] = useState<Item[]>([]);
@@ -155,7 +157,7 @@ export default function Inbox() {
                 item_id: selectedItem.id,
                 title: data.title,
                 description: data.description,
-                due_date: data.due_date ? new Date(data.due_date).toISOString() : undefined,
+                due_date: data.due_date ? data.due_date : undefined,
                 priority_id: data.priority_id,
                 project_id: data.project_id,
                 status_id: data.status_id,
@@ -275,6 +277,9 @@ export default function Inbox() {
                 onProcess={handleProcessItem}
                 onConvertToProject={handleConvertToProject}
                 users={usersList}
+                priorities={priorities}
+                statusTasks={statusTasks}
+                statusProjects={statusProjects}
             />
         </Stack>
     );

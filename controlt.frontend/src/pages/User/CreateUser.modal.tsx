@@ -2,12 +2,12 @@ import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState } from "react";
 import Dialog from "../../components/ui/Dialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
-import type { UserCreateRequest } from "../../dtos/user/User.req.dto";
+import type { CreateUserDto } from "../../dtos/user/User.req.dto";
 
 interface ICreateUserModal {
 	open: boolean;
 	onClose: () => void;
-	onSave: (user: UserCreateRequest) => Promise<boolean>;
+	onSave: (user: CreateUserDto) => Promise<boolean>;
 	profiles?: Profile[];
 }
 
@@ -40,7 +40,7 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 	const handleSave = async () => {
 		if (!isValid()) return;
 
-		const userData: UserCreateRequest = {
+		const userData: CreateUserDto = {
 			name: name,
 			email: email,
 			password: password,

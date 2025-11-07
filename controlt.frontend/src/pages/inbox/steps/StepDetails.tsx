@@ -1,15 +1,21 @@
 import { Alert, Chip, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import type { User } from "../../../dtos/user/User.res.dto";
 import { StatusItemEnum } from "../../../enums/StatusItem.enum";
+import type { PriorityTask } from "../../../dtos/priorityTask/priorityTask.res.dto";
+import type { StatusTask } from "../../../dtos/statusTask/statusTask.res.dto";
+import type { StatusProject } from "../../../dtos/statusProject/statusProject.res.dto";
 
 interface IStepDetailsProps {
     classification: number;
     priority: number;
-    dueDate: string;
+    dueDate: Date | undefined;
     assignedUser: User | undefined;
     users: User[];
+    priorities: PriorityTask[];
+    statusTasks: StatusTask[];
+    statusProjects: StatusProject[];
     onPriorityChange: (value: number) => void;
-    onDueDateChange: (value: string) => void;
+    onDueDateChange: (value: Date | undefined) => void;
     onAssignedUserChange: (user: User) => void;
     getStatusName: () => string;
 }
@@ -20,21 +26,14 @@ export default function StepDetails({
     dueDate,
     assignedUser,
     users,
+    priorities,
+    statusTasks,
+    statusProjects,
     onPriorityChange,
     onDueDateChange,
     onAssignedUserChange,
     getStatusName,
 }: IStepDetailsProps) {
-    const getPriorityLabel = (priority: number) => {
-        switch (priority) {
-            case 1: return "Alta";
-            case 2: return "Média-Alta";
-            case 3: return "Média";
-            case 4: return "Baixa";
-            case 5: return "Muito Baixa";
-            default: return "Média";
-        }
-    };
 
     const handleUserChange = (userId: number) => {
         const selectedUser = users.find(u => u.id === userId);
@@ -42,6 +41,10 @@ export default function StepDetails({
             onAssignedUserChange(selectedUser);
         }
     };
+
+    function handleOnPriorityChange(number: number) {
+        onPriorityChange(number);
+    }
 
     return (
         <Stack spacing={3}>
@@ -52,38 +55,15 @@ export default function StepDetails({
                 <Select
                     value={priority}
                     label="Prioridade"
-                    onChange={(e) => onPriorityChange(Number(e.target.value))}
+                    onChange={(e) => handleOnPriorityChange(e.target.value as number)}
                 >
-                    <MenuItem value={1}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip label="Alta" color="error" size="small" />
-                            <Typography>Urgente e Importante</Typography>
-                        </Stack>
-                    </MenuItem>
-                    <MenuItem value={2}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip label="Média-Alta" color="warning" size="small" />
-                            <Typography>Importante</Typography>
-                        </Stack>
-                    </MenuItem>
-                    <MenuItem value={3}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip label="Média" color="info" size="small" />
-                            <Typography>Normal</Typography>
-                        </Stack>
-                    </MenuItem>
-                    <MenuItem value={4}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip label="Baixa" color="default" size="small" />
-                            <Typography>Pode esperar</Typography>
-                        </Stack>
-                    </MenuItem>
-                    <MenuItem value={5}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip label="Muito Baixa" size="small" />
-                            <Typography>Quando sobrar tempo</Typography>
-                        </Stack>
-                    </MenuItem>
+                    {
+                        priorities.map((p) => (
+                            <MenuItem key={p.id} value={p.level}>
+                                {p.name}
+                            </MenuItem>
+                        ))
+                    }
                 </Select>
             </FormControl>
 
@@ -94,7 +74,7 @@ export default function StepDetails({
                     fullWidth
                     required
                     value={dueDate}
-                    onChange={(e) => onDueDateChange(e.target.value)}
+                    onChange={(e) => onDueDateChange(new Date(e.target.value))}
                     helperText="Defina quando esta tarefa deve ser realizada"
                 />
             )}
@@ -131,7 +111,7 @@ export default function StepDetails({
                     Status: <strong>{getStatusName()}</strong>
                 </Typography>
                 <Typography variant="body2">
-                    Prioridade: <strong>{getPriorityLabel(priority)}</strong>
+                    Prioridade: <strong>{priorities.find(p => p.level === priority)?.name}</strong>
                 </Typography>
                 {classification === StatusItemEnum.Agendada && dueDate && (
                     <Typography variant="body2">

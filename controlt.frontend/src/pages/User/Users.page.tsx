@@ -9,21 +9,22 @@ import { profileService } from "../../services/profile.service";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import type { Profile } from "../../dtos/Profile.entity";
 import { userService } from "../../services/user.service";
-import type { UserFindByIdResponse, UserListResponse } from "../../dtos/user/User.res.dto";
-import type { UserCreateRequest, UserUpdateRequest } from "../../dtos/user/User.req.dto";
 import UpdateUserModal from "./UpdateUser.modal";
 import { useAuth } from "../../contexts/Auth.context";
+import type { User } from "../../dtos/user/User.res.dto";
+import { useInitialize } from "../../contexts/Initialized.context";
+import type { CreateUserDto, UpdateUserDto } from "../../dtos/user/User.req.dto";
 
 export default function Users() {
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
+    const { profiles } = useInitialize();
     const { isManager } = useAuth();
 
     const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
     const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
-    const [userList, setUserList] = useState<UserListResponse[]>([]);
-    const [selectedUser, setSelectedUser] = useState<UserFindByIdResponse | null>(null);
-    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [userList, setUserList] = useState<User[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     useEffect(() => {
         onInitialize();
@@ -32,7 +33,6 @@ export default function Users() {
     async function onInitialize() {
         showBackdrop();
         try {
-            await getProfiles();
             await getUsers();
         } catch (error) {
             showSnackbar('Erro ao carregar dados', 5000, 'error');
@@ -41,28 +41,13 @@ export default function Users() {
         }
     }
 
-    async function getProfiles() {
-        try {
-            showBackdrop();
-            const response = await profileService.getList();
-            setProfiles(response);
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar perfis';
-            showSnackbar(message, 5000, 'error');
-            throw error;
-        }
-        finally {
-            hideBackdrop();
-        }
-    }
-
     async function getUsers() {
         try {
             showBackdrop();
-            const list = await userService.list();
+            const list = await userService.findAll();
             setUserList(list)
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar usuários';
+            const message = error.response?.data?.messages || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -77,7 +62,7 @@ export default function Users() {
             const user = await userService.findById(id);
             setSelectedUser(user)
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar usuários';
+            const message = error.response?.data?.messages || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -86,15 +71,21 @@ export default function Users() {
         }
     }
 
-    async function updateUser(data: UserUpdateRequest): Promise<boolean> {
+    async function updateUser(data: UpdateUserDto): Promise<boolean> {
         try {
             showBackdrop()
-            const user = await userService.update(data);
+
+            if (!selectedUser) {
+                showSnackbar('Nenhum usuário selecionado para edição', 5000, 'error');
+                return false;
+            }
+
+            const user = await userService.update(selectedUser.id, data);
             await getUsers();
             showSnackbar(`Usuário ${user.name} editado com sucesso`, 5000, 'success')
             return true;
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao editar usuário';
+            const message = error.response?.data?.messages || 'Erro ao editar usuário';
             showSnackbar(message, 5000, 'error');
             return false;
         } finally {
@@ -102,7 +93,7 @@ export default function Users() {
         }
     }
 
-    async function createUser(data: UserCreateRequest): Promise<boolean> {
+    async function createUser(data: CreateUserDto): Promise<boolean> {
         try {
             showBackdrop();
             await userService.create(data);
@@ -110,7 +101,7 @@ export default function Users() {
             showSnackbar(`Usuário ${data.name} criado com sucesso`, 5000, 'success')
             return true;
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao criar usuário';
+            const message = error.response?.data?.messages || 'Erro ao criar usuário';
             showSnackbar(message, 5000, 'error');
             return false;
         } finally {
@@ -121,12 +112,12 @@ export default function Users() {
     async function deleteUser(id: number, name: string) {
         try {
             showBackdrop();
-            await userService.delete(id);
+            await userService.remove(id);
             await getUsers();
             showSnackbar(`O usuário ${name} foi deletado`, 5000, 'info');
         }
         catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao deletar usuário';
+            const message = error.response?.data?.messages || 'Erro ao deletar usuário';
             showSnackbar(message, 5000, 'error');
             throw error;
         }
@@ -145,7 +136,7 @@ export default function Users() {
         }
     };
 
-    const handleEdit = async (user: UserListResponse) => {
+    const handleEdit = async (user: User) => {
         if (isManager) {
             await getUserById(user.id);
             setIsUpdateUserModalOpen(true);
@@ -155,7 +146,7 @@ export default function Users() {
         }
     };
 
-    const handleDelete = async (user: UserListResponse) => {
+    const handleDelete = async (user: User) => {
         await deleteUser(user.id, user.name);
     };
 

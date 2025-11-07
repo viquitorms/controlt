@@ -22,11 +22,17 @@ import StepDetails from "./steps/StepDetails";
 import { getStatusName, StatusItemEnum } from "../../enums/StatusItem.enum";
 import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
 import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
+import type { PriorityTask } from "../../dtos/priorityTask/priorityTask.res.dto";
+import type { StatusTask } from "../../dtos/statusTask/statusTask.res.dto";
+import type { StatusProject } from "../../dtos/statusProject/statusProject.res.dto";
 
 interface IProcessItemProps {
     open: boolean;
     item: Item | null;
     users: User[];
+    priorities: PriorityTask[];
+    statusTasks: StatusTask[];
+    statusProjects: StatusProject[];
     onClose: () => void;
     onProcess: (data: CreateTaskDto) => Promise<void>;
     onConvertToProject?: (data: CreateProjectDto) => Promise<void>;
@@ -39,6 +45,9 @@ export default function ProcessItem({
     open,
     item,
     users,
+    priorities,
+    statusTasks,
+    statusProjects,
     onClose,
     onProcess,
     onConvertToProject,
@@ -46,9 +55,9 @@ export default function ProcessItem({
     const [activeStep, setActiveStep] = useState(0);
     const [isActionable, setIsActionable] = useState<boolean | null>(null);
     const [statusId, setStatusId] = useState<number>(0);
-    const [dueDate, setDueDate] = useState<string>("");
+    const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
     const [assignedUser, setAssignedUser] = useState<User | undefined>();
-    const [priority, setPriority] = useState<number>(3);
+    const [priority, setPriority] = useState<number>(2);
 
     const handleNext = () => {
         if (activeStep === 0 && isActionable === false) {
@@ -70,7 +79,7 @@ export default function ProcessItem({
         setActiveStep(0);
         setIsActionable(null);
         setStatusId(0);
-        setDueDate("");
+        setDueDate(undefined);
         setAssignedUser(undefined);
         setPriority(3);
     };
@@ -121,7 +130,7 @@ export default function ProcessItem({
     const handleClassificationChange = (value: number) => {
         setStatusId(value);
         if (value !== StatusItemEnum.Aguardando) setAssignedUser(undefined);
-        if (value !== StatusItemEnum.Agendada) setDueDate("");
+        if (value !== StatusItemEnum.Agendada) setDueDate(undefined);
     };
 
     const renderStep = () => {
@@ -164,6 +173,9 @@ export default function ProcessItem({
                     onAssignedUserChange={setAssignedUser}
                     getStatusName={handleGetStatus}
                     users={users}
+                    priorities={priorities}
+                    statusTasks={statusTasks}
+                    statusProjects={statusProjects}
                 />
             );
         }

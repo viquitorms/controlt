@@ -2,7 +2,7 @@ export interface CreateTaskDto {
     item_id: number;
     title: string;
     description?: string;
-    due_date?: string;
+    due_date?: Date;
     priority_id?: number;
     project_id?: number;
     status_id: number;
