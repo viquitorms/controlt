@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/Auth.context';
 
 const drawerWidth = 240;
 
-export default function Sidebar() {
+export default function CTSidebar() {
     const navigate = useNavigate();
     const { isManager } = useAuth();
 
@@ -28,7 +28,7 @@ export default function Sidebar() {
         { text: 'Projetos', icon: <TableChartRounded />, path: '/projetos' },
         // { text: 'Termos', icon: <SpellcheckIcon />, path: '/termos' },
         { text: 'Usuários', icon: <Person />, path: '/usuarios' },
-        { text: 'Equipes', icon: <Groups />, path: '/equipes' }
+        // { text: 'Equipes', icon: <Groups />, path: '/equipes' }
     ];
 
     const configurationList = [
@@ -79,7 +79,7 @@ export default function Sidebar() {
                     </Stack>
 
                     {
-                        isManager &&
+                        // isManager &&
                         <>
                             <Divider />
 

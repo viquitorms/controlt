@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'pt-br'}>
-        <InitializeProvider>
+        <InitializeProvider autoLoad={false}>
           <SnackbarProvider>
             <BackdropProvider>
               <AuthProvider>

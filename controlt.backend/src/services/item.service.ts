@@ -19,6 +19,11 @@ class ItemService {
                 created_by_id: data.created_by_id,
                 is_processed: data.is_processed,
             },
+            include: {
+                created_by: true,
+                tasks: true,
+                recorded_time: true
+            }
         });
     }
 
@@ -38,8 +43,9 @@ class ItemService {
         return prisma.item.findMany({
             where,
             include: {
-                created_by: { select: { id: true, name: true } },
-                _count: { select: { tasks: true } },
+                created_by: true,
+                tasks: true,
+                recorded_time: true
             },
             skip: (page - 1) * limit,
             take: limit,
@@ -68,6 +74,11 @@ class ItemService {
         return prisma.item.update({
             where: { id },
             data,
+            include: {
+                created_by: true,
+                tasks: true,
+                recorded_time: true
+            },
         });
     }
 

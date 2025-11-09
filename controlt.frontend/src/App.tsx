@@ -5,7 +5,7 @@ import Inbox from './pages/inbox/Inbox.page'
 import MainLayout from './components/layouts/Main.layout'
 import Users from './pages/user/Users.page'
 import Settings from './pages/Settings.page'
-import ProtectedRoute from './components/ui/ProtectedRoute.component'
+import CTProtectedRoute from './components/ui/CTProtectedRoute.component'
 import Projects from './pages/project/Projects.page'
 import Teams from './pages/team/Teams.page'
 import CaptureItem from './pages/capture/CaptureItem.page'
@@ -16,22 +16,14 @@ import References from './pages/references/References.page'
 import Someday from './pages/someday/Someday.page'
 import Finished from './pages/finished/Finished.page'
 import Archived from './pages/archived/Archived.page'
-import { useEffect } from 'react'
-import { useInitialize } from './contexts/Initialized.context'
 
 function App() {
-
-  const { refresh } = useInitialize();
-
-  useEffect(() => {
-    refresh();
-  }, []);
 
   return (
     <Routes>
       <Route path='/' element={<Login />} />
 
-      <Route element={<ProtectedRoute />}>
+      <Route element={<CTProtectedRoute />}>
         <Route path='/captura' element={
           <MainLayout title='Capturar Itens' description='Capture itens e tarefas'>
             <CaptureItem />

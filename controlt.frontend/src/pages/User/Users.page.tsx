@@ -1,19 +1,17 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import UpdateIcon from '@mui/icons-material/Update';
 import { useEffect, useState } from "react";
-import DataGrid from "../../components/ui/DataGrid.component";
-import { Add } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import CreateUserModal from "./CreateUser.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";
-import { profileService } from "../../services/profile.service";
 import { useBackdrop } from "../../contexts/Backdrop.context";
-import type { Profile } from "../../dtos/Profile.entity";
 import { userService } from "../../services/user.service";
 import UpdateUserModal from "./UpdateUser.modal";
 import { useAuth } from "../../contexts/Auth.context";
 import type { User } from "../../dtos/user/User.res.dto";
 import { useInitialize } from "../../contexts/Initialized.context";
 import type { CreateUserDto, UpdateUserDto } from "../../dtos/user/User.req.dto";
+import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 
 export default function Users() {
     const { showSnackbar } = useSnackbar();
@@ -46,21 +44,6 @@ export default function Users() {
             showBackdrop();
             const list = await userService.findAll();
             setUserList(list)
-        } catch (error: any) {
-            const message = error.response?.data?.messages || 'Erro ao carregar usuários';
-            showSnackbar(message, 5000, 'error');
-            throw error;
-        }
-        finally {
-            hideBackdrop();
-        }
-    }
-
-    async function getUserById(id: number) {
-        try {
-            showBackdrop();
-            const user = await userService.findById(id);
-            setSelectedUser(user)
         } catch (error: any) {
             const message = error.response?.data?.messages || 'Erro ao carregar usuários';
             showSnackbar(message, 5000, 'error');
@@ -138,7 +121,7 @@ export default function Users() {
 
     const handleEdit = async (user: User) => {
         if (isManager) {
-            await getUserById(user.id);
+            setSelectedUser(user)
             setIsUpdateUserModalOpen(true);
         }
         else {
@@ -154,6 +137,68 @@ export default function Users() {
         await getUsers();
         showSnackbar('Lista de usuários atualizada', 5000, 'success')
     }
+
+    {/** Renderização de mensagem quando não houver items no grid*/ }
+    function CustomNoRowsOverlay() {
+        return (
+            <Stack height="100%" alignItems="center" justifyContent="center" spacing={1}>
+                <Typography>Nenhum item para exibir.</Typography>
+            </Stack>
+        );
+    }
+
+    const columns: GridColDef<User>[] = [
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 80
+        },
+        {
+            field: 'name',
+            headerName: 'Nome',
+            flex: 1
+        },
+        {
+            field: 'email',
+            headerName: 'E-mail',
+            flex: 1
+        },
+        {
+            field: 'profile',
+            headerName: 'Perfil',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<User>) => (
+                <span>{params.row.profile.name}</span>
+            )
+        },
+        {
+            field: 'actions',
+            headerName: 'Ações',
+            width: 120,
+            sortable: false,
+            filterable: false,
+            renderCell: (params: GridRenderCellParams<User>) => (
+                <Box>
+                    <IconButton size="small"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(params.row);
+                        }}
+                    >
+                        <Edit />
+                    </IconButton>
+                    <IconButton size="small"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(params.row);
+                        }}
+                    >
+                        <Delete />
+                    </IconButton>
+                </Box>
+            )
+        }
+    ];
 
     return (
         <Stack spacing={2}>
@@ -176,10 +221,25 @@ export default function Users() {
             </Stack>
 
             <DataGrid
-                data={userList}
-                rowKey={(row) => row.id}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                rows={userList || []}
+                columns={columns}
+                initialState={{
+                    pagination: {
+                        paginationModel: { page: 0, pageSize: 10 },
+                    },
+                }}
+                pageSizeOptions={[5, 10, 25, 50]}
+                disableRowSelectionOnClick
+                disableColumnResize
+                resizeThrottleMs={1000}
+                sx={{
+                    '& .MuiDataGrid-row:hover': {
+                        backgroundColor: 'action.hover',
+                    },
+                }}
+                slots={{
+                    noRowsOverlay: CustomNoRowsOverlay
+                }}
             />
 
             <CreateUserModal

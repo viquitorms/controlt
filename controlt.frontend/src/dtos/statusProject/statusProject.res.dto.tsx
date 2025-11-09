@@ -1,4 +1,4 @@
 export interface StatusProject {
-    id: string;
+    id: number;
     name: string;
 }

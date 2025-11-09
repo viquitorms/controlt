@@ -15,8 +15,8 @@ export interface TaskFilterDto {
     priority_id?: number;
     project_id?: number;
     assigned_to_id?: number;
-    due_date_from?: string;
-    due_date_to?: string;
+    due_date_from?: Date;
+    due_date_to?: Date;
     page?: number;
     limit?: number;
 }
@@ -24,7 +24,7 @@ export interface TaskFilterDto {
 export interface UpdateTaskDto {
     title?: string;
     description?: string;
-    due_date?: string;
+    due_date?: Date;
     priority_id?: number;
     project_id?: number;
     status_id?: number;

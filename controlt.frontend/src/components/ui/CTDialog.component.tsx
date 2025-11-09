@@ -13,7 +13,7 @@ interface IDialog {
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export default function Dialog({
+export default function CTDialog({
     open,
     title,
     onClose,

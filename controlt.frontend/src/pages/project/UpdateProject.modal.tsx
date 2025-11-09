@@ -1,60 +1,59 @@
-import { TextField, Stack } from "@mui/material";
+import { TextField, Stack, Select, InputLabel, FormControl, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/ui/Dialog.component";
-import type { ProjectFindByIdResponse } from "../../dtos/project/Project.res.dto";
-import type { ProjectUpdateRequest } from "../../dtos/project/Project.req.dto";
+import CTDialog from "../../components/ui/CTDialog.component";
+import type { Project } from "../../dtos/project/Project.res.dto";
+import { useInitialize } from "../../contexts/Initialized.context";
 
 interface IUpdateProjectModal {
 	open: boolean;
-	project: ProjectFindByIdResponse | null;
+	project: Project | null;
 	onClose: () => void;
-	onSave: (project: ProjectUpdateRequest) => Promise<boolean>;
+	onSave: (project: Project) => Promise<boolean>;
 }
 
 export default function UpdateProjectModal({ open, project, onClose, onSave }: IUpdateProjectModal) {
-
+	const { statusProjects } = useInitialize();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
-	const [status, setStatus] = useState('');
+	const [status, setStatus] = useState(0);
 
 	useEffect(() => {
 		if (open && project) {
 			setTitle(project.title || '');
 			setDescription(project.description || '');
-			setStatus(project.status);
+			setStatus(project.status_id);
 		}
 	}, [open, project]);
 
 	const clear = () => {
 		setTitle('');
 		setDescription('');
-		setStatus('');
+		setStatus(0);
 	};
 
 	const isValid = () => {
 		return title.trim() !== '' &&
-			description.trim() !== '' &&
-			status.trim() !== ''
+			description.trim() !== ''
 	};
 
 	const handleClose = async () => {
 		clear();
 		onClose();
-	}
+	};
 
 	const handleSave = async () => {
 		if (!isValid()) return;
 
 		if (!project) return;
 
-		const projectData: ProjectUpdateRequest = {
-			id: project.id,
-			title: title,
-			description: description,
-			status: status,
+		const updatedProject: Project = {
+			...project,
+			title: title.trim(),
+			description: description.trim(),
+			status_id: status,
 		};
 
-		const success = await onSave(projectData);
+		const success = await onSave(updatedProject);
 
 		if (success) {
 			onClose();
@@ -63,7 +62,7 @@ export default function UpdateProjectModal({ open, project, onClose, onSave }: I
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Editar Projeto'}
 			onClose={handleClose}
@@ -86,14 +85,23 @@ export default function UpdateProjectModal({ open, project, onClose, onSave }: I
 					fullWidth
 					required
 				/>
-				<TextField
-					label="Status"
-					value={status}
-					onChange={(e) => setStatus(e.target.value)}
-					fullWidth
-					required
-				/>
+				<FormControl fullWidth>
+					<InputLabel>Status</InputLabel>
+					<Select
+						value={status}
+						label="Status"
+						onChange={(e) => setStatus(e.target.value)}
+					>
+						{
+							statusProjects.map((s) => (
+								<MenuItem key={s.id} value={s.id}>
+									{s.name}
+								</MenuItem>
+							))
+						}
+					</Select>
+				</FormControl>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

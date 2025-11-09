@@ -41,6 +41,7 @@ async function main() {
     { name: 'Bloqueada' },
     { name: 'Em Revisão' },
     { name: 'Referência' },
+    { name: 'Projeto' }
   ];
 
   for (const status of statuses_task) {

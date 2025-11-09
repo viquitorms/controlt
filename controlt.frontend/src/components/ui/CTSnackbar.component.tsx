@@ -10,7 +10,7 @@ interface ISnackbar {
     onClose: () => void;
 }
 
-export default function Snackbar({ open, message, duration = 6000, onClose, severity }: ISnackbar) {
+export default function CTSnackbar({ open, message, duration = 6000, onClose, severity }: ISnackbar) {
 
     const handleClose = (
         event: React.SyntheticEvent | Event,

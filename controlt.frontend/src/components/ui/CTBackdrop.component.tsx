@@ -5,7 +5,7 @@ interface IBackdrop {
     onClose?: () => void;
 }
 
-export default function Backdrop({ open, onClose }: IBackdrop) {
+export default function CTBackdrop({ open, onClose }: IBackdrop) {
     return (
         <MuiBackdrop
             sx={() => ({

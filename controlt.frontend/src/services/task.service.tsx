@@ -13,9 +13,7 @@ export const taskService = {
     },
 
     async findAll(filters?: TaskFilterDto): Promise<Task[]> {
-        const response = await api.get("/tasks", {
-            params: filters,
-        });
+        const response = await api.get("/tasks", { params: filters });
         return response.data as Task[];
     },
 

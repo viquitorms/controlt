@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { authService } from '../../services/auth.service';
 
-const ProtectedRoute = () => {
+const CTProtectedRoute = () => {
 
     const isAuthenticated = authService.isAuthenticated();
 
@@ -12,4 +12,4 @@ const ProtectedRoute = () => {
     return <Outlet />;
 }
 
-export default ProtectedRoute;
+export default CTProtectedRoute;

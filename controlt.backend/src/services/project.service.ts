@@ -17,6 +17,7 @@ class ProjectService {
             },
             include: {
                 status: true,
+                tasks: true
             },
         });
     }
@@ -36,9 +37,7 @@ class ProjectService {
             where,
             include: {
                 status: true,
-                _count: {
-                    select: { tasks: true },
-                },
+                tasks: true
             },
             skip: (Number(page) - 1) * Number(limit),
             take: Number(limit),
@@ -58,7 +57,9 @@ class ProjectService {
                     include: {
                         status: true,
                         priority: true,
-                        assigned_to: { select: { id: true, name: true } },
+                        assigned_to: true,
+                        created_by: true,
+                        item: true,
                     },
                     orderBy: { created_date: 'asc' }
                 },

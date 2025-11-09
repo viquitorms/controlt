@@ -2,16 +2,13 @@ import prisma from "../config/prisma.config.js"; // Se este arquivo for .js, man
 import bcrypt from "bcryptjs";
 import CreateUserDto from "../dtos/user/createUser.dto.js";
 import UpdateUserDto from "../dtos/user/updateUser.dto.js";
-import { User } from "@prisma/client";
+import { Profile, User } from "@prisma/client";
 
 interface UserResponse {
     id: number;
     name: string;
     email: string;
-    profile: {
-        id: number;
-        name: string;
-    };
+    profile: Profile;
     created_date: Date;
 }
 
@@ -25,13 +22,8 @@ class UserService {
                 id: true,
                 name: true,
                 email: true,
-                profile: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                },
-                created_date: true
+                created_date: true,
+                profile: true,
             },
             where: {
                 name: {
@@ -43,7 +35,7 @@ class UserService {
             },
             orderBy: {
                 id: 'asc'
-            }
+            },
         });
     }
 
@@ -57,12 +49,7 @@ class UserService {
                 id: true,
                 name: true,
                 email: true,
-                profile: {
-                    select: {
-                        id: true,
-                        name: true,
-                    }
-                },
+                profile: true,
                 created_date: true
             }
         });
@@ -101,12 +88,7 @@ class UserService {
                 id: true,
                 name: true,
                 email: true,
-                profile: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                },
+                profile: true,
                 created_date: true
             }
         });
@@ -137,12 +119,7 @@ class UserService {
                 id: true,
                 name: true,
                 email: true,
-                profile: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                },
+                profile: true,
                 created_date: true
             }
         });

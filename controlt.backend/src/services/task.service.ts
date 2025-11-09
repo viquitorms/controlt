@@ -28,10 +28,28 @@ class TaskService {
     public async findAll(filters: TaskFilterDto): Promise<Task[]> {
         const { page = 1, limit = 20, ...whereClause } = filters;
 
+        const where: Prisma.TaskWhereInput = {
+            ...whereClause,
+            ...(whereClause.status_id && { status_id: Number(whereClause.status_id) }),
+            ...(whereClause.priority_id && { priority_id: Number(whereClause.priority_id) }),
+            ...(whereClause.project_id && { project_id: Number(whereClause.project_id) }),
+            ...(whereClause.assigned_to_id && { assigned_to_id: Number(whereClause.assigned_to_id) }),
+            ...(whereClause.due_date_from && { due_date: { gte: new Date(whereClause.due_date_from) } }),
+            ...(whereClause.due_date_to && { due_date: { lte: new Date(whereClause.due_date_to) } })
+        };
+
         return prisma.task.findMany({
-            where: whereClause,
+            where,
             skip: (Number(page) - 1) * Number(limit),
             take: Number(limit),
+            include: {
+                status: true,
+                priority: true,
+                assigned_to: true,
+                created_by: true,
+                project: true,
+                item: true,
+            },
             orderBy: { created_date: "desc" },
         });
     }

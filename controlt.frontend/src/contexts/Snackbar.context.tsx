@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import Snackbar from "../components/ui/Snackbar.component";
+import CTSnackbar from "../components/ui/CTSnackbar.component";
 import type { AlertColor } from "@mui/material";
 
 interface ISnackbar {
@@ -29,13 +29,13 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
     return (
         <SnackbarContext.Provider value={{ showSnackbar, hideSnackbar }}>
             {children}
-            <Snackbar
+            <CTSnackbar
                 open={open}
                 message={message}
                 duration={duration}
                 severity={severity}
                 onClose={() => setOpen(false)}>
-            </Snackbar>
+            </CTSnackbar>
         </SnackbarContext.Provider>
     );
 }

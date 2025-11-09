@@ -1,3 +1,9 @@
+import type { Item } from "../item/Item.res.dto";
+import type { PriorityTask } from "../priorityTask/priorityTask.res.dto";
+import type { Project } from "../Project.entity";
+import type { StatusTask } from "../statusTask/statusTask.res.dto";
+import type { User } from "../user/User.res.dto";
+
 export interface Task {
     id: number;
     title: string;
@@ -12,4 +18,10 @@ export interface Task {
     started_at: Date | null;
     completed_at: Date | null;
     assigned_to_id: number | null;
+    status: StatusTask | null,
+    priority: PriorityTask,
+    assigned_to: User | null,
+    created_by: User | null,
+    project: Project | null,
+    item: Item | null,
 }

@@ -13,18 +13,20 @@ import {
     Box,
 } from "@mui/material";
 import { HelpOutline } from "@mui/icons-material";
-import type { Item } from "../../dtos/item/Item.res.dto";
-import type { User } from "../../dtos/user/User.res.dto";
-import StepActionable from "./steps/StepActionable";
-import StepClassifyActionable from "./steps/StepClassifyActionable";
-import StepClassifyNonActionable from "./steps/StepClassifyNonActionable";
-import StepDetails from "./steps/StepDetails";
-import { getStatusName, StatusItemEnum } from "../../enums/StatusItem.enum";
-import type { CreateTaskDto } from "../../dtos/task/task.req.dto";
-import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
-import type { PriorityTask } from "../../dtos/priorityTask/priorityTask.res.dto";
-import type { StatusTask } from "../../dtos/statusTask/statusTask.res.dto";
-import type { StatusProject } from "../../dtos/statusProject/statusProject.res.dto";
+import type { Item } from "../../../dtos/item/Item.res.dto";
+import type { User } from "../../../dtos/user/User.res.dto";
+import StepActionable from "./StepActionable";
+import StepClassifyActionable from "./StepClassifyActionable";
+import StepClassifyNonActionable from "./StepClassifyNonActionable";
+import StepDetails from "./StepDetails";
+import { getStatusName, StatusItemEnum } from "../../../enums/StatusItem.enum";
+import type { CreateTaskDto } from "../../../dtos/task/task.req.dto";
+import type { CreateProjectDto } from "../../../dtos/project/Project.req.dto";
+import type { PriorityTask } from "../../../dtos/priorityTask/priorityTask.res.dto";
+import type { StatusTask } from "../../../dtos/statusTask/statusTask.res.dto";
+import type { StatusProject } from "../../../dtos/statusProject/statusProject.res.dto";
+import type { Project } from "../../../dtos/project/Project.res.dto";
+import { useAuth } from "../../../contexts/Auth.context";
 
 interface IProcessItemProps {
     open: boolean;
@@ -33,6 +35,7 @@ interface IProcessItemProps {
     priorities: PriorityTask[];
     statusTasks: StatusTask[];
     statusProjects: StatusProject[];
+    projects: Project[];
     onClose: () => void;
     onProcess: (data: CreateTaskDto) => Promise<void>;
     onConvertToProject?: (data: CreateProjectDto) => Promise<void>;
@@ -48,6 +51,7 @@ export default function ProcessItem({
     priorities,
     statusTasks,
     statusProjects,
+    projects,
     onClose,
     onProcess,
     onConvertToProject,
@@ -58,6 +62,8 @@ export default function ProcessItem({
     const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
     const [assignedUser, setAssignedUser] = useState<User | undefined>();
     const [priority, setPriority] = useState<number>(2);
+    const [project, setProject] = useState<Project | undefined>(undefined);
+    const { user } = useAuth();
 
     const handleNext = () => {
         if (activeStep === 0 && isActionable === false) {
@@ -82,6 +88,7 @@ export default function ProcessItem({
         setDueDate(undefined);
         setAssignedUser(undefined);
         setPriority(3);
+        setProject(undefined);
     };
 
     const handleGetStatus = (): string => {
@@ -104,10 +111,10 @@ export default function ProcessItem({
                 description: item.note || "",
                 due_date: dueDate,
                 priority_id: priority,
-                project_id: undefined,
+                project_id: project ? project.id : undefined,
                 status_id: statusId,
                 created_by_id: item.created_by_id,
-                assigned_to_id: assignedUser ? assignedUser.id : undefined,
+                assigned_to_id: assignedUser ? assignedUser.id : user?.id,
             };
 
             await onProcess(processedData);
@@ -176,6 +183,9 @@ export default function ProcessItem({
                     priorities={priorities}
                     statusTasks={statusTasks}
                     statusProjects={statusProjects}
+                    project={project}
+                    projects={projects}
+                    onProjectChange={setProject}
                 />
             );
         }

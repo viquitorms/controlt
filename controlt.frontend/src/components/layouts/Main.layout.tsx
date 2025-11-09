@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import Sidebar from './Sidebar.component';
+import CTSidebar from '../ui/CTSidebar.component';
 import type { ReactNode } from 'react';
 
 interface IMainLayout {
@@ -11,7 +11,7 @@ interface IMainLayout {
 export default function MainLayout({ title, description, children }: IMainLayout) {
     return (
         <Box sx={{ display: 'flex' }}>
-            <Sidebar />
+            <CTSidebar />
             <Stack component="main" sx={{ flexGrow: 1, p: 2 }} spacing={2}>
                 <Stack>
                     <Typography variant="h5">{title}</Typography>
