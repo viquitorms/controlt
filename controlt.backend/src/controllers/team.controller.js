@@ -6,7 +6,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async list(req, res) {
+  static async list(req, res) {
     try {
       const teams = await TeamService.list();
       res.json(teams);
@@ -20,7 +20,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async findById(req, res) {
+  static async findById(req, res) {
     try {
       const { id } = req.params;
       const team = await TeamService.findById(Number(id));
@@ -35,7 +35,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async create(req, res) {
+  static async create(req, res) {
     try {
       const data = req.body;
       const team = await TeamService.create(data);
@@ -50,7 +50,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async update(req, res) {
+  static async update(req, res) {
     try {
       const { id } = req.params;
       const data = req.body;
@@ -66,7 +66,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async delete(req, res) {
+  static async delete(req, res) {
     try {
       const { id } = req.params;
       await TeamService.delete(Number(id));
@@ -81,7 +81,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async getMembers(req, res) {
+  static async getMembers(req, res) {
     try {
       const { id } = req.params;
       const members = await TeamService.getMembers(Number(id));
@@ -96,7 +96,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async addMember(req, res) {
+  static async addMember(req, res) {
     try {
       const { id } = req.params;
       const { user_id } = req.body;
@@ -117,7 +117,7 @@ class TeamController {
    * @param {Request} req
    * @param {Response} res
    */
-  async removeMember(req, res) {
+  static async removeMember(req, res) {
     try {
       const { id, userId } = req.params;
       const result = await TeamService.removeMember(Number(id), Number(userId));
@@ -128,4 +128,4 @@ class TeamController {
   }
 }
 
-export default new TeamController();
+export default TeamController;

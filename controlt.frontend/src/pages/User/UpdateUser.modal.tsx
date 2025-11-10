@@ -1,15 +1,14 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
-import type { UserFindByIdResponse } from "../../dtos/user/User.res.dto";
-import type { UserUpdateRequest } from "../../dtos/user/User.req.dto";
+import type { User } from "../../dtos/user/User.res.dto";
 
 interface IUpdateUserModal {
 	open: boolean;
-	user: UserFindByIdResponse | null;
+	user: User | null;
 	onClose: () => void;
-	onSave: (user: UserUpdateRequest) => Promise<boolean>;
+	onSave: (user: User) => Promise<boolean>;
 	profiles?: Profile[];
 }
 
@@ -49,11 +48,17 @@ export default function UpdateUserModal({ open, user, onClose, onSave, profiles 
 
 		if (!user) return;
 
-		const userData: UserUpdateRequest = {
+		const selectedProfile = profiles?.find(p => p.id === profileId) ?? user.profile;
+
+		const userData: User = {
 			id: user.id,
 			name: name,
 			email: email,
-			profile_id: profileId,
+			created_date: user.created_date,
+			profile: {
+				id: selectedProfile?.id || 0,
+				name: selectedProfile?.name || '',
+			},
 		};
 
 		const success = await onSave(userData);
@@ -65,7 +70,7 @@ export default function UpdateUserModal({ open, user, onClose, onSave, profiles 
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={user ? 'Editar Usuário' : 'Adicionar Usuário'}
 			onClose={handleClose}
@@ -104,6 +109,6 @@ export default function UpdateUserModal({ open, user, onClose, onSave, profiles 
 					))}
 				</TextField>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

@@ -1,80 +1,81 @@
+/**
+ * @author viquitorms
+ * @version 2025-11-01 20:53:09
+ * @description Controller simples para orquestrar requisições de Projects.
+ */
 import ProjectService from '../services/project.service.js';
 
 class ProjectController {
   /**
-   * Lista todos os projetos
-   * @param {Request} req
-   * @param {Response} res
+   * Rota: POST /projects
    */
-  async list(req, res) {
+  static async create(req, res) {
     try {
-      const projects = await ProjectService.list();
-      res.json(projects);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+      const project = await ProjectService.create(req.body);
+      return res.status(201).json(project);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
     }
   }
 
   /**
-   * Encontra um projeto pelo ID
-   * @param {Request} req
-   * @param {Response} res
+   * Rota: GET /projects
    */
-  async findById(req, res) {
+  static async findAll(req, res) {
     try {
-      const { id } = req.params;
-      const project = await ProjectService.findById(Number(id));
-      res.json(project);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+      const projects = await ProjectService.findAll(req.query);
+      return res.status(200).json(projects);
+    } catch (err) {
+      return res.status(500).json({ error: 'Erro ao buscar projetos.' });
     }
   }
 
   /**
-   * Cria um novo projeto
-   * @param {Request} req
-   * @param {Response} res
+   * Rota: GET /projects/:id
    */
-  async create(req, res) {
+  static async findById(req, res) {
     try {
-      const data = req.body;
-      const project = await ProjectService.create(data);
-      res.status(201).json(project);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+      const id = Number(req.params.id);
+      if (isNaN(id)) return res.status(400).json({ error: 'ID inválido.' });
+
+      const project = await ProjectService.findById(id);
+      return res.status(200).json(project);
+    } catch (err) {
+      return res.status(404).json({ error: err.message });
     }
   }
 
   /**
-   * Atualiza um projeto
-   * @param {Request} req
-   * @param {Response} res
+   * Rota: PUT /projects/:id
    */
-  async update(req, res) {
+  static async update(req, res) {
     try {
-      const { id } = req.params;
-      const data = req.body;
-      const project = await ProjectService.update(Number(id), data);
-      res.json(project);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+      const id = Number(req.params.id);
+      if (isNaN(id)) return res.status(400).json({ error: 'ID inválido.' });
+
+      const updatedProject = await ProjectService.update(id, req.body);
+      return res.status(200).json(updatedProject);
+    } catch (err) {
+      const status = err.message.includes('não encontrado') ? 404 : 400;
+      return res.status(status).json({ error: err.message });
     }
   }
 
   /**
-   * Deleta um projeto
-   * @param {Request} req
-   * @param {Response} res
+   * Rota: DELETE /projects/:id
    */
-  async delete(req, res) {
+  static async delete(req, res) {
     try {
-      const { id } = req.params;
-      await ProjectService.delete(Number(id));
-      res.status(204).send();
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+      const id = Number(req.params.id);
+      if (isNaN(id)) return res.status(400).json({ error: 'ID inválido.' });
+
+      await ProjectService.delete(id);
+      return res.status(204).send();
+    } catch (err) {
+      const status = err.message.includes('não encontrado') ? 404 : 400;
+      return res.status(status).json({ error: err.message });
     }
   }
 }
 
-export default new ProjectController();
+export default ProjectController;

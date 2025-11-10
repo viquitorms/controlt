@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type ItemCreateRequest } from "../../dtos/item/Item.req.dto";
+import { type CreateItemDto } from "../../dtos/item/Item.req.dto";
 import { Box, Button, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useSnackbar } from "../../contexts/Snackbar.context";
@@ -11,14 +11,11 @@ export default function CaptureItem() {
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { user } = useAuth();
-    const [item, setItem] = useState<ItemCreateRequest>({
+    const [item, setItem] = useState<CreateItemDto>({
         title: '',
-        description: '',
-        user_id: user!.id,
-        userAssigned_id: undefined,
-        project_id: 0,
-        due_date: undefined,
-        status_name: 'Inbox'
+        note: '',
+        created_by_id: user!.id,
+        is_processed: false,
     });
 
     async function createItem() {
@@ -43,13 +40,10 @@ export default function CaptureItem() {
 
             setItem({
                 title: '',
-                description: '',
-                user_id: user.id,
-                userAssigned_id: undefined,
-                project_id: 0,
-                due_date: undefined,
-                status_name: 'Inbox'
-            })
+                note: '',
+                created_by_id: user.id,
+                is_processed: false,
+            });
         } catch (error) {
             showSnackbar('Falha ao limpar campos!')
         }
@@ -67,7 +61,6 @@ export default function CaptureItem() {
     return (
         <>
             <Stack spacing={2}>
-                <Typography variant="h5">Capturar Itens</Typography>
                 <Card variant="outlined">
                     <CardContent>
                         <Stack spacing={2}>
@@ -94,8 +87,8 @@ export default function CaptureItem() {
                                 fullWidth
                                 multiline
                                 rows={2}
-                                value={item.description}
-                                onChange={(e) => setItem({ ...item, description: e.target.value })}
+                                value={item.note}
+                                onChange={(e) => setItem({ ...item, note: e.target.value })}
                                 placeholder="Adicione contexto, detalhes ou observações..."
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && !e.shiftKey) {

@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { ProjectCreateRequest } from "../../dtos/project/Project.req.dto";
 
 interface ICreateProjectModal {
@@ -50,7 +50,7 @@ export default function CreateProjectModal({ open, onClose, onSave }: ICreatePro
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Adicionar Projeto'}
 			onClose={handleClose}
@@ -81,6 +81,6 @@ export default function CreateProjectModal({ open, onClose, onSave }: ICreatePro
 					required
 				/>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

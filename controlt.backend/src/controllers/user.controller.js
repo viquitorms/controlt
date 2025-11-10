@@ -8,9 +8,9 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async list(req, res) {
+  static async findAll(req, res) {
     try {
-      const users = await UserService.list();
+      const users = await UserService.findAll();
       res.json(users);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -22,7 +22,7 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async findById(req, res) {
+  static async findById(req, res) {
     try {
       const { id } = req.params;
       const user = await UserService.findById(Number(id));
@@ -37,7 +37,7 @@ class UserController {
    * @param {Request} req
    * @param {Response} res
    */
-  async create(req, res) {
+  static async create(req, res) {
     try {
       const data = req.body;
       const user = await userService.create(data);
@@ -52,7 +52,7 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async update(req, res) {
+  static async update(req, res) {
     try {
       const { id } = req.params;
       const data = req.body;
@@ -69,7 +69,7 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async delete(req, res) {
+  static async delete(req, res) {
     try {
       const { id } = req.params;
       await UserService.delete(Number(id));
@@ -80,4 +80,4 @@ class UserController {
   }
 }
 
-export default new UserController();
+export default UserController;

@@ -7,7 +7,7 @@ class UserController {
    * @param {*} req 
    * @param {*} res 
    */
-  async list(req, res) {
+  static async list(req, res) {
     try {
       const profiles = await profileService.list();
       res.json(profiles);
@@ -17,4 +17,4 @@ class UserController {
   }
 }
 
-export default new UserController();
+export default UserController;

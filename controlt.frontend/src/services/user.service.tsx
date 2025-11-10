@@ -1,29 +1,29 @@
-import api from '../config/Axios';
-import type { UserCreateRequest, UserUpdateRequest } from '../dtos/user/User.req.dto';
-import type { UserCreateResponse, UserFindByIdResponse, UserListResponse, UserUpdateResponse } from '../dtos/user/User.res.dto';
+import api from "../config/Axios";
+import type { CreateUserDto, UpdateUserDto } from "../dtos/user/User.req.dto.tsx";
+import type { User } from "../dtos/user/User.res.dto.tsx";
 
 export const userService = {
-    async list(): Promise<Array<UserListResponse>> {
-        const response = await api.get('/users');
-        return response.data;
+    async create(data: CreateUserDto): Promise<User> {
+        const response = await api.post("/users", data);
+        return response.data as User;
     },
 
-    async findById(id: number): Promise<UserFindByIdResponse> {
-        const response = await api.get('/users/' + id);
-        return response.data;
+    async findAll(): Promise<User[]> {
+        const response = await api.get("/users");
+        return response.data as User[];
     },
 
-    async create(data: UserCreateRequest): Promise<UserCreateResponse> {
-        const response = await api.post(`/users`, data);
-        return response.data;
+    async findById(id: number): Promise<User> {
+        const response = await api.get(`/users/${id}`);
+        return response.data as User;
     },
 
-    async update(data: UserUpdateRequest): Promise<UserUpdateResponse> {
-        const response = await api.put(`/users/${data.id}`, data);
-        return response.data;
+    async update(id: number, data: UpdateUserDto): Promise<User> {
+        const response = await api.put(`/users/${id}`, data);
+        return response.data as User;
     },
 
-    async delete(id: number): Promise<void> {
+    async remove(id: number): Promise<void> {
         await api.delete(`/users/${id}`);
-    }
+    },
 };

@@ -1,284 +1,33 @@
-import { useCallback, useEffect, useState } from "react";
-import { DataGrid, type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
-import {
-    Box,
-    Button,
-    IconButton,
-    Stack,
-    TextField,
-    Typography,
-    Popover
-} from "@mui/material";
-import { useBackdrop } from "../../contexts/Backdrop.context";
-import { useSnackbar } from "../../contexts/Snackbar.context";
-import { itemService } from "../../services/item.service";
-import type { ItemListResponse } from "../../dtos/item/Item.res.dto";
-import { Delete, Edit, Update, FilterList, Clear, AutoMode } from "@mui/icons-material";
-import ProcessItem, { type IConvertToProject } from "./ProcessItem.modal";
-import { type IProcessedItem } from "./ProcessItem.modal";
-import { StatusItemEnum } from "../../enums/StatusItem.enum";
-import ItemStatusChip from "../../components/ItemStatusChip.component";
-import type { IFilter } from "./interfaces/Filter.inbox.interface";
+import { Stack, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { type UserListResponse } from "../../dtos/user/User.res.dto";
-import { userService } from "../../services/user.service";
-import NotStartedOutlinedIcon from '@mui/icons-material/NotStartedOutlined';
+import CTDataGrid from "../../components/ui/CTDataGrid.component";
+import ProcessItem from "./processModal/ProcessItem.modal";
+import { useInboxController } from "./Inbox.controller";
 
 export default function Inbox() {
-    const { showBackdrop, hideBackdrop } = useBackdrop();
-    const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
-    const [itemsList, setItemsList] = useState<ItemListResponse[]>([]);
-    const [filteredItems, setFilteredItems] = useState<ItemListResponse[]>([]);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [selectedItem, setSelectedItem] = useState<ItemListResponse | null>(null);
-    const [usersList, setUsersList] = useState<UserListResponse[]>([]);
-    const [modalOpen, setProcessModalOpen] = useState(false);
-
-    const [filters, setFilters] = useState<IFilter>({
-        title: "",
-        description: ""
-    });
-
-    useEffect(() => {
-        onInitialized();
-    }, []);
-
-    useEffect(() => {
-        applyFilters();
-    }, [filters, itemsList]);
-
-    async function onInitialized() {
-        try {
-            await getItems();
-            await getUsers();
-        } catch {
-            return;
-        }
-    }
-
-    async function getItems() {
-        try {
-            showBackdrop();
-            const items = await itemService.list({ status_id: StatusItemEnum.Inbox });
-            setItemsList(items);
-            setFilteredItems(items);
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar items';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    }
-
-    async function getUsers() {
-        try {
-            showBackdrop();
-            const users = await userService.list();
-            setUsersList(users);
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao carregar usuários';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    }
-
-    async function deleteItem(id: number) {
-        try {
-            showBackdrop();
-            await itemService.delete(id);
-            showSnackbar('Item deletado com sucesso', 5000, 'success');
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao deletar item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    }
-
-    function applyFilters() {
-        let filtered = [...itemsList];
-
-        if (filters.title.trim()) {
-            filtered = filtered.filter((item) =>
-                item.title.toLowerCase().includes(filters.title.toLowerCase())
-            );
-        }
-
-        if (filters.description) {
-            filtered = filtered.filter((item) =>
-                item.description?.toLowerCase().includes(filters.description.toLowerCase())
-            );
-        }
-
-        setFilteredItems(filtered);
-    }
-
-    function clearFilters() {
-        setFilters({
-            title: "",
-            description: ""
-        });
-        handleCloseFilter();
-    }
-
-    const handleUpdate = useCallback(async () => {
-        try {
-            await getItems();
-            showSnackbar("Itens atualizados com sucesso", 3000, 'success');
-        } catch {
-            return;
-        }
-    }, [getItems, showSnackbar]);
-
-    const handleEdit = (row: ItemListResponse) => {
-        setSelectedItem(row);
-        setProcessModalOpen(true);
-    };
-
-    const handleDelete = async (data: ItemListResponse) => {
-        await deleteItem(data.id);
-        await getItems();
-    };
-
-    const handleOpenFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseFilter = () => {
-        setAnchorEl(null);
-    };
-
-    const openFilter = Boolean(anchorEl);
-
-    const activeFiltersCount = [
-        filters.title,
-        filters.description
-    ].filter(Boolean).length;
-
-    const hasActiveFilters = activeFiltersCount > 0;
-
-    const columns: GridColDef<ItemListResponse>[] = [
-        {
-            field: 'id',
-            headerName: 'ID',
-        },
-        {
-            field: 'title',
-            headerName: 'Título',
-            flex: 1,
-        },
-        {
-            field: 'description',
-            headerName: 'Descrição',
-            flex: 1,
-        },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 150,
-            renderCell: (params) => <ItemStatusChip statusId={params.row.status_id} />
-        },
-        {
-            field: 'created_date',
-            headerName: 'Capturado em',
-            width: 130,
-            valueFormatter: (value) => {
-                return new Date(value as string).toLocaleDateString('pt-BR');
-            },
-        },
-        {
-            field: "actions",
-            type: "actions",
-            headerName: "Ações",
-            align: "center",
-            headerAlign: "center",
-            sortable: false,
-            disableColumnMenu: true,
-            renderCell: (params: GridRenderCellParams<ItemListResponse>) => (
-                <Stack direction="row" spacing={1}>
-                    <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEdit(params.row)}
-                        title="Processar item"
-                    >
-                        <AutoMode fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                        color="error"
-                        size="small"
-                        onClick={() => handleDelete(params.row)}
-                        title="Deletar item"
-                    >
-                        <Delete fontSize="small" />
-                    </IconButton>
-                </Stack>
-            ),
-        },
-    ];
-
-    const handleProcessItem = async (data: IProcessedItem) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.processItem({
-                id: selectedItem.id,
-                is_actionable: data.is_actionable,
-                status_id: data.status_id,
-                due_date: data.due_date,
-                userAssigned_id: data.userAssigned_id,
-                priority: data.priority,
-            });
-
-            showSnackbar('Item processado com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao processar item';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
-
-    const handleConvertToProject = async (projectData: IConvertToProject) => {
-        if (!selectedItem) return;
-
-        try {
-            showBackdrop();
-
-            await itemService.convertToProject({
-                id: selectedItem.id,
-                title: projectData.title,
-                description: projectData.description,
-                status: projectData.status,
-            });
-
-            showSnackbar('Item convertido em projeto com sucesso!', 5000, 'success');
-            setProcessModalOpen(false);
-            setSelectedItem(null);
-            await getItems();
-        } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao converter em projeto';
-            showSnackbar(message, 5000, 'error');
-        } finally {
-            hideBackdrop();
-        }
-    };
+    const {
+        itemsList,
+        columns,
+        modalOpen,
+        selectedItem,
+        usersList,
+        projectsList,
+        handleOpenWizard,
+        handleCloseWizard,
+        handleProcessItem,
+        handleConvertToProject,
+        handleRefresh,
+        statusTasks,
+        priorities,
+        statusProjects,
+    } = useInboxController();
 
     function CustomNoRowsOverlay() {
         return (
             <Stack height="100%" alignItems="center" justifyContent="center" spacing={1}>
                 <Typography>Nenhum item para exibir.</Typography>
-                <Button
-                    variant="contained"
-                    onClick={() => navigate('/captura')}
-                >
+                <Button variant="contained" onClick={() => navigate("/captura")}>
                     Capturar Itens
                 </Button>
             </Stack>
@@ -287,132 +36,26 @@ export default function Inbox() {
 
     return (
         <Stack spacing={2}>
-            <Stack>
-                <Typography variant="h5">Caixa de Entrada</Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Todos os items que você capturou e precisam ser processados
-                </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1} alignItems="center">
-
-                <Button
-                    variant="outlined"
-                    startIcon={<Update />}
-                    onClick={handleUpdate}
-                >
-                    Atualizar
-                </Button>
-
-                <Button
-                    variant={hasActiveFilters ? "contained" : "outlined"}
-                    startIcon={<FilterList />}
-                    onClick={handleOpenFilter}
-                >
-                    Filtrar {hasActiveFilters && `(${activeFiltersCount})`}
-                </Button>
-
-                {hasActiveFilters && (
-                    <Button
-                        variant="text"
-                        startIcon={<Clear />}
-                        onClick={clearFilters}
-                        color="error"
-                    >
-                        Limpar
-                    </Button>
-                )}
-
-                <Typography variant="body2" color="text.secondary" sx={{ ml: 'auto !important' }}>
-                    {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'itens'}
-                </Typography>
-            </Stack>
-
-            <Popover
-                open={openFilter}
-                anchorEl={anchorEl}
-                onClose={handleCloseFilter}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <Box sx={{ p: 2 }}>
-                    <Stack spacing={2}>
-                        <Typography>Filtros</Typography>
-
-                        <TextField
-                            label="Título"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            value={filters.title}
-                            onChange={(e) => setFilters({ ...filters, title: e.target.value })}
-                            placeholder="Buscar por título..."
-                        />
-
-                        <TextField
-                            label="Descrição"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            value={filters.description}
-                            onChange={(e) => setFilters({ ...filters, description: e.target.value })}
-                            placeholder="Buscar por descrição..."
-                        />
-
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
-                            <Button onClick={clearFilters} color="inherit">
-                                Limpar
-                            </Button>
-                            <Button onClick={handleCloseFilter} variant="contained">
-                                Aplicar
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Box>
-            </Popover>
-
-            <Box sx={{ height: 600, width: '100%' }}>
-                <DataGrid
-                    rows={filteredItems || []}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 10 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10, 25, 50]}
-                    disableRowSelectionOnClick
-                    disableColumnResize
-                    resizeThrottleMs={1000}
-                    sx={{
-                        '& .MuiDataGrid-row:hover': {
-                            backgroundColor: 'action.hover',
-                        },
-                    }}
-
-                    slots={{
-                        noRowsOverlay: CustomNoRowsOverlay
-                    }}
-                />
-
-            </Box>
+            <CTDataGrid
+                rows={itemsList || []}
+                columns={columns}
+                NoRowsOverlay={CustomNoRowsOverlay}
+                refresh={handleRefresh}
+                cursor="pointer"
+                onRowDoubleClick={handleOpenWizard}
+            />
 
             <ProcessItem
                 open={modalOpen}
                 item={selectedItem}
-                onClose={() => {
-                    setProcessModalOpen(false);
-                    setSelectedItem(null);
-                }}
+                onClose={handleCloseWizard}
                 onProcess={handleProcessItem}
                 onConvertToProject={handleConvertToProject}
                 users={usersList}
+                priorities={priorities}
+                statusTasks={statusTasks}
+                statusProjects={statusProjects}
+                projects={projectsList}
             />
         </Stack>
     );

@@ -1,13 +1,13 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
-import type { UserCreateRequest } from "../../dtos/user/User.req.dto";
+import type { CreateUserDto } from "../../dtos/user/User.req.dto";
 
 interface ICreateUserModal {
 	open: boolean;
 	onClose: () => void;
-	onSave: (user: UserCreateRequest) => Promise<boolean>;
+	onSave: (user: CreateUserDto) => Promise<boolean>;
 	profiles?: Profile[];
 }
 
@@ -40,7 +40,7 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 	const handleSave = async () => {
 		if (!isValid()) return;
 
-		const userData: UserCreateRequest = {
+		const userData: CreateUserDto = {
 			name: name,
 			email: email,
 			password: password,
@@ -56,7 +56,7 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Adicionar Usuário'}
 			onClose={handleClose}
@@ -103,6 +103,6 @@ export default function CreateUserModal({ open, onClose, onSave, profiles }: ICr
 					))}
 				</TextField>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

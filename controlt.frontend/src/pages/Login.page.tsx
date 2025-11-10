@@ -6,12 +6,14 @@ import { authService } from '../services/auth.service';
 import { useBackdrop } from '../contexts/Backdrop.context';
 import type { LoginRequest } from '../dtos/auth/Auth.req.dto';
 import { useAuth } from '../contexts/Auth.context';
+import { useInitialize } from '../contexts/Initialized.context';
 
 export default function Login() {
     const navigate = useNavigate();
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { setUser } = useAuth();
+    const { refresh } = useInitialize();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -53,6 +55,7 @@ export default function Login() {
             if (authUser) {
                 setUser(authUser);
                 showSnackbar('Login realizado com sucesso!', 2000, 'success');
+                await refresh();
                 navigate('/caixadeentrada');
             } else {
                 throw new Error('Erro ao recuperar dados do usuário');

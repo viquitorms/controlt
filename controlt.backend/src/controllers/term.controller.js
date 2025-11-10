@@ -6,7 +6,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async list(req, res) {
+    static async list(req, res) {
         try {
             const { search } = req.query;
             const terms = await TermService.list({ search });
@@ -21,7 +21,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async findById(req, res) {
+    static async findById(req, res) {
         try {
             const { id } = req.params;
             const term = await TermService.findById(Number(id));
@@ -36,7 +36,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async findByName(req, res) {
+    static async findByName(req, res) {
         try {
             const { name } = req.params;
             const term = await TermService.findByName(name);
@@ -51,7 +51,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async create(req, res) {
+    static async create(req, res) {
         try {
             const data = req.body;
             const term = await TermService.create(data);
@@ -66,7 +66,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async update(req, res) {
+    static async update(req, res) {
         try {
             const { id } = req.params;
             const data = req.body;
@@ -82,7 +82,7 @@ class TermController {
      * @param {Request} req
      * @param {Response} res
      */
-    async delete(req, res) {
+    static async delete(req, res) {
         try {
             const { id } = req.params;
             await TermService.delete(Number(id));
@@ -93,4 +93,4 @@ class TermController {
     }
 }
 
-export default new TermController();
+export default TermController;

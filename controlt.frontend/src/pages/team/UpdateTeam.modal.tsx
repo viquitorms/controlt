@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { TeamFindByIdResponse } from "../../dtos/team/Team.res.dto";
 import type { TeamUpdateRequest } from "../../dtos/team/Team.req.dto";
 
@@ -53,7 +53,7 @@ export default function UpdateTeamModal({ open, team, onClose, onSave }: IUpdate
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Editar Equipe'}
 			onClose={handleClose}
@@ -70,6 +70,6 @@ export default function UpdateTeamModal({ open, team, onClose, onSave }: IUpdate
 					required
 				/>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

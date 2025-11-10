@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { TeamCreateRequest } from "../../dtos/team/Team.req.dto";
 
 interface ICreateTeamModal {
@@ -42,7 +42,7 @@ export default function CreateTeamModal({ open, onClose, onSave }: ICreateTeamMo
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Adicionar Equipe'}
 			onClose={handleClose}
@@ -59,6 +59,6 @@ export default function CreateTeamModal({ open, onClose, onSave }: ICreateTeamMo
 					required
 				/>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

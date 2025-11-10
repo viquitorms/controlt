@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import Dialog from "../../components/Dialog.component";
+import CTDialog from "../../components/ui/CTDialog.component";
 import type { TermCreateRequest } from "../../dtos/term/Term.req.dto";
 
 interface ICreateTermModal {
@@ -46,7 +46,7 @@ export default function CreateTermModal({ open, onClose, onSave }: ICreateTermMo
 	};
 
 	return (
-		<Dialog
+		<CTDialog
 			open={open}
 			title={'Adicionar Termo'}
 			onClose={handleClose}
@@ -71,6 +71,6 @@ export default function CreateTermModal({ open, onClose, onSave }: ICreateTermMo
 					required
 				/>
 			</Stack>
-		</Dialog>
+		</CTDialog>
 	);
 }

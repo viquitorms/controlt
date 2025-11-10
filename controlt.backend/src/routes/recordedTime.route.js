@@ -1,19 +1,32 @@
 import { Router } from 'express';
-import recordedTimeController from '../controllers/recordedTime.controller.js';
-import { authMiddleware } from '../middlewares/auth.middleware.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
+import { validateDto } from '../middlewares/validateDto.middleware.js';
+import StartTimerDto from '../dtos/recordedTime/startTimer.dto.ts';
+import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto.ts';
+import RecordedTimeController from '../controllers/recordedTime.controller.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.post('/', recordedTimeController.create);
-router.get('/', recordedTimeController.list);
-router.get('/:id', recordedTimeController.findById);
-router.put('/:id', recordedTimeController.update);
-router.delete('/:id', recordedTimeController.delete);
+router.post("/start", validateDto(StartTimerDto), (req, res, next) => {
+  return RecordedTimeController.start(req, res, next);
+});
 
-router.get('/item/:itemId', recordedTimeController.getTimeByItem);
-router.get('/user/:userId/stats', recordedTimeController.getTimeByUser);
-router.get('/project/:projectId', recordedTimeController.getTimeByProject);
+router.post("/stop", (req, res, next) => {
+  return RecordedTimeController.stop(req, res, next);
+});
+
+router.get("/", validateDto(FilterRecordedTimeDto), (req, res, next) => {
+  return RecordedTimeController.findAll(req, res, next);
+});
+
+router.get("/active", (req, res, next) => {
+  return RecordedTimeController.getActiveTimer(req, res, next);
+});
+
+router.delete("/:id", (req, res, next) => {
+  return RecordedTimeController.delete(req, res, next);
+});
 
 export default router;
