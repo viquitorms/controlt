@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
-import CTDialog from "../../components/ui/CTDialog.component";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import type { TermCreateRequest } from "../../dtos/term/Term.req.dto";
 
 interface ICreateTermModal {

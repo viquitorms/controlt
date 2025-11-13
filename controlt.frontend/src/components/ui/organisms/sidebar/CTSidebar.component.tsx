@@ -3,8 +3,9 @@ import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFille
 import DeleteIcon from '@mui/icons-material/Delete';
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/auth.service';
-import { useAuth } from '../../contexts/Auth.context';
+import { authService } from '../../../../services/auth.service';
+import { useAuth } from '../../../../contexts/Auth.context';
+import CTList from '../../molecules/CTList.molecule.component';
 
 const drawerWidth = 240;
 
@@ -66,40 +67,13 @@ export default function CTSidebar() {
                 <Stack display={'flex'} flexDirection={'column'} gap={2}>
                     <Stack>
                         <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>GTD</Typography>
-                        <List>
-                            {actionList.map((item) => (
-                                <ListItem key={item.text} disablePadding>
-                                    <ListItemButton onClick={() => handleNavigate(item)}>
-                                        <ListItemIcon>{item.icon}</ListItemIcon>
-                                        <ListItemText primary={item.text} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List>
+                        <CTList items={new CTList} />
                     </Stack>
-
-                    {
-                        // isManager &&
-                        <>
-                            <Divider />
-
-                            <Stack>
-                                <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Organização</Typography>
-                                <List>
-                                    {navigationList.map((item) => (
-                                        <ListItem key={item.text} disablePadding>
-                                            <ListItemButton onClick={() => handleNavigate(item)}>
-                                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                                <ListItemText primary={item.text} />
-                                            </ListItemButton>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Stack>
-                        </>
-                    }
-
-
+                    <Divider />
+                    <Stack>
+                        <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Organização</Typography>
+                        <CTList items={navigationList.map(item => item.text)} />
+                    </Stack>
                 </Stack>
 
                 <List>

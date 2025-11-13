@@ -1,5 +1,5 @@
 import { Button, Stack, Typography } from "@mui/material";
-import CTDataGrid from "../../components/ui/CTDataGrid.component";
+import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
 import TaskEditModal from "./Tasks.modal";
 import { useTasksController } from "./Tasks.controller";
 import type { Task } from "../../dtos/task/task.res.dto";

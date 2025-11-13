@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import CTSidebar from '../ui/CTSidebar.component';
+import CTSidebar from '../ui/organisms/sidebar/CTSidebar.component';
 import type { ReactNode } from 'react';
 
 interface IMainLayout {

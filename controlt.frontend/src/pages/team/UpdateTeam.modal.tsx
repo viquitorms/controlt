@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
-import CTDialog from "../../components/ui/CTDialog.component";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import type { TeamFindByIdResponse } from "../../dtos/team/Team.res.dto";
 import type { TeamUpdateRequest } from "../../dtos/team/Team.req.dto";
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import CTBackdrop from '../components/ui/CTBackdrop.component';
+import CTBackdrop from '../components/ui/atoms/backdrop/CTBackdrop.component';
 import { useBackdrop as useBackdropHook } from '../hooks/useBackdrop.hook';
 
 interface BackdropContextType {

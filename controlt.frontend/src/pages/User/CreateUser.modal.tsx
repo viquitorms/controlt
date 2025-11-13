@@ -1,6 +1,6 @@
 import { TextField, Stack, MenuItem } from "@mui/material";
 import { useState } from "react";
-import CTDialog from "../../components/ui/CTDialog.component";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
 import type { CreateUserDto } from "../../dtos/user/User.req.dto";
 

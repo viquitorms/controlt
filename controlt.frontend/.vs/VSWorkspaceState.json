@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\ui",
+    "\\src\\components\\ui\\atoms",
+    "\\src\\components\\ui\\atoms\\backdrop",
+    "\\src\\components\\ui\\molecules",
+    "\\src\\components\\ui\\organisms",
+    "\\src\\components\\ui\\organisms\\data grid",
+    "\\src\\components\\ui\\organisms\\dialog",
+    "\\src\\components\\ui\\organisms\\sidebar"
+  ],
+  "SelectedNode": "\\src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx",
+  "PreviewInSolutionExplorer": false
+}

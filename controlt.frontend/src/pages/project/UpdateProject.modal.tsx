@@ -1,6 +1,6 @@
 import { TextField, Stack, Select, InputLabel, FormControl, MenuItem } from "@mui/material";
 import { useState, useEffect } from "react";
-import CTDialog from "../../components/ui/CTDialog.component";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import type { Project } from "../../dtos/project/Project.res.dto";
 import { useInitialize } from "../../contexts/Initialized.context";
 

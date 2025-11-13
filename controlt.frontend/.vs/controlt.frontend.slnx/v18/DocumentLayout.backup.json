@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\CTProtectedRoute.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\CTProtectedRoute.component.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CTSidebar.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\organisms\\sidebar\\CTSidebar.component.tsx",
+              "ViewState": "AgIAADYAAAAAAAAAAAAQwEYAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T04:22:47.669Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CTListText.atom.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\atoms\\list\\CTListText.atom.component.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T03:52:40.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CTListButton.atom.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\atoms\\list\\CTListButton.atom.component.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T03:52:38.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CTBackdrop.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\atoms\\backdrop\\CTBackdrop.component.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T03:09:02.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CTDrawer.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\atoms\\drawer\\CTDrawer.component.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T03:09:00.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CTProtectedRoute.component.tsx",
+              "DocumentMoniker": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\CTProtectedRoute.component.tsx",
+              "RelativeDocumentMoniker": "src\\components\\ui\\CTProtectedRoute.component.tsx",
+              "ToolTip": "C:\\Users\\victo\\OneDrive\\\u00C1rea de Trabalho\\Projects\\tcc\\controlt\\controlt.frontend\\src\\components\\ui\\CTProtectedRoute.component.tsx",
+              "RelativeToolTip": "src\\components\\ui\\CTProtectedRoute.component.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-11-13T03:06:41.975Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
