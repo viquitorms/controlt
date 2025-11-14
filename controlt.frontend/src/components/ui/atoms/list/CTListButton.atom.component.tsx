@@ -1,9 +1,10 @@
 import React from "react";
-import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
-interface ICTListButton {
+export interface ICTListButton {
   id?: string | number;
-  label: string;
+  label?: string;
+  icon?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   disabled?: boolean;
   className?: string;
@@ -14,6 +15,7 @@ export default function CTListButton(props: ICTListButton) {
   return (
     <ListItem key={props.id} className={props.className} disablePadding dense={props.dense}>
       <ListItemButton onClick={props.onClick} disabled={props.disabled}>
+        <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.label} />
       </ListItemButton>
     </ListItem>

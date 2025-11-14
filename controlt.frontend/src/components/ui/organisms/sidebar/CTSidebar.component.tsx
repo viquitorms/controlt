@@ -60,33 +60,54 @@ export default function CTSidebar() {
             }}
         >
             <Toolbar>
-                <Typography variant={'h5'} fontWeight={500}>ControlT</Typography>
+                <Typography variant={'h6'} fontWeight={500}>ControlT</Typography>
             </Toolbar>
 
             <Stack display={'flex'} flexDirection={'column'} justifyContent={'space-between'} height={'100%'}>
                 <Stack display={'flex'} flexDirection={'column'} gap={2}>
                     <Stack>
                         <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>GTD</Typography>
-                        <CTList items={new CTList} />
+                        <CTList
+                            type="button"
+                            buttonType={actionList.map(item => ({
+                                id: item.text,
+                                icon: item.icon,
+                                label: item.text,
+                                onClick: () => handleNavigate(item),
+                                dense: true,
+                            }))}
+                        />
                     </Stack>
                     <Divider />
                     <Stack>
                         <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Organização</Typography>
-                        <CTList items={navigationList.map(item => item.text)} />
+                        <CTList
+                            type="button"
+                            buttonType={navigationList.map(item => ({
+                                id: item.text,
+                                icon: item.icon,
+                                label: item.text,
+                                onClick: () => handleNavigate(item),
+                                dense: true,
+                            }))}
+                        />
                     </Stack>
                 </Stack>
 
                 <List>
-                    {configurationList.map((item) => (
-                        <ListItem key={item.text} disablePadding>
-                            <ListItemButton onClick={() => handleNavigate(item)}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    <CTList
+                        type="button"
+                        buttonType={configurationList.map(item => ({
+                            id: item.text,
+                            icon: item.icon,
+                            label: item.text,
+                            onClick: () => handleNavigate(item),
+                            dense: true,
+                        }))}
+                    />
                 </List>
             </Stack>
+
         </Drawer>
     );
 }

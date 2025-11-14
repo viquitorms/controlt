@@ -1,47 +1,37 @@
-import React from "react";
-import { List } from "@mui/material";
-import CTListText from "../atoms/list/CTListText.atom.component";
-import CTListButton from "../atoms/list/CTListButton.atom.component";
+import CTListText, { type ICTListText } from "../atoms/list/CTListText.atom.component";
+import CTListButton, { type ICTListButton } from "../atoms/list/CTListButton.atom.component";
+import { useSnackbar } from "../../../contexts/Snackbar.context";
 
-type TextItem = { type: "text"; id: string | number; text: string; secondary?: string };
-type ButtonItem = { type: "button"; id: string | number; label: string; onClick?: () => void; disabled?: boolean };
-
-export type CTListItem = TextItem | ButtonItem;
-
-interface CTListProps {
-    items: CTListItem[];
-    className?: string;
+export interface ICTList {
+    type: "text" | "button";
+    buttonType?: ICTListButton[];
+    textType?: ICTListText[];
 }
 
-export default function CTList({ items, className }: CTListProps) {
-    return (
-        <List className={className}>
-            {items.map((item) => {
-                if (item.type === "text") {
-                    return (
-                        <CTListText
-                            key={item.id}
-                            id={item.id}
-                            text={item.text}
-                            secondary={item.secondary}
-                        />
-                    );
-                }
-                if (item.type === "button") {
-                    return (
-                        <CTListButton
-                            key={item.id}
-                            id={item.id}
-                            label={item.label}
-                            onClick={(e) => {
-                                item.onClick?.();
-                            }}
-                            disabled={item.disabled}
-                        />
-                    );
-                }
-                return null;
-            })}
-        </List>
-    );
+export default function CTList(
+    {
+        type,
+        buttonType,
+        textType,
+    }: ICTList
+) {
+    const { showSnackbar } = useSnackbar();
+
+    if (type === "button" && buttonType) {
+        return (
+            buttonType.map((button) => (
+                <CTListButton {...button} key={button.id} />
+            ))
+        );
+    }
+    else if (type === "text" && textType) {
+        return (
+            textType.map((text) => (
+                <CTListText {...text} key={text.id} />
+            ))
+        );
+    }
+    else {
+        showSnackbar("Tipo de lista inválido ou lista vazia", 5000, "error");
+    }
 }
