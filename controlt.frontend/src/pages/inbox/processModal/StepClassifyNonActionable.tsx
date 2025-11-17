@@ -1,6 +1,5 @@
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
-import { Archive, Delete, WatchLater } from "@mui/icons-material";
-import { NonActionableClassificationEnum } from "../../../enums/ClassificationItem.enum";
+import { Archive, Delete, WatchLater } from "@mui/icons-material";   
 
 interface IStepClassifyNonActionableProps {
     classification: number;

@@ -1,6 +1,4 @@
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material";
-import { Assignment, CalendarToday, Flag, Group, KeyboardDoubleArrowRight } from "@mui/icons-material";
-import { ActionableClassificationEnum } from "../../../enums/ClassificationItem.enum";
 
 interface IStepClassifyActionableProps {
     classification: number;
@@ -11,7 +9,7 @@ export default function StepClassifyActionable({ classification, onChange }: ISt
     return (
         <Stack spacing={3}>
             <Typography>
-                Este item requer ação. Como você quer processá-lo?
+                Este item não requer ação. O que fazer com ele?
             </Typography>
 
             <FormControl component="fieldset" fullWidth>
@@ -21,17 +19,17 @@ export default function StepClassifyActionable({ classification, onChange }: ISt
                     sx={{ gap: 2 }}
                 >
                     <FormControlLabel
-                        value={ActionableClassificationEnum.FazerAgora}
+                        value={NonActionableClassificationEnum.Lixo}
                         control={<Radio />}
                         label={
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Flag fontSize="small" color="primary" />
+                                <Delete fontSize="small" color="error" />
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
-                                        Fazer agora (menos de 2 minutos)
+                                        Descartar
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        Execute imediatamente e marque como concluído
+                                        Não é útil, pode ser deletado
                                     </Typography>
                                 </Box>
                             </Stack>
@@ -39,17 +37,17 @@ export default function StepClassifyActionable({ classification, onChange }: ISt
                     />
 
                     <FormControlLabel
-                        value={ActionableClassificationEnum.Delegar}
+                        value={NonActionableClassificationEnum.Referencia}
                         control={<Radio />}
                         label={
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Group fontSize="small" color="primary" />
+                                <Archive fontSize="small" color="primary" />
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
-                                        Delegar
+                                        Material de referência
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        Atribuir a outra pessoa e aguardar
+                                        Informação útil para consulta futura
                                     </Typography>
                                 </Box>
                             </Stack>
@@ -57,53 +55,17 @@ export default function StepClassifyActionable({ classification, onChange }: ISt
                     />
 
                     <FormControlLabel
-                        value={ActionableClassificationEnum.Agendar}
+                        value={NonActionableClassificationEnum.AlgumDia}
                         control={<Radio />}
                         label={
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <CalendarToday fontSize="small" color="primary" />
+                                <WatchLater fontSize="small" color="primary" />
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
-                                        Agendar
+                                        Algum dia / Talvez
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        Definir data/hora específica
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        }
-                    />
-
-                    <FormControlLabel
-                        value={ActionableClassificationEnum.Projeto}
-                        control={<Radio />}
-                        label={
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Assignment fontSize="small" color="primary" />
-                                <Box>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        É um projeto (mais de 1 ação)
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Converter em projeto com múltiplas tarefas
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        }
-                    />
-
-                    <FormControlLabel
-                        value={ActionableClassificationEnum.ProximaAcao}
-                        control={<Radio />}
-                        label={
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <KeyboardDoubleArrowRight fontSize="small" color="primary" />
-                                <Box>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        Próxima ação
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Ação única que farei quando possível
+                                        Algo que eu possa querer fazer no futuro
                                     </Typography>
                                 </Box>
                             </Stack>

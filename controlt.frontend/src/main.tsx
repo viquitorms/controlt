@@ -14,6 +14,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { InitializeProvider } from './contexts/Initialized.context.tsx';
 
+import './config/dayjs.config.tsx';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

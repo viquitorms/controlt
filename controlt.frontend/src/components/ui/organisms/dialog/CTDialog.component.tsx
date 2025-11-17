@@ -1,4 +1,5 @@
-import { Dialog as MuiDialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { ArrowLeft } from "@mui/icons-material";
+import { Dialog as MuiDialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Box, IconButton } from "@mui/material";
 import type { ReactNode } from "react";
 
 interface IDialog {
@@ -11,6 +12,8 @@ interface IDialog {
     cancelText?: string;
     confirmDisabled?: boolean;
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    onBack?: () => void;
+    showActions?: boolean;
 }
 
 export default function CTDialog({
@@ -22,26 +25,42 @@ export default function CTDialog({
     confirmText = 'Confirmar',
     cancelText = 'Cancelar',
     confirmDisabled = false,
-    maxWidth = 'sm'
+    maxWidth = 'sm',
+    onBack,
+    showActions = true,
 }: IDialog) {
     return (
         <MuiDialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>
+                {
+                    onBack && (
+                        <IconButton onClick={onBack}>
+                            <ArrowLeft />
+                        </IconButton>
+                    )
+                }
+                {title}
+            </DialogTitle>
             <DialogContent>
                 {children}
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>{cancelText}</Button>
-                {onConfirm && (
-                    <Button
-                        onClick={onConfirm}
-                        variant="contained"
-                        disabled={confirmDisabled}
-                    >
-                        {confirmText}
-                    </Button>
-                )}
-            </DialogActions>
+            {
+                showActions &&
+                <DialogActions>
+                    <Button onClick={onClose}>{cancelText}</Button>
+                    {
+                        onConfirm && (
+                            <Button
+                                onClick={onConfirm}
+                                variant="contained"
+                                disabled={confirmDisabled}
+                            >
+                                {confirmText}
+                            </Button>
+                        )
+                    }
+                </DialogActions>
+            }
         </MuiDialog>
     );
 }

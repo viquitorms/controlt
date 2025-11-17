@@ -166,6 +166,6 @@ export default function StepDetails({
                     )
                 }
             </Alert>
-        </Stack >
+        </Stack>
     );
 }
