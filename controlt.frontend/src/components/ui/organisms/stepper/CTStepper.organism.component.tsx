@@ -125,7 +125,7 @@ export default function CTStepper(
                                 <Box sx={{ flex: '1 1 auto' }} />
                                 {
                                     !isLastStep() && (
-                                        <Button onClick={handleNext} sx={{ mr: 1 }}>
+                                        <Button onClick={handleNext} sx={{ mr: 1 }} disabled={isNextStepDisabled}>
                                             Próximo
                                         </Button>
                                     )

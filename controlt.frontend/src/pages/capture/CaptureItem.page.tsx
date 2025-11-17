@@ -151,7 +151,7 @@ export default function CaptureItem() {
      */
     const handleCloseProcessItemDialog = () => {
         setIsProcessItemDialogOpen(false);
-        setSelectedItem(null);
+        setSelectedItem(undefined);
         setStep(0);
         setIsNextButtonDisabled(true);
         setIsActionable(null);
