@@ -621,7 +621,12 @@ export default function CaptureItem() {
                 }
 
                 {
-                    classification === EnumActionableType.Agendada && (
+                    (
+                        classification === EnumActionableType.Agendada ||
+                        classification === EnumActionableType.Aguardando
+                    )
+                    &&
+                    (
                         <DateTimePicker
                             label="Data/Hora"
                             value={dueDate}
@@ -733,27 +738,46 @@ export default function CaptureItem() {
         try {
             showBackdrop();
 
-            await taskService.create({
-                item_id: selectedItem.id,
-                title: selectedItem.title,
-                description: selectedItem.note,
-                due_date: dueDate ? dueDate.toDate() : undefined,
-                priority_id: priority,
-                project_id: project ? project.id : undefined,
-                status_id: statusTasks.find(s => s.name === (isActionable ? EnumActionableTypeName[classification as number] : EnumNonActionableTypeName[classification as number]))?.id || 0,
-                created_by_id: selectedItem.created_by_id,
-                assigned_to_id: assignedUser ? assignedUser.id : undefined,
-            })
+            if (isActionable) {
+                if (classification !== EnumActionableType.Projeto) {
+                    await taskService.create({
+                        item_id: selectedItem.id,
+                        title: selectedItem.title,
+                        description: selectedItem.note,
+                        due_date: dueDate ? dueDate.toDate() : undefined,
+                        priority_id: priority,
+                        project_id: project ? project.id : undefined,
+                        status_id: statusTasks.find(s => s.name === (isActionable ? EnumActionableTypeName[classification as number] : EnumNonActionableTypeName[classification as number]))?.id || 0,
+                        created_by_id: selectedItem.created_by_id,
+                        assigned_to_id: assignedUser ? assignedUser.id : undefined,
+                    })
 
-            await itemService.update(selectedItem.id, {
-                is_processed: true,
-            });
+                    showSnackbar('Item processado com sucesso!', 5000, 'success');
+                }
+                else {
+                    await projectService.create({
+                        title: selectedItem.title,
+                        description: selectedItem.note,
+                        status_id: 1
+                    })
 
-            await getItems();
+                    await itemService.update(selectedItem.id, {
+                        is_processed: true
+                    });
+
+                    showSnackbar('Item processado e projeto criado com sucesso!', 5000, 'success');
+                }
+            }
+            else {
+                await itemService.update(selectedItem.id, {
+                    is_processed: true
+                });
+
+                showSnackbar('Item não acionável processado com sucesso!', 5000, 'success');
+            }
 
             handleCloseProcessItemDialog();
-
-            showSnackbar('Item processado com sucesso!', 5000, 'success');
+            await getItems();
 
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao processar item';
