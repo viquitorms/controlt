@@ -13,6 +13,7 @@ interface ICTStepper {
     steps: string[];
     finishButtonText?: string;
     isNextStepDisabled: boolean;
+    isFinishButtonDisabled?: boolean;
     onStepChange?: (newStep: number, previousStep: number) => void;
     onFinish?: () => void;
 }
@@ -24,6 +25,7 @@ export default function CTStepper(
         steps,
         finishButtonText = 'Finalizar',
         isNextStepDisabled,
+        isFinishButtonDisabled,
         onStepChange,
         onFinish
     }: ICTStepper
@@ -72,6 +74,10 @@ export default function CTStepper(
 
     const handleStep = (step: number) => () => {
         setActiveStep(step);
+
+        if (onStepChange) {
+            onStepChange(step, activeStep);
+        }
     };
 
     const handleReset = () => {
@@ -81,7 +87,7 @@ export default function CTStepper(
 
     return (
         <Stack sx={{ width: '100%' }} spacing={3}>
-            <Stepper nonLinear activeStep={activeStep}>
+            <Stepper activeStep={activeStep}>
                 {steps.map((label, index) => (
                     <Step key={label} completed={completed[index]}>
                         <StepButton color="inherit" onClick={handleStep(index)}>
@@ -130,9 +136,13 @@ export default function CTStepper(
                                         </Button>
                                     )
                                 }
-                                <Button onClick={onFinish} disabled={!isLastStep()}>
-                                    {finishButtonText}
-                                </Button>
+                                {
+                                    isLastStep() && (
+                                        <Button onClick={onFinish} disabled={isFinishButtonDisabled}>
+                                            {finishButtonText}
+                                        </Button>
+                                    )
+                                }
                             </Box>
                         </Stack>
                     </React.Fragment>

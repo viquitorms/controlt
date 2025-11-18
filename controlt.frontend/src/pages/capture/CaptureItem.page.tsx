@@ -12,13 +12,16 @@ import type { GridColDef, GridRenderCellParams, GridValueGetter } from "@mui/x-d
 import type { User } from "../../dtos/user/User.res.dto";
 import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import CTStepper from "../../components/ui/organisms/stepper/CTStepper.organism.component";
-import { EnumActionableType } from "../../enums/ActionableType.enum";
-import { EnumNonActionableType } from "../../enums/NonActionableType.enum";
+import { EnumActionableType, EnumActionableTypeName } from "../../enums/ActionableType.enum";
+import { EnumNonActionableType, EnumNonActionableTypeName } from "../../enums/NonActionableType.enum";
 import { useInitialize } from "../../contexts/Initialized.context";
 import type { Project } from "../../dtos/project/Project.res.dto";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
-import { formatDate } from "../../utils/Date.util";
+import { formatDate, formatDateTime } from "../../utils/Date.util";
+import { taskService } from "../../services/task.service";
+import { userService } from "../../services/user.service";
+import { projectService } from "../../services/project.service";
 
 export default function CaptureItem() {
     const { showSnackbar } = useSnackbar();
@@ -39,11 +42,13 @@ export default function CaptureItem() {
 
     const [step, setStep] = useState<number>(0);
     const steps = ['Definir Ação', 'Classificar Item', 'Revisar e Finalizar'];
+
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState<boolean>(true);
+    const [isFinishButtonDisabled, setIsFinishButtonDisabled] = useState<boolean>(true);
 
     const [isActionable, setIsActionable] = useState<boolean | null>(null);
     const [classification, setClassification] = useState<number | null>(null);
-    const [priority, setPriority] = useState<number>(1);
+    const [priority, setPriority] = useState<number>(2);
     const [dueDate, setDueDate] = useState<Dayjs | null>(null);
     const [assignedUser, setAssignedUser] = useState<User | undefined>(undefined);
 
@@ -59,7 +64,9 @@ export default function CaptureItem() {
         (async () => {
             try {
                 await Promise.all([
-                    getItems()
+                    getItems(),
+                    getUsers(),
+                    getProjects()
                 ]);
             } catch {
                 return;
@@ -95,6 +102,38 @@ export default function CaptureItem() {
             setItemsList(items);
         } catch (error) {
             showSnackbar('Erro ao carregar items', 5000, 'error');
+        }
+        finally {
+            hideBackdrop();
+        }
+    }
+
+    /**
+     * Busca os usuários do sistema
+     */
+    async function getUsers() {
+        try {
+            showBackdrop();
+            const usersList = await userService.findAll();
+            setUsers(usersList);
+        } catch (error) {
+            showSnackbar('Erro ao carregar usuários', 5000, 'error');
+        }
+        finally {
+            hideBackdrop();
+        }
+    }
+
+    /**
+     * Busca os projetos do sistema
+     */
+    async function getProjects() {
+        try {
+            showBackdrop();
+            const projectsList = await projectService.findAll();
+            setProjects(projectsList);
+        } catch (error) {
+            showSnackbar('Erro ao carregar projetos', 5000, 'error');
         }
         finally {
             hideBackdrop();
@@ -165,9 +204,7 @@ export default function CaptureItem() {
      */
     const handleOnStepChange = (newStep: number, previousStep: number) => {
         if (newStep === steps.length - 1) {
-            console.log('adsjfkalsdf');
             setIsNextButtonDisabled(true);
-            console.log('isnext:', isNextButtonDisabled);
         }
         else if (newStep > previousStep) {
             setIsNextButtonDisabled(true);
@@ -175,6 +212,11 @@ export default function CaptureItem() {
         else {
             setIsNextButtonDisabled(false);
         }
+
+        setDueDate(null);
+        setAssignedUser(undefined);
+        setProject(undefined);
+        setPriority(2);
 
         setStep(newStep);
         renderStep();
@@ -193,7 +235,9 @@ export default function CaptureItem() {
                     return renderStepClassifyActionable();
                 return renderStepClassifyNonActionable();
             case 2:
-                return renderProcessReview();
+                if (isActionable)
+                    return renderProcessActionableReview();
+                return renderProcessNonActionableReview();
             default:
                 return null;
         }
@@ -302,7 +346,7 @@ export default function CaptureItem() {
                         sx={{ gap: 2 }}
                     >
                         <FormControlLabel
-                            value={EnumActionableType.FazerAgora}
+                            value={EnumActionableType.EmAndamento}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -320,7 +364,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumActionableType.Delegar}
+                            value={EnumActionableType.Aguardando}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -338,7 +382,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumActionableType.Agendar}
+                            value={EnumActionableType.Agendada}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -432,7 +476,7 @@ export default function CaptureItem() {
                         sx={{ gap: 2 }}
                     >
                         <FormControlLabel
-                            value={EnumNonActionableType.Lixo}
+                            value={EnumNonActionableType.Arquivada}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -494,7 +538,19 @@ export default function CaptureItem() {
      * Renderiza o passo de revisão e finalização do processamento de item
      * @returns 
      */
-    function renderProcessReview() {
+    function renderProcessActionableReview() {
+
+        switch (classification) {
+            case EnumActionableType.Agendada:
+                setIsFinishButtonDisabled(dueDate === null);
+                break;
+            case EnumActionableType.Aguardando:
+                setIsFinishButtonDisabled(assignedUser === undefined);
+                break;
+            default:
+                setIsFinishButtonDisabled(false);
+                break;
+        }
 
         function handleOnPriorityChange(value: number) {
             setPriority(value);
@@ -506,14 +562,16 @@ export default function CaptureItem() {
 
         function handleDueDateChange(date: Dayjs | null) {
             setDueDate(date);
+            setIsFinishButtonDisabled(date === null);
         }
 
-        function handleUserChange(user: number | undefined) {
-            setAssignedUser(users.find(u => u.id === Number(user)));
+        function handleUserChange(user_id: number | undefined) {
+            setAssignedUser(users.find(u => u.id === Number(user_id)));
+            setIsFinishButtonDisabled(user_id === undefined);
         }
 
         function getStatusName() {
-            const status = statusTasks.find(s => s.id === classification);
+            const status = statusTasks.find(s => s.name === EnumActionableTypeName[classification as number]);
             return status ? status.name : 'Desconhecido';
         }
 
@@ -563,20 +621,21 @@ export default function CaptureItem() {
                 }
 
                 {
-                    classification === EnumActionableType.Agendar && (
-                        <DatePicker
+                    classification === EnumActionableType.Agendada && (
+                        <DateTimePicker
                             label="Data/Hora"
                             value={dueDate}
                             onChange={(e) => handleDueDateChange(e || null)}
+                            slotProps={{ field: { clearable: true, } }}
                         />
                     )}
 
                 {
-                    classification === EnumActionableType.Delegar && (
+                    classification === EnumActionableType.Aguardando && (
                         <FormControl fullWidth required>
                             <InputLabel>Delegar para</InputLabel>
                             <Select
-                                value={assignedUser || undefined}
+                                value={assignedUser ? assignedUser : undefined}
                                 label="Delegar para"
                                 onChange={(e) => handleUserChange(Number(e.target.value))}
                             >
@@ -614,14 +673,14 @@ export default function CaptureItem() {
                         )
                     }
                     {
-                        classification === EnumActionableType.Agendar && dueDate && (
+                        classification === EnumActionableType.Agendada && dueDate && (
                             <Typography variant="body2">
-                                Data agendada: <strong>{formatDate(dueDate)}</strong>
+                                Data agendada: <strong>{formatDateTime(dueDate)}</strong>
                             </Typography>
                         )
                     }
                     {
-                        classification === EnumActionableType.Delegar && assignedUser && (
+                        classification === EnumActionableType.Aguardando && assignedUser && (
                             <Typography variant="body2">
                                 Atribuído para: <strong>{assignedUser.name}</strong>
                                 {assignedUser.profile && ` (${assignedUser.profile.name})`}
@@ -634,11 +693,75 @@ export default function CaptureItem() {
     }
 
     /**
+     * Renderiza o passo de revisão e finalização do processamento de item
+     * @returns 
+     */
+    function renderProcessNonActionableReview() {
+
+        setIsFinishButtonDisabled(false);
+
+        function getStatusName() {
+            console.log(EnumNonActionableTypeName[classification as number]);
+            const status = statusTasks.find(s => s.name === EnumNonActionableTypeName[classification as number]);
+            return status ? status.name : 'Desconhecido';
+        }
+
+        return (
+            <Stack spacing={2}>
+                <Alert severity="success">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        Resumo do Processamento:
+                    </Typography>
+                    <Typography variant="body2">
+                        Status: <strong>{getStatusName()}</strong>
+                    </Typography>
+                </Alert>
+            </Stack>
+        )
+    }
+
+    /**
      * Lida com o processamento final do item
      */
     async function handleProcessItem() {
-        console.log('Finalizar processamento do item');
-        handleCloseProcessItemDialog();
+
+        if (!selectedItem) {
+            showSnackbar('Nenhum item selecionado para processar!', 5000, 'error');
+            return;
+        }
+
+        try {
+            showBackdrop();
+
+            await taskService.create({
+                item_id: selectedItem.id,
+                title: selectedItem.title,
+                description: selectedItem.note,
+                due_date: dueDate ? dueDate.toDate() : undefined,
+                priority_id: priority,
+                project_id: project ? project.id : undefined,
+                status_id: statusTasks.find(s => s.name === (isActionable ? EnumActionableTypeName[classification as number] : EnumNonActionableTypeName[classification as number]))?.id || 0,
+                created_by_id: selectedItem.created_by_id,
+                assigned_to_id: assignedUser ? assignedUser.id : undefined,
+            })
+
+            await itemService.update(selectedItem.id, {
+                is_processed: true,
+            });
+
+            await getItems();
+
+            handleCloseProcessItemDialog();
+
+            showSnackbar('Item processado com sucesso!', 5000, 'success');
+
+        } catch (error: any) {
+            const message = error.response?.data?.error || 'Erro ao processar item';
+            showSnackbar(message, 5000, 'error');
+        }
+        finally {
+            hideBackdrop();
+        }
     }
 
     /**
@@ -775,6 +898,7 @@ export default function CaptureItem() {
                         renderStepContent={renderStep}
                         finishButtonText="Processar Item"
                         isNextStepDisabled={isNextButtonDisabled}
+                        isFinishButtonDisabled={isFinishButtonDisabled}
                         onStepChange={handleOnStepChange}
                         onFinish={handleProcessItem}
                     />

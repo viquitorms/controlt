@@ -7,7 +7,7 @@ export interface Item {
     title: string;
     created_date: Date;
     created_by_id: number;
-    note: string | null;
+    note: string | undefined;
     is_processed: boolean;
     created_by: User;
     tasks: Task[];
