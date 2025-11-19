@@ -12,7 +12,7 @@ export default class UpdateItemDto {
      */
     @IsOptional()
     @IsString()
-    title: string;
+    title?: string;
 
     /**
      * As novas notas para o item.
@@ -20,10 +20,10 @@ export default class UpdateItemDto {
      */
     @IsOptional()
     @IsString()
-    note: string;
+    note?: string;
 
     @IsOptional()
     @IsBoolean()
     @Type(() => Boolean)
-    is_processed: boolean;
+    is_processed?: boolean;
 }

@@ -4,13 +4,15 @@ import CreateTaskDto from "../dtos/task/createTask.dto.js";
 import UpdateTaskDto from "../dtos/task/updateTask.dto.js";
 import TaskFilterDto from "../dtos/task/filterTask.dto.js";
 import recordedTimeService from "./recordedTime.service.js";
+import itemService from "./item.service.js";
 
 class TaskService {
     /**
      * Cria uma nova tarefa.
      */
     public async create(data: CreateTaskDto): Promise<Task> {
-        return prisma.task.create({
+
+        const newTask = prisma.task.create({
             data: {
                 ...data,
                 item_id: Number(data.item_id),
@@ -21,6 +23,18 @@ class TaskService {
                 assigned_to_id: data.assigned_to_id ? Number(data.assigned_to_id) : undefined,
             },
         });
+
+        if (!newTask) {
+            throw new Error(`Erro ao criar a tarefa ${data.title}.`);
+        }
+
+        const item = await itemService.update(data.item_id, { is_processed: true });
+
+        if (!item) {
+            throw new Error(`Erro ao atualizar o item associado à tarefa ${data.title}.`);
+        }
+
+        return newTask;
     }
 
     /**
