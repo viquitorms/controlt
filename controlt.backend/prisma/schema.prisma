@@ -91,15 +91,14 @@ model StatusTask {
 }
 
 model Item {
-  id            Int            @id @default(autoincrement())
-  title         String         @db.VarChar(255)
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(255)
   note          String?
-  created_date  DateTime       @default(now())
+  created_date  DateTime @default(now())
   created_by_id Int
-  is_processed  Boolean        @default(false)
-  created_by    User           @relation("ItemCreator", fields: [created_by_id], references: [id])
+  is_processed  Boolean  @default(false)
+  created_by    User     @relation("ItemCreator", fields: [created_by_id], references: [id])
   tasks         Task[]
-  recorded_time RecordedTime[]
 
   @@map("item")
 }
@@ -145,10 +144,8 @@ model RecordedTime {
   id        Int       @id @default(autoincrement())
   startedAt DateTime
   endedAt   DateTime?
-  item_id   Int?
   task_id   Int?
   user_id   Int
-  item      Item?     @relation(fields: [item_id], references: [id], onDelete: Cascade)
   task      Task?     @relation(fields: [task_id], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [user_id], references: [id])
 

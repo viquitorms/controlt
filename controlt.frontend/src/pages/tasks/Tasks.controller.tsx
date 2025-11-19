@@ -93,6 +93,48 @@ export function useTasksController(statusName: string) {
         [statusName]
     );
 
+    const handleStart = useCallback(async (task: Task) => {
+        try {
+            showBackdrop();
+            await taskService.start(task.id);
+            showSnackbar("Tarefa iniciada!", 3000, "success");
+            await loadTasks(); // Recarrega para atualizar status e botões
+        } catch (error: any) {
+            const message = error?.response?.data?.error || "Erro ao iniciar tarefa";
+            showSnackbar(message, 5000, "error");
+        } finally {
+            hideBackdrop();
+        }
+    }, [statusName]);
+
+    const handlePause = useCallback(async (task: Task) => {
+        try {
+            showBackdrop();
+            await taskService.pause(task.id);
+            showSnackbar("Tarefa pausada!", 3000, "info");
+            await loadTasks();
+        } catch (error: any) {
+            const message = error?.response?.data?.error || "Erro ao pausar tarefa";
+            showSnackbar(message, 5000, "error");
+        } finally {
+            hideBackdrop();
+        }
+    }, [statusName]);
+
+    const handleFinish = useCallback(async (task: Task) => {
+        try {
+            showBackdrop();
+            await taskService.finish(task.id);
+            showSnackbar("Tarefa concluída!", 3000, "success");
+            await loadTasks();
+        } catch (error: any) {
+            const message = error?.response?.data?.error || "Erro ao concluir tarefa";
+            showSnackbar(message, 5000, "error");
+        } finally {
+            hideBackdrop();
+        }
+    }, [statusName]);
+
     const handleEdit = useCallback((task: Task) => {
         setTaskToEdit(task);
         setEditDialogOpen(true);
@@ -130,9 +172,16 @@ export function useTasksController(statusName: string) {
 
     const columns: GridColDef<Task>[] = useMemo(() => {
         return createTaskColumns(
-            statusName, { handleEdit, handleDelete }
+            statusName,
+            {
+                handleEdit,
+                handleDelete,
+                handleStart,
+                handlePause,
+                handleFinish
+            }
         );
-    }, [statusName, handleEdit, handleDelete]);
+    }, [statusName, handleEdit, handleDelete, handleStart, handlePause, handleFinish]);
 
     return {
         // data

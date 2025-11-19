@@ -1,11 +1,14 @@
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { IconButton, Stack } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { IconButton, Stack, Tooltip } from "@mui/material";
+import { Edit, Delete, PlayArrow, Pause, CheckCircle } from "@mui/icons-material";
 import type { Task } from "../../dtos/task/task.res.dto";
 
 export interface TaskColumnOptions {
     handleEdit: (task: Task) => void;
     handleDelete: (task: Task) => void;
+    handleStart: (task: Task) => void;
+    handlePause: (task: Task) => void;
+    handleFinish: (task: Task) => void;
 }
 export const baseColumns: GridColDef<Task>[] = [
     {
@@ -36,27 +39,55 @@ export const baseColumns: GridColDef<Task>[] = [
 ];
 
 export function createTaskColumns(statusName: string, options: TaskColumnOptions): GridColDef<Task>[] {
-    const { handleEdit, handleDelete } = options;
+    const { handleEdit, handleDelete, handleStart, handlePause, handleFinish } = options;
 
     const actionsColumn: GridColDef<Task> = {
         field: "actions",
         type: "actions",
         headerName: "Ações",
-        width: 140,
+        width: 180,
         align: "center",
         headerAlign: "center",
         sortable: false,
         disableColumnMenu: true,
         renderCell: (params: GridRenderCellParams<Task>) => (
             <Stack direction="row" spacing={1}>
-                <>
-                    <IconButton color="primary" size="small" onClick={() => handleEdit(params.row)} title="Editar">
+
+                {(statusName === "Próxima Ação" || statusName === "Em Andamento") && (
+                    <Tooltip title="Iniciar / Retomar">
+                        <IconButton color="success" size="small" onClick={() => handleStart(params.row)}>
+                            <PlayArrow fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                )}
+
+                {statusName === "Em Andamento" && (
+                    <>
+                        <Tooltip title="Pausar">
+                            <IconButton color="warning" size="small" onClick={() => handlePause(params.row)}>
+                                <Pause fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Concluir">
+                            <IconButton color="success" size="small" onClick={() => handleFinish(params.row)}>
+                                <CheckCircle fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
+                )}
+
+                {/* Botões Padrão */}
+                <Tooltip title="Editar">
+                    <IconButton color="primary" size="small" onClick={() => handleEdit(params.row)}>
                         <Edit fontSize="small" />
                     </IconButton>
-                    <IconButton color="error" size="small" onClick={() => handleDelete(params.row)} title="Deletar">
+                </Tooltip>
+
+                <Tooltip title="Deletar">
+                    <IconButton color="error" size="small" onClick={() => handleDelete(params.row)}>
                         <Delete fontSize="small" />
                     </IconButton>
-                </>
+                </Tooltip>
             </Stack>
         ),
     };

@@ -12,10 +12,10 @@ class RecordedTimeService {
      * @returns 
      */
     public async start(data: StartTimerDto, userId: number): Promise<RecordedTime> {
-        const { item_id, task_id } = data;
+        const { task_id } = data;
 
-        if ((!item_id && !task_id) || (item_id && task_id)) {
-            throw new Error('Forneça somente um dos parâmetros: item_id ou task_id.');
+        if (!task_id) {
+            throw new Error('Tarefa não especificada para iniciar o cronômetro.');
         }
 
         const activeTime = await this.getActiveTimer(userId);
@@ -28,8 +28,7 @@ class RecordedTimeService {
                 startedAt: new Date(),
                 endedAt: null,
                 user_id: userId,
-                item_id: item_id || null,
-                task_id: task_id || null
+                task_id: task_id
             }
         });
     }
@@ -77,12 +76,6 @@ class RecordedTimeService {
                         name: true,
                     }
                 },
-                item: {
-                    select: {
-                        id: true,
-                        title: true,
-                    }
-                },
                 task: {
                     select: {
                         id: true,
@@ -103,12 +96,6 @@ class RecordedTimeService {
                 endedAt: null,
             },
             include: {
-                item: {
-                    select: {
-                        id: true,
-                        title: true,
-                    }
-                },
                 task: {
                     select: {
                         id: true,

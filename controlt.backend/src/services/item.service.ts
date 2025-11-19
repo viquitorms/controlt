@@ -22,7 +22,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             }
         });
     }
@@ -45,7 +44,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             },
             skip: (page - 1) * limit,
             take: limit,
@@ -59,7 +57,6 @@ class ItemService {
             include: {
                 created_by: { select: { id: true, name: true } },
                 tasks: true,
-                recorded_time: true,
             },
         });
 
@@ -77,7 +74,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             },
         });
     }
