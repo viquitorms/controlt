@@ -8,6 +8,7 @@ class ItemService {
     public async create(data: CreateItemDto): Promise<Item> {
 
         const userExists = await prisma.user.findUnique({ where: { id: data.created_by_id } });
+
         if (!userExists) {
             throw new Error('Usuário criador não encontrado.');
         }

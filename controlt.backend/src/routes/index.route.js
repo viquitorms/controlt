@@ -11,6 +11,7 @@ import profileRoutes from "./profile.route.js";
 import priorityTaskRoutes from "./priorityTask.route.js";
 import statusProjectRoutes from "./statusProject.route.js";
 import statusTaskRoutes from "./statusTask.route.js";
+import metricRoutes from "./metric.route.js";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use('/priority-tasks', priorityTaskRoutes);
 router.use('/status-projects', statusProjectRoutes);
 router.use('/status-tasks', statusTaskRoutes);
 router.use('/recorded-time', recordedTimeRoutes);
+router.use("/metrics", metricRoutes);
 
 export default router;

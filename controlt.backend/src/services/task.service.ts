@@ -41,7 +41,7 @@ class TaskService {
      * Lista tarefas com filtros.
      */
     public async findAll(filters: TaskFilterDto): Promise<Task[]> {
-        const { page = 1, limit = 20, ...whereClause } = filters;
+        const { ...whereClause } = filters;
 
         const where: Prisma.TaskWhereInput = {
             ...whereClause,
@@ -55,8 +55,6 @@ class TaskService {
 
         return prisma.task.findMany({
             where,
-            skip: (Number(page) - 1) * Number(limit),
-            take: Number(limit),
             include: {
                 status: true,
                 priority: true,
@@ -109,15 +107,34 @@ class TaskService {
     public async start(id: number, userId: number): Promise<Task> {
         const task = await this.findById(id);
 
-        // Tenta iniciar o cronômetro. O service de recordedTime já valida se há outro ativo.
-        // Se falhar (ex: usuário já tem timer rodando), o erro sobe e o controller trata.
+        if (!userId) {
+            throw new Error("Usuário não identificado.");
+        }
+
+        if (!task) {
+            throw new Error("Tarefa não encontrada.");
+        }
+
+        if (task.assigned_to_id && task.assigned_to_id !== userId) {
+            throw new Error("Somente o usuário atribuído pode iniciar esta tarefa.");
+        }
+
         await recordedTimeService.start({ task_id: id }, userId);
+
+        const statusInProgress = await prisma.statusTask.findFirstOrThrow({
+            where: { name: "Em Andamento" }
+        });
 
         return prisma.task.update({
             where: { id },
             data: {
-                status_id: 2, // Assumindo ID 2 = Em Andamento (Verifique seu Seed/Banco)
-                // Grava started_at apenas se ainda não tiver sido iniciado antes
+                status: {
+                    connect: {
+                        id: statusInProgress.id,
+                        name: statusInProgress.name
+                    }
+                },
+                assigned_to: task.assigned_to_id ? undefined : { connect: { id: userId } },
                 started_at: task.started_at ? undefined : new Date(),
             }
         });
@@ -134,21 +151,13 @@ class TaskService {
         // Tenta parar o cronômetro deste usuário
         try {
             await recordedTimeService.stop(userId);
-        } catch (error) {
-            // Se não houver timer ativo, apenas ignoramos e seguimos para atualizar a task se necessário
-            // (Neste caso, o pause pode ser chamado mesmo sem timer, por segurança)
-        }
+        } catch (error) { }
 
-        // Aqui você decide: ao pausar, volta para "Próxima Ação" ou mantém "Em Andamento"?
-        // Por enquanto, vamos manter o status visual, apenas parando a contagem de tempo.
         return prisma.task.findUniqueOrThrow({ where: { id } });
     }
 
     /**
      * Conclui a tarefa (Finish).
-     * - Para o cronômetro.
-     * - Define completed_at.
-     * - Atualiza status para 'Concluída'.
      */
     public async finish(id: number, userId: number): Promise<Task> {
         await this.findById(id);
@@ -156,14 +165,18 @@ class TaskService {
         // Para qualquer timer ativo do usuário ao concluir
         try {
             await recordedTimeService.stop(userId);
-        } catch (error) {
-            // Ignora erro de "nenhum timer ativo"
-        }
+        } catch (error) { }
+
+        const statusCompleted = await prisma.statusTask.findFirstOrThrow({
+            where: { name: "Concluída" }
+        });
+
+        console.log(statusCompleted);
 
         return prisma.task.update({
             where: { id },
             data: {
-                status_id: 3, // Assumindo ID 3 = Concluída (Verifique seu Seed/Banco)
+                status_id: statusCompleted.id,
                 completed_at: new Date(),
             }
         });

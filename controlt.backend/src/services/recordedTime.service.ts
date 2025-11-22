@@ -19,6 +19,7 @@ class RecordedTimeService {
         }
 
         const activeTime = await this.getActiveTimer(userId);
+
         if (activeTime) {
             throw new Error('Já existe um tempo registrado ativo para este usuário. Pare o atual antes de iniciar um novo.');
         }

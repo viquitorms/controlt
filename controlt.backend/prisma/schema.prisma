@@ -83,9 +83,10 @@ model Term {
 }
 
 model StatusTask {
-  id    Int    @id @default(autoincrement())
-  name  String @unique @db.VarChar(50)
-  tasks Task[]
+  id            Int     @id @default(autoincrement())
+  name          String  @unique @db.VarChar(50)
+  is_actionable Boolean
+  tasks         Task[]
 
   @@map("status_task")
 }
