@@ -1,11 +1,16 @@
-import { Backdrop as MuiBackdrop, CircularProgress } from '@mui/material';
+import { Backdrop as MuiBackdrop, CircularProgress, TextField, Typography, Stack } from '@mui/material';
 
 interface IBackdrop {
     open: boolean;
-    onClose?: () => void;
+    message?: string;
 }
 
-export default function CTBackdrop({ open, onClose }: IBackdrop) {
+export default function CTBackdrop(
+    {
+        open,
+        message = "Carregando..."
+    }: IBackdrop
+) {
     return (
         <MuiBackdrop
             sx={() => ({
@@ -13,9 +18,11 @@ export default function CTBackdrop({ open, onClose }: IBackdrop) {
                 zIndex: 9999,
             })}
             open={open}
-            onClick={onClose}
         >
-            <CircularProgress color="inherit" />
+            <Stack spacing={2} alignItems="center">
+                <CircularProgress color="inherit" size={50} />
+                <Typography>{message}</Typography>
+            </Stack>
         </MuiBackdrop>
     );
 }

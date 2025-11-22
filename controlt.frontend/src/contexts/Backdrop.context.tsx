@@ -16,7 +16,7 @@ export function BackdropProvider({ children }: { children: ReactNode }) {
     return (
         <BackdropContext.Provider value={backdrop}>
             {children}
-            <CTBackdrop open={backdrop.open} onClose={backdrop.hideBackdrop} />
+            <CTBackdrop open={backdrop.open} />
         </BackdropContext.Provider>
     );
 }

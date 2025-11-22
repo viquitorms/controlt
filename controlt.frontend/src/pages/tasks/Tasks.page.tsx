@@ -4,27 +4,32 @@ import TaskEditModal from "./Tasks.modal";
 import { useTasksController } from "./Tasks.controller";
 import type { Task } from "../../dtos/task/task.res.dto";
 import { useNavigate } from "react-router-dom";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 
 interface TasksPageProps {
     statusName: string;
-    onRowDoubleClick?: (task: Task) => void;
 }
 
-export default function TasksPage({ statusName, onRowDoubleClick }: TasksPageProps) {
+export default function TasksPage({ statusName }: TasksPageProps) {
+
+    // Quando um página chama esta página, ela pode passar um statusName para filtrar as tarefas exibidas
     const controller = useTasksController(statusName);
     const navigate = useNavigate();
 
+    // Resgata as propriedades e métodos do controller
     const {
         tasks,
         columns,
         editDialogOpen,
-        taskToEdit,
+        editTask,
         users,
         projects,
         handleEdit,
         handleSaveEdit,
         setEditDialogOpen,
         refresh,
+        status,
+        isEditable,
     } = controller;
 
     function NoRowsOverlay() {
@@ -47,17 +52,19 @@ export default function TasksPage({ statusName, onRowDoubleClick }: TasksPagePro
                 cursor="pointer"
                 NoRowsOverlay={NoRowsOverlay}
                 onRowDoubleClick={(params) => {
-                    const t = params.row as Task;
-                    if (onRowDoubleClick) return onRowDoubleClick(t);
-                    handleEdit(t);
+                    if (isEditable) {
+                        const task = params.row as Task;
+                        handleEdit(task);
+                    }
                 }}
             />
 
             <TaskEditModal
                 open={editDialogOpen}
-                task={taskToEdit}
+                task={editTask}
                 users={users}
                 projects={projects}
+                status={status!}
                 onClose={() => setEditDialogOpen(false)}
                 onSave={handleSaveEdit}
             />

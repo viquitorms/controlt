@@ -1,11 +1,12 @@
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from '@mui/material';
-import { Settings, ExitToApp, TableChartRounded, Groups, Person, PlayCircleFilled, HourglassBottom, KeyboardDoubleArrowRight, CalendarToday, Inbox, DateRange, CheckCircleOutline } from '@mui/icons-material';
+import { Divider, Drawer, List, Stack, Toolbar, Typography } from '@mui/material';
+import { ExitToApp, TableChartRounded, Person, PlayCircleFilled, HourglassBottom, KeyboardDoubleArrowRight, CalendarToday, DateRange, CheckCircleOutline, Insights, DonutLarge } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SourceIcon from '@mui/icons-material/Source';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../../../services/auth.service';
-import { useAuth } from '../../../../contexts/Auth.context';
-import CTList from '../../molecules/CTList.molecule.component';
+import { authService } from '../../services/auth.service';
+import { useAuth } from '../../contexts/Auth.context';
+import CTList from '../ui/molecules/CTList.molecule.component';
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 
 const drawerWidth = 240;
 
@@ -13,16 +14,27 @@ export default function CTSidebar() {
     const navigate = useNavigate();
     const { isManager } = useAuth();
 
-    const actionList = [
+    const captureList = [
         { text: 'Iniciar Captura', icon: <PlayCircleFilled />, path: '/captura' },
-        { text: 'Caixa de Entrada', icon: <Inbox />, path: '/caixadeentrada' },
+    ]
+
+    const actionList = [
+        { text: 'Em Andamento', icon: <AutoModeIcon />, path: '/emandamento' },
         { text: 'Aguardando', icon: <HourglassBottom />, path: '/aguardando' },
         { text: 'Agendado', icon: <CalendarToday />, path: '/agendado' },
         { text: 'Próximas Ações', icon: <KeyboardDoubleArrowRight />, path: '/proximasacoes' },
         { text: 'Algum dia talvez', icon: <DateRange />, path: '/algumdia' },
-        { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
         { text: 'Concluídos', icon: <CheckCircleOutline />, path: '/concluidos' },
-        { text: 'Deletados', icon: <DeleteIcon />, path: '/deletados' },
+    ];
+
+    const nonActionableList = [
+        { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
+        { text: 'Arquivadas', icon: <DeleteIcon />, path: '/arquivadas' },
+    ];
+
+    const metricsList = [
+        { text: 'Lead Time', icon: <Insights />, path: '/metricas/lead-time' },
+        { text: 'Taxa Conclusão', icon: <DonutLarge />, path: '/metricas/taxa-conclusao' }
     ];
 
     const navigationList = [
@@ -33,7 +45,7 @@ export default function CTSidebar() {
     ];
 
     const configurationList = [
-        { text: 'Configurações', icon: <Settings />, path: '/configuracoes' },
+        // { text: 'Configurações', icon: <Settings />, path: '/configuracoes' },
         { text: 'Sair', icon: <ExitToApp />, action: Logout },
     ];
 
@@ -66,7 +78,19 @@ export default function CTSidebar() {
             <Stack display={'flex'} flexDirection={'column'} justifyContent={'space-between'} height={'100%'}>
                 <Stack display={'flex'} flexDirection={'column'} gap={2}>
                     <Stack>
-                        <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>GTD</Typography>
+                        <CTList
+                            type="button"
+                            buttonType={captureList.map(item => ({
+                                id: item.text,
+                                icon: item.icon,
+                                label: item.text,
+                                onClick: () => handleNavigate(item),
+                                dense: true,
+                            }))}
+                        />
+                    </Stack>
+                    <Stack>
+                        <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Acionáveis</Typography>
                         <CTList
                             type="button"
                             buttonType={actionList.map(item => ({
@@ -79,6 +103,41 @@ export default function CTSidebar() {
                         />
                     </Stack>
                     <Divider />
+                    <Stack>
+                        <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Não Acionáveis</Typography>
+                        <CTList
+                            type="button"
+                            buttonType={nonActionableList.map(item => ({
+                                id: item.text,
+                                icon: item.icon,
+                                label: item.text,
+                                onClick: () => handleNavigate(item),
+                                dense: true,
+                            }))}
+                        />
+                    </Stack>
+                    <Divider />
+                    {
+                        isManager && (
+                            <>
+                                <Stack>
+                                    <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Métricas</Typography>
+                                    <CTList
+                                        type="button"
+                                        buttonType={metricsList.map(item => ({
+                                            id: item.text,
+                                            icon: item.icon,
+                                            label: item.text,
+                                            onClick: () => handleNavigate(item),
+                                            dense: true,
+                                        }))}
+                                    />
+                                </Stack>
+                                <Divider />
+                            </>
+                        )
+                    }
+
                     <Stack>
                         <Typography variant='caption' sx={{ marginLeft: 2 }} color={'textDisabled'}>Organização</Typography>
                         <CTList

@@ -8,7 +8,7 @@ import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useAuth } from "../../contexts/Auth.context";
 import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
 import type { Item } from "../../dtos/item/Item.res.dto";
-import type { GridColDef, GridRenderCellParams, GridValueGetter } from "@mui/x-data-grid";
+import type { GridRenderCellParams } from "@mui/x-data-grid";
 import type { User } from "../../dtos/user/User.res.dto";
 import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import CTStepper from "../../components/ui/organisms/stepper/CTStepper.organism.component";
@@ -16,17 +16,18 @@ import { EnumActionableType, EnumActionableTypeName } from "../../enums/Actionab
 import { EnumNonActionableType, EnumNonActionableTypeName } from "../../enums/NonActionableType.enum";
 import { useInitialize } from "../../contexts/Initialized.context";
 import type { Project } from "../../dtos/project/Project.res.dto";
-import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
-import { formatDate, formatDateTime } from "../../utils/Date.util";
+import { formatDateTime } from "../../utils/Date.util";
 import { taskService } from "../../services/task.service";
 import { userService } from "../../services/user.service";
 import { projectService } from "../../services/project.service";
+import type { StatusTask } from "../../dtos/statusTask/statusTask.res.dto";
 
 export default function CaptureItem() {
     const { showSnackbar } = useSnackbar();
     const { showBackdrop, hideBackdrop } = useBackdrop();
-    const { user } = useAuth();
+    const { user, isManager } = useAuth();
     const [item, setItem] = useState<CreateItemDto>({
         title: '',
         note: '',
@@ -34,7 +35,7 @@ export default function CaptureItem() {
         is_processed: false,
     });
 
-    const { priorities, statusTasks } = useInitialize()
+    const { priorities, getStatus } = useInitialize()
 
     const [itemsList, setItemsList] = useState<Item[]>([]);
     const [isProcessDialogOpen, setIsProcessItemDialogOpen] = useState<boolean>(false);
@@ -47,7 +48,7 @@ export default function CaptureItem() {
     const [isFinishButtonDisabled, setIsFinishButtonDisabled] = useState<boolean>(true);
 
     const [isActionable, setIsActionable] = useState<boolean | null>(null);
-    const [classification, setClassification] = useState<number | null>(null);
+    const [status, setStatus] = useState<StatusTask | null>(null);
     const [priority, setPriority] = useState<number>(2);
     const [dueDate, setDueDate] = useState<Dayjs | null>(null);
     const [assignedUser, setAssignedUser] = useState<User | undefined>(undefined);
@@ -81,8 +82,8 @@ export default function CaptureItem() {
         try {
             showBackdrop();
             await itemService.create(item);
-            showSnackbar('Item criado e inserido na caida de entrada!', 5000, "success")
             await getItems();
+            showSnackbar('Item criado e inserido na caida de entrada!', 5000, "success")
         } catch (error: any) {
             const message = error.response?.data?.error || 'Erro ao criar item';
             showSnackbar(message, 5000, 'error');
@@ -150,12 +151,14 @@ export default function CaptureItem() {
                 return;
             }
 
-            setItem({
+            const newTask: CreateItemDto = {
                 title: '',
                 note: '',
                 created_by_id: user.id,
                 is_processed: false,
-            });
+            };
+
+            setItem(newTask);
         } catch (error) {
             showSnackbar('Falha ao limpar campos!')
         }
@@ -194,7 +197,7 @@ export default function CaptureItem() {
         setStep(0);
         setIsNextButtonDisabled(true);
         setIsActionable(null);
-        setClassification(null);
+        setStatus(null);
     }
 
     /**
@@ -263,7 +266,7 @@ export default function CaptureItem() {
 
             if (value !== isActionable) {
                 setIsActionable(value);
-                setClassification(null);
+                setStatus(null);
             }
         }
 
@@ -316,21 +319,21 @@ export default function CaptureItem() {
      */
     function renderStepClassifyActionable() {
 
-        if (classification !== null)
-            handleClassificationChange(classification!);
+        if (status !== null)
+            handleStatusChange(status!.name);
 
         /**
          * Lida com a mudança da classificação no stepper 2
          * @param value 
          */
-        function handleClassificationChange(value: number) {
+        function handleStatusChange(value: string) {
             if (value !== null) {
                 setIsNextButtonDisabled(false);
             }
             else {
                 setIsNextButtonDisabled(true);
             }
-            setClassification(value);
+            setStatus(getStatus(value)!);
         }
 
         return (
@@ -341,12 +344,12 @@ export default function CaptureItem() {
 
                 <FormControl component="fieldset" fullWidth>
                     <RadioGroup
-                        value={classification}
-                        onChange={(e) => handleClassificationChange(Number(e.target.value))}
+                        value={status?.name}
+                        onChange={(e) => handleStatusChange(e.target.value)}
                         sx={{ gap: 2 }}
                     >
                         <FormControlLabel
-                            value={EnumActionableType.EmAndamento}
+                            value={EnumActionableTypeName[EnumActionableType.EmAndamento]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -364,7 +367,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumActionableType.Aguardando}
+                            value={EnumActionableTypeName[EnumActionableType.Aguardando]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -382,7 +385,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumActionableType.Agendada}
+                            value={EnumActionableTypeName[EnumActionableType.Agendada]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -399,26 +402,30 @@ export default function CaptureItem() {
                             }
                         />
 
-                        <FormControlLabel
-                            value={EnumActionableType.Projeto}
-                            control={<Radio />}
-                            label={
-                                <Stack direction="row" spacing={1} alignItems="center">
-                                    <Assignment fontSize="small" color="primary" />
-                                    <Box>
-                                        <Typography variant="body1" fontWeight="bold">
-                                            É um projeto (mais de 1 ação)
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            Converter em projeto com múltiplas tarefas
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                            }
-                        />
+                        {
+                            isManager && (
+                                <FormControlLabel
+                                    value={EnumActionableTypeName[EnumActionableType.Projeto]}
+                                    control={<Radio />}
+                                    label={
+                                        <Stack direction="row" spacing={1} alignItems="center">
+                                            <Assignment fontSize="small" color="primary" />
+                                            <Box>
+                                                <Typography variant="body1" fontWeight="bold">
+                                                    É um projeto (mais de 1 ação)
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    Converter em projeto com múltiplas tarefas
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                    }
+                                />
+                            )
+                        }
 
                         <FormControlLabel
-                            value={EnumActionableType.ProximaAcao}
+                            value={EnumActionableTypeName[EnumActionableType.ProximaAcao]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -446,21 +453,21 @@ export default function CaptureItem() {
      */
     function renderStepClassifyNonActionable() {
 
-        if (classification !== null)
-            handleClassificationChange(classification!);
+        if (status !== null)
+            handleStatusChange(status!.name);
 
         /**
          * Lida com a mudança da classificação no stepper 2
          * @param value 
          */
-        function handleClassificationChange(value: number) {
+        function handleStatusChange(value: string) {
             if (value !== null) {
                 setIsNextButtonDisabled(false);
             }
             else {
                 setIsNextButtonDisabled(true);
             }
-            setClassification(value);
+            setStatus(getStatus(value)!);
         }
 
         return (
@@ -471,22 +478,22 @@ export default function CaptureItem() {
 
                 <FormControl component="fieldset" fullWidth>
                     <RadioGroup
-                        value={classification}
-                        onChange={(e) => handleClassificationChange(Number(e.target.value))}
+                        value={status?.name}
+                        onChange={(e) => handleStatusChange(e.target.value)}
                         sx={{ gap: 2 }}
                     >
                         <FormControlLabel
-                            value={EnumNonActionableType.Arquivada}
+                            value={EnumNonActionableTypeName[EnumNonActionableType.Arquivada]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
                                     <Delete fontSize="small" color="error" />
                                     <Box>
                                         <Typography variant="body1" fontWeight="bold">
-                                            Descartar
+                                            Arquivar
                                         </Typography>
                                         <Typography variant="caption" color="text.secondary">
-                                            Não é útil, pode ser deletado
+                                            Não é útil, pode ser arquivado
                                         </Typography>
                                     </Box>
                                 </Stack>
@@ -494,7 +501,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumNonActionableType.Referencia}
+                            value={EnumNonActionableTypeName[EnumNonActionableType.Referencia]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -512,7 +519,7 @@ export default function CaptureItem() {
                         />
 
                         <FormControlLabel
-                            value={EnumNonActionableType.AlgumDia}
+                            value={EnumNonActionableTypeName[EnumNonActionableType.AlgumDia]}
                             control={<Radio />}
                             label={
                                 <Stack direction="row" spacing={1} alignItems="center">
@@ -540,11 +547,11 @@ export default function CaptureItem() {
      */
     function renderProcessActionableReview() {
 
-        switch (classification) {
-            case EnumActionableType.Agendada:
+        switch (status?.name) {
+            case EnumActionableTypeName[EnumActionableType.Agendada]:
                 setIsFinishButtonDisabled(dueDate === null);
                 break;
-            case EnumActionableType.Aguardando:
+            case EnumActionableTypeName[EnumActionableType.Aguardando]:
                 setIsFinishButtonDisabled(assignedUser === undefined);
                 break;
             default:
@@ -570,34 +577,33 @@ export default function CaptureItem() {
             setIsFinishButtonDisabled(user_id === undefined);
         }
 
-        function getStatusName() {
-            const status = statusTasks.find(s => s.name === EnumActionableTypeName[classification as number]);
-            return status ? status.name : 'Desconhecido';
-        }
-
         return (
             <Stack spacing={2}>
                 <Typography variant="h6">Detalhes Adicionais</Typography>
 
-                <FormControl fullWidth>
-                    <InputLabel>Prioridade</InputLabel>
-                    <Select
-                        value={priority}
-                        label="Prioridade"
-                        onChange={(e) => handleOnPriorityChange(e.target.value as number)}
-                    >
-                        {
-                            priorities.map((p) => (
-                                <MenuItem key={p.id} value={p.level}>
-                                    {p.name}
-                                </MenuItem>
-                            ))
-                        }
-                    </Select>
-                </FormControl>
+                {
+                    status?.name !== EnumActionableTypeName[EnumActionableType.Projeto] && (
+                        <FormControl fullWidth>
+                            <InputLabel>Prioridade</InputLabel>
+                            <Select
+                                value={priority}
+                                label="Prioridade"
+                                onChange={(e) => handleOnPriorityChange(e.target.value as number)}
+                            >
+                                {
+                                    priorities.map((p) => (
+                                        <MenuItem key={p.id} value={p.level}>
+                                            {p.name}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                    )
+                }
 
                 {
-                    classification !== EnumActionableType.Projeto &&
+                    status?.name !== EnumActionableTypeName[EnumActionableType.Projeto] &&
                     (
                         <FormControl fullWidth>
                             <InputLabel>Projeto</InputLabel>
@@ -622,8 +628,9 @@ export default function CaptureItem() {
 
                 {
                     (
-                        classification === EnumActionableType.Agendada ||
-                        classification === EnumActionableType.Aguardando
+                        status?.name === EnumActionableTypeName[EnumActionableType.Agendada] ||
+                        status?.name === EnumActionableTypeName[EnumActionableType.Aguardando] ||
+                        status?.name === EnumActionableTypeName[EnumActionableType.EmAndamento]
                     )
                     &&
                     (
@@ -636,7 +643,7 @@ export default function CaptureItem() {
                     )}
 
                 {
-                    classification === EnumActionableType.Aguardando && (
+                    status?.name === EnumActionableTypeName[EnumActionableType.Aguardando] && (
                         <FormControl fullWidth required>
                             <InputLabel>Delegar para</InputLabel>
                             <Select
@@ -665,27 +672,27 @@ export default function CaptureItem() {
                         Resumo do Processamento:
                     </Typography>
                     <Typography variant="body2">
-                        Status: <strong>{getStatusName()}</strong>
+                        Status: <strong>{status?.name}</strong>
                     </Typography>
                     <Typography variant="body2">
                         Prioridade: <strong>{priorities.find(p => p.level === priority)?.name}</strong>
                     </Typography>
                     {
-                        classification !== EnumActionableType.Projeto && project && (
+                        status?.name !== EnumActionableTypeName[EnumActionableType.Projeto] && project && (
                             <Typography variant="body2">
                                 Projeto: <strong>{project.title}</strong>
                             </Typography>
                         )
                     }
                     {
-                        classification === EnumActionableType.Agendada && dueDate && (
+                        status?.name === EnumActionableTypeName[EnumActionableType.Agendada] && dueDate && (
                             <Typography variant="body2">
                                 Data agendada: <strong>{formatDateTime(dueDate)}</strong>
                             </Typography>
                         )
                     }
                     {
-                        classification === EnumActionableType.Aguardando && assignedUser && (
+                        status?.name === EnumActionableTypeName[EnumActionableType.Aguardando] && assignedUser && (
                             <Typography variant="body2">
                                 Atribuído para: <strong>{assignedUser.name}</strong>
                                 {assignedUser.profile && ` (${assignedUser.profile.name})`}
@@ -705,12 +712,6 @@ export default function CaptureItem() {
 
         setIsFinishButtonDisabled(false);
 
-        function getStatusName() {
-            console.log(EnumNonActionableTypeName[classification as number]);
-            const status = statusTasks.find(s => s.name === EnumNonActionableTypeName[classification as number]);
-            return status ? status.name : 'Desconhecido';
-        }
-
         return (
             <Stack spacing={2}>
                 <Alert severity="success">
@@ -718,7 +719,7 @@ export default function CaptureItem() {
                         Resumo do Processamento:
                     </Typography>
                     <Typography variant="body2">
-                        Status: <strong>{getStatusName()}</strong>
+                        Status: <strong>{status?.name}</strong>
                     </Typography>
                 </Alert>
             </Stack>
@@ -738,49 +739,43 @@ export default function CaptureItem() {
         try {
             showBackdrop();
 
-            if (isActionable) {
-                if (classification !== EnumActionableType.Projeto) {
-                    await taskService.create({
-                        item_id: selectedItem.id,
-                        title: selectedItem.title,
-                        description: selectedItem.note,
-                        due_date: dueDate ? dueDate.toDate() : undefined,
-                        priority_id: priority,
-                        project_id: project ? project.id : undefined,
-                        status_id: statusTasks.find(s => s.name === (isActionable ? EnumActionableTypeName[classification as number] : EnumNonActionableTypeName[classification as number]))?.id || 0,
-                        created_by_id: selectedItem.created_by_id,
-                        assigned_to_id: assignedUser ? assignedUser.id : undefined,
-                    })
-
-                    showSnackbar('Item processado com sucesso!', 5000, 'success');
-                }
-                else {
-                    await projectService.create({
-                        title: selectedItem.title,
-                        description: selectedItem.note,
-                        status_id: 1
-                    })
-
-                    await itemService.update(selectedItem.id, {
-                        is_processed: true
-                    });
-
-                    showSnackbar('Item processado e projeto criado com sucesso!', 5000, 'success');
-                }
+            if (!status) {
+                throw new Error(`Status não encontrado no sistema.`);
             }
-            else {
-                await itemService.update(selectedItem.id, {
-                    is_processed: true
-                });
 
-                showSnackbar('Item não acionável processado com sucesso!', 5000, 'success');
+            const isProject = status.name === EnumActionableTypeName[EnumActionableType.Projeto];
+
+            // Se for projeto
+            if (isProject) {
+                await projectService.create({
+                    title: selectedItem.title,
+                    description: selectedItem.note,
+                    status_id: 1
+                });
+            }
+            // Se for tarefa
+            else {
+                await taskService.create({
+                    item_id: selectedItem.id,
+                    title: selectedItem.title,
+                    description: selectedItem.note,
+                    due_date: dueDate ? dueDate.toDate() : undefined,
+                    priority_id: priority,
+                    project_id: project ? project.id : undefined,
+                    status_id: status.id,
+                    created_by_id: selectedItem.created_by_id,
+                    assigned_to_id: assignedUser ? assignedUser.id : undefined,
+                });
             }
 
             handleCloseProcessItemDialog();
             await getItems();
 
+            const message = isProject ? 'Item processado e convertido em Projeto!' : 'Item processado e convertido em Tarefa!';
+            showSnackbar(message, 5000, 'success');
+
         } catch (error: any) {
-            const message = error.response?.data?.error || 'Erro ao processar item';
+            const message = error.response?.data?.error || error.message || 'Erro ao processar item';
             showSnackbar(message, 5000, 'error');
         }
         finally {
@@ -900,7 +895,7 @@ export default function CaptureItem() {
                                     flex: 1,
                                     renderCell: (params: GridRenderCellParams<Item>) => {
                                         return (
-                                            new Date(params.row.created_date).toLocaleDateString()
+                                            new Date(params.row.created_date).toLocaleString()
                                         );
                                     }
                                 }

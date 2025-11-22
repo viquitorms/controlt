@@ -31,7 +31,7 @@ export function AuthProvider({ children }: IAuthProvider) {
 
     useEffect(() => {
         if (user) {
-            setIsManager(user.profile.id === ProfileEnum.GERENTE);
+            setIsManager(user.profile.id === ProfileEnum.Gerente);
         } else {
             setIsManager(false);
         }
