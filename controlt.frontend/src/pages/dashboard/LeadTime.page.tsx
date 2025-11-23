@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Card, CardContent, Grid, Stack, Typography, useTheme } from "@mui/material";
-import { AssignmentTurnedIn, Speed } from "@mui/icons-material";
+import { AccessTime, AssignmentTurnedIn, Speed } from "@mui/icons-material";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
 import { metricService } from "../../services/metric.service";
@@ -40,60 +40,43 @@ export default function LeadTimePage() {
         {
             field: "capture_date",
             headerName: "Captura",
-            width: 160, // Aumentei a largura para caber a hora
+            width: 160,
             renderCell: (params: GridRenderCellParams<MetricData>) => (
-                <span>
-                    {new Date(params.row.capture_date).toLocaleString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}
-                </span>
+                <span>{params?.row?.capture_date ? new Date(params.row.capture_date).toLocaleString() : "-"}</span>
             ),
         },
         {
             field: "completion_date",
             headerName: "Conclusão",
-            width: 160, // Aumentei a largura para caber a hora
+            width: 160,
             renderCell: (params: GridRenderCellParams<MetricData>) => (
-                <span>
-                    {new Date(params.row.completion_date).toLocaleString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}
-                </span>
+                <span>{params?.row?.capture_date ? new Date(params.row.completion_date).toLocaleString() : "-"}</span>
             ),
         },
         {
             field: "lead_time_days",
             headerName: "Lead Time",
-            width: 180,
+            width: 220,
             align: "center",
             headerAlign: "center",
             renderCell: (params: GridRenderCellParams<MetricData>) => {
-                // Cálculo dinâmico de horas para exibição
-                const start = new Date(params.row.capture_date).getTime();
-                const end = new Date(params.row.completion_date).getTime();
-                const diffMs = Math.abs(end - start);
-                const hours = (diffMs / (1000 * 60 * 60)).toFixed(1);
+                const isAboveAverage = metrics?.summary?.average_days
+                    ? params.row.lead_time_days > metrics.summary.average_days
+                    : false;
 
                 return (
-                    <Box
-                        sx={{
-                            fontWeight: "bold",
-                            color: params.row.lead_time_days > (metrics?.summary.average || 0)
-                                ? theme.palette.warning.main
-                                : theme.palette.success.main
-                        }}
-                    >
-                        {/* Exibe Dias e Horas */}
-                        {params.row.lead_time_days} dias ({hours}h)
-                    </Box>
+                    <Stack direction="column" justifyContent="center" alignItems="center" sx={{ height: '100%', lineHeight: 1 }}>
+                        <Typography
+                            variant="body2"
+                            fontWeight="bold"
+                            color={isAboveAverage ? "error.main" : "success.main"}
+                        >
+                            {params.row.lead_time_days} dias
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {params.row.lead_time_formatted}
+                        </Typography>
+                    </Stack>
                 );
             },
         },
@@ -101,31 +84,50 @@ export default function LeadTimePage() {
 
     return (
         <Stack spacing={3}>
-            {/* Cards de Resumo */}
             {metrics && (
                 <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Card variant="outlined">
+                    {/* Card 1: Média em Dias */}
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <Card variant="outlined" sx={{ height: '100%' }}>
                             <CardContent>
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                     <Speed fontSize="large" />
                                     <Box>
-                                        <Typography variant="overline">Lead Time Médio</Typography>
+                                        <Typography variant="overline" color="text.secondary">Lead Time Médio (Dias)</Typography>
                                         <Typography variant="h4" fontWeight="bold">
-                                            {metrics.summary.average} {metrics.unit}
+                                            {metrics.summary.average_days} <Typography component="span" variant="caption" color="text.secondary">dias</Typography>
                                         </Typography>
                                     </Box>
                                 </Stack>
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Card variant="outlined">
+
+                    {/* Card 2: NOVO - Média em Horas */}
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <Card variant="outlined" sx={{ height: '100%' }}>
                             <CardContent>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <AssignmentTurnedIn fontSize="large" />
+                                    <AccessTime fontSize="large" />
                                     <Box>
-                                        <Typography variant="overline">Tarefas Analisadas</Typography>
+                                        <Typography variant="overline" color="text.secondary">Lead Time Médio (Horas)</Typography>
+                                        <Typography variant="h4" fontWeight="bold">
+                                            {metrics.summary.average_formatted}
+                                        </Typography>
+                                    </Box>
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    {/* Card 3: Total de Tarefas */}
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <Card variant="outlined" sx={{ height: '100%' }}>
+                            <CardContent>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    <AssignmentTurnedIn fontSize="large" color="success" />
+                                    <Box>
+                                        <Typography variant="overline" color="text.secondary">Tarefas Analisadas</Typography>
                                         <Typography variant="h4" fontWeight="bold">
                                             {metrics.summary.total_tasks}
                                         </Typography>
@@ -147,6 +149,8 @@ export default function LeadTimePage() {
                     columns={columns}
                     refresh={loadMetrics}
                     cursor="default"
+                    // Desabilitar seleção se for apenas relatório
+                    checkboxSelection={false}
                 />
             </Box>
         </Stack>

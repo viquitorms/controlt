@@ -157,14 +157,19 @@ class TaskService {
     }
 
     /**
-     * Conclui a tarefa (Finish).
-     */
+         * Conclui a tarefa (Finish).
+         */
     public async finish(id: number, userId: number): Promise<Task> {
         const task = await this.findById(id);
         const now = new Date();
+        const activeTime = await recordedTimeService.getActiveTimer(userId);
+        const wasRunningThisTask = activeTime?.task_id === id;
 
-        if (task.started_at == null) {
-            task.started_at = now;
+        if (activeTime) {
+            await recordedTimeService.stop(userId);
+        }
+
+        if (!task.started_at && !wasRunningThisTask) {
             await recordedTimeService.start({ task_id: id }, userId);
             await recordedTimeService.stop(userId);
         }
@@ -177,8 +182,8 @@ class TaskService {
             where: { id },
             data: {
                 status_id: statusCompleted.id,
-                started_at: task.started_at,
-                completed_at: now
+                started_at: task.started_at ?? now,
+                completed_at: now,
             }
         });
     }

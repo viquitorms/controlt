@@ -27,7 +27,7 @@ class RecordedTimeService {
         const activeTime = await this.getActiveTimer(userId);
 
         if (activeTime) {
-            throw new Error('Já existe um tempo registrado ativo para este usuário. Pare o atual antes de iniciar um novo.');
+            this.stop(userId);
         }
 
         return prisma.recordedTime.create({
@@ -47,15 +47,23 @@ class RecordedTimeService {
      */
     public async stop(user_id: number): Promise<RecordedTime> {
         const activeTime = await this.getActiveTimer(user_id);
+
         if (!activeTime) {
             throw new Error('Não há tempo registrado ativo para este usuário.');
         }
-        return prisma.recordedTime.update({
-            where: { id: activeTime.id },
-            data: { endedAt: new Date() }
-        });
-    }
 
+        // Armazene o resultado da atualização em uma nova variável ou retorne diretamente
+        const updatedTime = await prisma.recordedTime.update({
+            where: {
+                id: activeTime.id
+            },
+            data: {
+                endedAt: new Date()
+            }
+        });
+
+        return updatedTime;
+    }
     /**
      * Busca todos os tempos registrados com base nos filtros fornecidos.
      * @param filters 

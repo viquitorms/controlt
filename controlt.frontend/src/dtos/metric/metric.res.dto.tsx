@@ -11,16 +11,17 @@ export interface MetricData {
     capture_date: string;
     completion_date: string;
     lead_time_days: number;
+    lead_time_formatted: string;
 }
 
 export interface MetricSummary {
-    average: number;
+    average_days: number;
     total_tasks: number;
+    average_formatted: string;
 }
 
 export interface LeadTimeMetricResponse {
     metric: string;
-    unit: string;
     description: string;
     summary: MetricSummary;
     data: MetricData[];

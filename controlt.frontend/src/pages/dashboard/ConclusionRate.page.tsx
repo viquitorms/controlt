@@ -149,34 +149,36 @@ export default function ConclusionRatePage() {
             {
                 metrics && (
                     <>
-                        <Grid container spacing={2}>
-                            {/* Card Principal: Taxa % */}
+                        <Grid container spacing={2} alignItems={"center"} maxHeight={150}>
+
+                            {/* Card: Realizado vs Planeado */}
                             <Grid size={{ xs: 12, md: 4 }}>
                                 <Card variant="outlined">
                                     <CardContent>
-                                        <Stack spacing={1}>
-                                            <Stack direction="row" alignItems="center" spacing={1}>
-                                                <TrendingUp />
-                                                <Typography variant="overline">Taxa de Conclusão</Typography>
+                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                            <EventAvailable fontSize="large" />
+                                            <Stack>
+                                                <Typography variant="overline" color="text.secondary">Taxa de Conclusão</Typography>
+                                                <Typography variant="h4" fontWeight="bold">
+                                                    {metrics.summary.rate}%
+                                                </Typography>
                                             </Stack>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
 
-                                            <Typography variant="h4" fontWeight="bold">
-                                                {metrics.summary.rate}%
-                                            </Typography>
-
-                                            <Box sx={{ width: '100%', mt: 1 }}>
-                                                <LinearProgress
-                                                    variant="determinate"
-                                                    value={metrics.summary.rate}
-                                                    sx={{
-                                                        height: 8,
-                                                        borderRadius: 4,
-                                                        bgcolor: 'rgba(255,255,255,0.3)',
-                                                        '& .MuiLinearProgress-bar': {
-                                                            bgcolor: 'white'
-                                                        }
-                                                    }}
-                                                />
+                            {/* Card: Realizado vs Planeado */}
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                            <EventAvailable fontSize="large" />
+                                            <Box>
+                                                <Typography variant="overline" color="text.secondary">Total Planejado</Typography>
+                                                <Typography variant="h4" fontWeight="bold">
+                                                    {metrics.summary.total_planned}
+                                                </Typography>
                                             </Box>
                                         </Stack>
                                     </CardContent>
@@ -184,39 +186,22 @@ export default function ConclusionRatePage() {
                             </Grid>
 
                             {/* Card: Realizado vs Planeado */}
-                            <Grid size={{ xs: 12, md: 8 }}>
-                                <Card sx={{ height: '100%' }} variant="outlined">
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <Card variant="outlined">
                                     <CardContent>
-                                        <Grid container spacing={2}>
-                                            <Grid size={{ xs: 12, md: 6 }}>
-                                                <Stack direction="row" alignItems="center" spacing={2}>
-                                                    <EventAvailable fontSize="large" />
-                                                    <Box>
-                                                        <Typography variant="overline" color="text.secondary">Total Planeado</Typography>
-                                                        <Typography variant="h4" fontWeight="bold">
-                                                            {metrics.summary.total_planned}
-                                                        </Typography>
-                                                        <Typography variant="caption">Tarefas com data</Typography>
-                                                    </Box>
-                                                </Stack>
-                                            </Grid>
-
-                                            <Grid size={{ xs: 12, md: 6 }}>
-                                                <Stack direction="row" alignItems="center" spacing={2}>
-                                                    <CheckCircle fontSize="large" color="success" />
-                                                    <Box>
-                                                        <Typography variant="overline" color="text.secondary">Total Concluído</Typography>
-                                                        <Typography variant="h4" fontWeight="bold" color="success.main">
-                                                            {metrics.summary.total_completed}
-                                                        </Typography>
-                                                        <Typography variant="caption">Entregues no prazo</Typography>
-                                                    </Box>
-                                                </Stack>
-                                            </Grid>
-                                        </Grid>
+                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                            <CheckCircle fontSize="large" color="success" />
+                                            <Box>
+                                                <Typography variant="overline" color="text.secondary">Total Concluído</Typography>
+                                                <Typography variant="h4" fontWeight="bold" color="success.main">
+                                                    {metrics.summary.total_completed}
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
                                     </CardContent>
                                 </Card>
                             </Grid>
+
                         </Grid>
 
                         {/* Tabela Detalhada */}

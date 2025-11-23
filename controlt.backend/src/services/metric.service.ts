@@ -3,11 +3,29 @@ import { Prisma } from "@prisma/client";
 
 class MetricService {
     /**
+         * Helper para converter milissegundos em HH:mm:ss
+         * Nota: As horas podem passar de 24 se o lead time for maior que 1 dia.
+         */
+    private msToTime(duration: number): string {
+        const hours = Math.floor(duration / (1000 * 60 * 60));
+        const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+
+        const h = String(hours).padStart(2, '0');
+        const m = String(minutes).padStart(2, '0');
+        const s = String(seconds).padStart(2, '0');
+
+        return `${h}:${m}:${s}`;
+    }
+
+    /**
      * Calcula o Lead Time das tarefas concluídas.
      * Lead Time = Data de Conclusão (Task) - Data de Captura (Item)
      */
     public async getLeadTime(userId: number, filters?: any) {
         const { project_id, date_from, date_to } = filters || {};
+
+        let totalDiffMs = 0;
 
         const statusCompleted = await prisma.statusTask.findFirstOrThrow({
             where: { name: "Concluída" }
@@ -35,37 +53,47 @@ class MetricService {
             orderBy: { completed_at: 'desc' }
         });
 
-        // Realiza o cálculo para cada tarefa
         const tasksWithMetrics = tasks.map(task => {
             if (!task.completed_at || !task.item?.created_date) return null;
 
             const completionDate = new Date(task.completed_at);
             const captureDate = new Date(task.item.created_date);
+
             const diffTime = Math.abs(completionDate.getTime() - captureDate.getTime());
+
+            // Acumula para a média geral
+            totalDiffMs += diffTime;
+
             const leadTimeDays = parseFloat((diffTime / (1000 * 60 * 60 * 24)).toFixed(1));
+            const leadTimeFormatted = this.msToTime(diffTime);
 
             return {
                 id: task.id,
                 title: task.title,
-                project: task.project?.title || 'Sem Projeto',
+                project: task.project?.title || '-',
                 capture_date: captureDate,
                 completion_date: completionDate,
-                lead_time_days: leadTimeDays
+                lead_time_days: leadTimeDays,
+                lead_time_formatted: leadTimeFormatted,
             };
         }).filter(item => item !== null);
 
-        // Calcula a média
-        const totalLeadTime = tasksWithMetrics.reduce((acc, curr) => acc + (curr?.lead_time_days || 0), 0);
-        const averageLeadTime = tasksWithMetrics.length > 0
-            ? parseFloat((totalLeadTime / tasksWithMetrics.length).toFixed(1))
-            : 0;
+        // Cálculos de Média
+        const totalTasks = tasksWithMetrics.length;
+
+        // Média em Dias (para o primeiro card)
+        const totalDays = tasksWithMetrics.reduce((acc, curr) => acc + (curr?.lead_time_days || 0), 0);
+        const averageDays = totalTasks > 0 ? parseFloat((totalDays / totalTasks).toFixed(1)) : 0;
+
+        // Média em Horas (para o NOVO card)
+        const averageMs = totalTasks > 0 ? totalDiffMs / totalTasks : 0;
+        const averageFormatted = this.msToTime(averageMs);
 
         return {
-            metric: "Lead Time (Dias)",
-            description: "Tempo decorrido entre a Captura (Inbox) e a Conclusão da tarefa.",
             summary: {
-                average: averageLeadTime,
-                total_tasks: tasksWithMetrics.length
+                average_days: averageDays,
+                average_formatted: averageFormatted,
+                total_tasks: totalTasks
             },
             data: tasksWithMetrics
         };

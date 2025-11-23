@@ -23,11 +23,11 @@ export default function CTSidebar() {
         { text: 'Aguardando', icon: <HourglassBottom />, path: '/aguardando' },
         { text: 'Agendado', icon: <CalendarToday />, path: '/agendado' },
         { text: 'Próximas Ações', icon: <KeyboardDoubleArrowRight />, path: '/proximasacoes' },
-        { text: 'Algum dia talvez', icon: <DateRange />, path: '/algumdia' },
         { text: 'Concluídos', icon: <CheckCircleOutline />, path: '/concluidos' },
     ];
 
     const nonActionableList = [
+        { text: 'Algum dia talvez', icon: <DateRange />, path: '/algumdia' },
         { text: 'Referências', icon: <SourceIcon />, path: '/referencias' },
         { text: 'Arquivadas', icon: <DeleteIcon />, path: '/arquivadas' },
     ];
