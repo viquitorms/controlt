@@ -160,24 +160,74 @@ class TaskService {
      * Conclui a tarefa (Finish).
      */
     public async finish(id: number, userId: number): Promise<Task> {
-        await this.findById(id);
+        const task = await this.findById(id);
+        const now = new Date();
 
-        // Para qualquer timer ativo do usuário ao concluir
-        try {
+        if (task.started_at == null) {
+            task.started_at = now;
+            await recordedTimeService.start({ task_id: id }, userId);
             await recordedTimeService.stop(userId);
-        } catch (error) { }
+        }
 
         const statusCompleted = await prisma.statusTask.findFirstOrThrow({
             where: { name: "Concluída" }
         });
 
-        console.log(statusCompleted);
-
         return prisma.task.update({
             where: { id },
             data: {
                 status_id: statusCompleted.id,
-                completed_at: new Date(),
+                started_at: task.started_at,
+                completed_at: now
+            }
+        });
+    }
+
+    /**
+     * Finaliza múltiplas tarefas de uma vez.
+     * Útil para operações em lote.
+     */
+    public async finishMany(ids: number[], userId: number): Promise<Prisma.BatchPayload> {
+        if (!ids || ids.length === 0) {
+            throw new Error("Nenhuma tarefa fornecida para finalização.");
+        }
+
+        const now = new Date();
+
+        const statusCompleted = await prisma.statusTask.findFirstOrThrow({
+            where: { name: "Concluída" },
+            select: { id: true }
+        });
+
+        const tasksNotStarted = await prisma.task.findMany({
+            where: {
+                id: { in: ids },
+                started_at: null
+            },
+            select: { id: true }
+        });
+
+        if (tasksNotStarted.length > 0) {
+            const unstartedIds = tasksNotStarted.map(t => t.id);
+
+            await prisma.task.updateMany({
+                where: { id: { in: unstartedIds } },
+                data: { started_at: now }
+            });
+
+            for (const task of tasksNotStarted) {
+                await recordedTimeService.start({ task_id: task.id }, userId);
+                await recordedTimeService.stop(userId);
+            }
+        }
+
+        return prisma.task.updateMany({
+            where: {
+                id: { in: ids }
+            },
+            data: {
+                status_id: statusCompleted.id,
+                completed_at: now
             }
         });
     }

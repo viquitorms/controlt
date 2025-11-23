@@ -95,12 +95,23 @@ class MetricService {
             select: {
                 id: true,
                 title: true,
+                description: true,
                 status: true,
                 due_date: true,
                 completed_at: true,
-                project: { select: { title: true } },
-                priority: { select: { name: true } },
+                project: true,
+                priority: true,
                 assigned_to: true,
+                created_date: true,
+                created_by: true,
+                recorded_time: {
+                    select: {
+                        id: true,
+                        startedAt: true,
+                        endedAt: true,
+                        user: true,
+                    }
+                },
             },
             orderBy: { due_date: 'asc' }
         });
@@ -118,14 +129,7 @@ class MetricService {
                 total_planned: totalPlanned,
                 total_completed: totalCompleted
             },
-            data: plannedTasks.map(task => ({
-                id: task.id,
-                title: task.title,
-                project: task.project?.title || 'Sem Projeto',
-                due_date: task.due_date,
-                status: task.status.id === statusCompleted.id ? 'Concluída' : 'Não Concluída',
-                is_completed: task.status.id === statusCompleted.id
-            }))
+            data: plannedTasks
         };
     }
 }

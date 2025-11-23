@@ -1,3 +1,9 @@
+import type { PriorityTask } from "../priorityTask/priorityTask.res.dto";
+import type { Project } from "../project/Project.res.dto";
+import type { RecordedTime } from "../recordedTime/RecordedTime.res.dto";
+import type { StatusTask } from "../statusTask/statusTask.res.dto";
+import type { User } from "../user/User.res.dto";
+
 export interface MetricData {
     id: number;
     title: string;
@@ -23,10 +29,16 @@ export interface LeadTimeMetricResponse {
 export interface ConclusionRateData {
     id: number;
     title: string;
-    project: string;
-    due_date: string;
-    status: string;
-    is_completed: boolean;
+    description: string | null;
+    due_date: Date | null;
+    completed_at: Date | null;
+    created_date: Date;
+    priority: PriorityTask | null;
+    project: Project | null;
+    status: StatusTask;
+    created_by: User;
+    assigned_to: User | null;
+    recorded_time: RecordedTime[];
 }
 
 export interface ConclusionRateSummary {
@@ -36,9 +48,6 @@ export interface ConclusionRateSummary {
 }
 
 export interface ConclusionRateResponse {
-    metric: string;
-    unit: string;
-    description: string;
     summary: ConclusionRateSummary;
     data: ConclusionRateData[];
 }

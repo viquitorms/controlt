@@ -18,6 +18,12 @@ class RecordedTimeService {
             throw new Error('Tarefa não especificada para iniciar o cronômetro.');
         }
 
+        const userExists = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!userExists) {
+            throw new Error('Usuário não encontrado.');
+        }
+
         const activeTime = await this.getActiveTimer(userId);
 
         if (activeTime) {

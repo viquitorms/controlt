@@ -12,6 +12,7 @@ export interface TaskColumnOptions {
     handleStart: (task: Task) => void;
     handlePause: (task: Task) => void;
     handleFinish: (task: Task) => void;
+    handleArchive: (task: Task) => void;
     activeTaskId: number | null;
     getStatus: (statusName: string) => StatusTask | undefined;
     showSnackbar: (message: string, duration?: number, severity?: "info" | "success" | "warning" | "error") => void;
@@ -404,7 +405,7 @@ function renderActionsCell(
             {
                 status.name !== EnumNonActionableTypeName[EnumNonActionableType.Arquivada] && (
                     <Tooltip title="Deletar">
-                        <IconButton color="error" size="small" onClick={() => options.handleDelete(task)}>
+                        <IconButton color="error" size="small" onClick={() => options.handleArchive(task)}>
                             <Delete fontSize="small" />
                         </IconButton>
                     </Tooltip>

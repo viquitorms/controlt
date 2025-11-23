@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { GridColDef } from "@mui/x-data-grid";
+import type { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { taskService } from "../../services/task.service";
@@ -29,6 +29,11 @@ export function useTasksController(statusName: string) {
     const [editTask, setTaskToEdit] = useState<Task | null>(null);
     const [status, setStatus] = useState<StatusTask>();
     const [isEditable, setIsEditable] = useState<Boolean>(false);
+    const [confirmFinishDialogOpen, setConfirmFinishDialogOpen] = useState(false);
+    const [taskToFinish, setTaskToFinish] = useState<Task | null>(null);
+    const [confirmArchiveDialogOpen, setConfirmArchiveDialogOpen] = useState(false);
+    const [taskToArchive, setTaskToArchive] = useState<Task | null>(null);
+    const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
 
     /**
      * Efeito para carregar os dados iniciais quando o statusName mudar
@@ -120,6 +125,7 @@ export function useTasksController(statusName: string) {
         await checkActiveTimer();
     }, [statusName]);
 
+
     const handleDelete = useCallback(
         async (task: Task) => {
             try {
@@ -181,24 +187,80 @@ export function useTasksController(statusName: string) {
     }, [statusName]);
 
     /**
-     * Finaliza a tarefa selecionada
+     * Lida com o arquivamento da tarefa
      */
-    const handleFinish = useCallback(async (task: Task) => {
+    const handleArchive = useCallback((task: Task) => {
+        setTaskToArchive(task);
+        setConfirmArchiveDialogOpen(true);
+    }, []);
+
+    /**
+     * Lida com a confirmação de arquivamento da tarefa
+     */
+    const handleConfirmArchiveTask = useCallback(async () => {
+        setConfirmArchiveDialogOpen(false);
+
+        if (!taskToArchive) return;
+
         try {
             showBackdrop();
 
-            await taskService.finish(task.id);
+            await taskService.update(taskToArchive.id, { status_id: getStatus(EnumNonActionableTypeName[EnumNonActionableType.Arquivada])?.id! });
+            await loadTasks();
+            await checkActiveTimer();
+
+            showSnackbar("Tarefa arquivada!", 3000, "info");
+        } catch (error: any) {
+            const message = error?.response?.data?.error || "Erro ao arquivar tarefa";
+            showSnackbar(message, 5000, "error");
+        } finally {
+            hideBackdrop();
+            setTaskToArchive(null);
+        }
+    }, [taskToArchive, statusName]);
+
+    /**
+     * Finaliza a tarefa selecionada
+     */
+    const handleFinish = useCallback((task: Task) => {
+        setTaskToFinish(task);
+        setConfirmFinishDialogOpen(true);
+    }, []);
+
+    /**
+     * Finaliza a tarefa selecionada
+     */
+    const handleConfirmFinishTask = useCallback(async () => {
+        // Fecha o dialog imediatamente
+        setConfirmFinishDialogOpen(false);
+
+        try {
+            showBackdrop();
+
+            if (selectedTasks.length > 0) {
+                await taskService.finishMany(selectedTasks.map(t => t.id));
+                setSelectedTasks([]);
+            }
+            else if (taskToFinish) {
+                await taskService.finish(taskToFinish.id);
+                setTaskToFinish(null);
+            }
+            else {
+                throw new Error("Nenhuma tarefa selecionada para finalizar.");
+            }
+
             await loadTasks();
             await checkActiveTimer();
 
             showSnackbar("Tarefa concluída!", 3000, "success");
         } catch (error: any) {
-            const message = error?.response?.data?.error || "Erro ao concluir tarefa";
+            const message = error?.response?.data?.message || "Erro ao concluir tarefa";
             showSnackbar(message, 5000, "error");
         } finally {
             hideBackdrop();
+            setTaskToFinish(null); // Limpa a tarefa selecionada
         }
-    }, [statusName]);
+    }, [taskToFinish, statusName]); // Adicionei taskToFinish nas dependências
 
     /**
      * Abre o modal de edição para a tarefa selecionada.
@@ -280,6 +342,23 @@ export function useTasksController(statusName: string) {
     }
 
     /**
+     * Lida com a mudança no modelo de seleção de linhas da DataGrid
+     * @param selectionModel 
+     */
+    const handleRowSelectionModelChange = async (selectionModel: GridRowSelectionModel) => {
+
+        // TODO: Melhorar essa lógica para lidar com seleção/deseleção corretamente
+        const selectedIds = Array.from(selectionModel.ids);
+
+        if (selectionModel.type === "include") {
+            setSelectedTasks(tasks.filter(task => selectedIds.includes(task.id)));
+        }
+        else {
+            setSelectedTasks(tasks);
+        }
+    }
+
+    /**
      * Define as colunas da tabela de tarefas com base no statusName e nas funções de manipulação.
      * O useMemo garante que, se os dados não mudaram, a referência do array columns permanece a mesma na memória.  Isso é importante para otimização de performance, evitando renderizações desnecessárias.
      */
@@ -292,6 +371,7 @@ export function useTasksController(statusName: string) {
                 handleStart,
                 handlePause,
                 handleFinish,
+                handleArchive,
                 activeTaskId,
                 getStatus,
                 showSnackbar
@@ -302,7 +382,6 @@ export function useTasksController(statusName: string) {
 
 
     return {
-        // data
         tasks,
         users,
         projects,
@@ -316,6 +395,22 @@ export function useTasksController(statusName: string) {
         handleUpdate,
         refresh: loadTasks,
         status,
-        isEditable
+        isEditable,
+
+        // Finalização
+        confirmFinishDialogOpen,
+        setConfirmFinishDialogOpen,
+        handleConfirmFinishTask,
+        taskToFinish,
+
+        // Arquivamento
+        confirmArchiveDialogOpen,
+        setConfirmArchiveDialogOpen,
+        handleConfirmArchiveTask,
+        taskToArchive,
+
+        // Seleção de itens
+        handleRowSelectionModelChange,
+        selectedTasks
     };
 }

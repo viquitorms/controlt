@@ -45,4 +45,9 @@ export const taskService = {
         const response = await api.patch(`/tasks/${id}/finish`);
         return response.data as Task;
     },
+
+    async finishMany(ids: number[]): Promise<Task> {
+        const response = await api.patch(`/tasks/finish-many`, { ids });
+        return response.data as Task;
+    },
 };

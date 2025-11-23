@@ -142,6 +142,22 @@ class TaskController {
             res.status(400).json({ error: error.message });
         }
     }
+
+    /**
+     * Conclui a execução de uma tarefa (Finish)
+     * @param {Request} req
+     * @param {Response} res
+     */
+    static async finishMany(req, res) {
+        try {
+            const ids = req.body.ids;
+            const userId = req.user.id;
+            const task = await TaskService.finishMany(ids, userId);
+            res.status(200).json(task);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 }
 
 export default TaskController;
