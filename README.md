@@ -17,7 +17,7 @@
   <em>Trabalho de Conclusão de Curso - Sistemas de Informação - PUC Minas</em>
 </p>
 
-## 📋 Índice
+## Índice
 
 - [Sobre o Projeto](#-sobre-o-projeto)
   - [O Problema](#o-problema)
@@ -43,32 +43,32 @@ O **ControlT** integra duas abordagens complementares:
 - **Bottom-up (GTD)**: Os colaboradores gerenciam seu fluxo de trabalho através dos 5 estágios do GTD (Capturar, Esclarecer, Organizar, Refletir, Engajar)
 - **Top-down (CMMI)**: O sistema captura automaticamente métricas de eficiência alinhadas ao CMMI nível 2, sem esforço adicional do usuário
 
-## ✨ Principais Funcionalidades
+## Principais Funcionalidades
 
-### 📥 Fluxo GTD Completo
+### Fluxo GTD Completo
 - **Caixa de Entrada (Inbox)**: Captura rápida de todas as tarefas e ideias
 - **Wizard de Processamento**: Interface guiada para classificação (É acionável? < 2 min? Delegar?)
 - **Listas GTD**:
-  - ✅ Próximas Ações
-  - ⏳ Aguardando
-  - 📅 Agendadas
-  - 💭 Algum Dia/Talvez
-  - 📚 Referências
-  - 🗂️ Projetos
+  - Próximas Ações
+  - Aguardando
+  - Agendadas
+  - Algum Dia/Talvez
+  - Referências
+  - Projetos
 
-### 📊 Métricas Automáticas CMMI
+### Métricas Automáticas CMMI
 - **Lead Time**: Tempo desde captura até conclusão
 - **Taxa de Conclusão**: Percentual de tarefas concluídas vs planejadas
 - **Tempo de Processamento**: Análise da eficiência do fluxo
 - **Distribuição por Status**: Visibilidade do pipeline de trabalho
 
-### 👥 Gestão Organizacional
+### Gestão Organizacional
 - Sistema de usuários com perfis (Colaborador/Gerente)
 - Gestão de equipes
 - Gestão de projetos
 - Autenticação JWT segura
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
 ┌─────────────────────────────────────────┐
@@ -93,7 +93,7 @@ O **ControlT** integra duas abordagens complementares:
 └─────────────────────────────────────────┘
 ```
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 | Categoria | Tecnologia | Versão |
 |-----------|------------|--------|
@@ -107,7 +107,7 @@ O **ControlT** integra duas abordagens complementares:
 | **Autenticação** | JWT | - |
 | **Hospedagem DB** | Supabase | - |
 
-## 🚀 Instalação e Execução
+## Instalação e Execução
 
 ### Pré-requisitos
 
@@ -162,7 +162,7 @@ Acesse: http://localhost:5173
 - Email: admin@controlt.com
 - Senha: admin
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 controlt/
@@ -189,7 +189,7 @@ controlt/
 │   └── index.html
 ```
 
-## 📈 Métricas CMMI
+## Métricas CMMI
 
 ### Lead Time
 ```javascript
@@ -213,7 +213,7 @@ Avalia a capacidade de entrega da equipe comparando o planejado vs realizado.
 | Refletir | Measurement & Analysis | Frequência de revisão |
 | Engajar | Project Monitoring | Taxa de conclusão |
 
-## 👨‍💻 Autor
+## Autor
 
 **Victor Magalhães de Souza**
 
@@ -224,6 +224,6 @@ Avalia a capacidade de entrega da equipe comparando o planejado vs realizado.
 **Orientador:** Prof. Leonardo Vilela Cardoso
 
 <p align="center">
-  Desenvolvido com ❤️ para o TCC de Sistemas de Informação<br>
+  Desenvolvido para o TCC de Sistemas de Informação<br>
   PUC Minas - 2s/2025
 </p>
