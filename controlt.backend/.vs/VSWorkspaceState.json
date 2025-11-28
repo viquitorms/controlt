@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\prisma",
+    "\\src",
+    "\\src\\controllers"
+  ],
+  "SelectedNode": "\\src\\controllers\\auth.controller.js",
+  "PreviewInSolutionExplorer": false
+}

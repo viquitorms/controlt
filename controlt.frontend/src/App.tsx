@@ -1,8 +1,7 @@
 import './App.css'
 import Login from './pages/Login.page'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Inbox from './pages/inbox/Inbox.page'
-import MainLayout from './components/layouts/Main.layout'
+import MainLayout from './components/layouts/CTMain.layout'
 import Users from './pages/user/Users.page'
 import Settings from './pages/Settings.page'
 import CTProtectedRoute from './components/ui/CTProtectedRoute.component'
@@ -16,6 +15,9 @@ import References from './pages/references/References.page'
 import Someday from './pages/someday/Someday.page'
 import Finished from './pages/finished/Finished.page'
 import Archived from './pages/archived/Archived.page'
+import Doing from './pages/doing/Doing.page'
+import LeadTimePage from './pages/dashboard/LeadTime.page'
+import ConclusionRatePage from './pages/dashboard/ConclusionRate.page'
 
 function App() {
 
@@ -31,29 +33,29 @@ function App() {
         }
         />
 
-        <Route path='/caixadeentrada' element={
-          <MainLayout title='Caixa de Entrada' description='Todos os items que você capturou e precisam ser processados'>
-            <Inbox />
+        <Route path='/emandamento' element={
+          <MainLayout title='Em Andamento' description='Tarefas que estão sendo trabalhadas no momento'>
+            <Doing />
           </MainLayout>
         }
         />
 
         <Route path='/proximasacoes' element={
-          <MainLayout title='Próximas Ações' description='Itens que você deve executar quando possível'>
+          <MainLayout title='Próximas Ações' description='Tarefas e Itens que você deve executar quando possível'>
             <NextActions />
           </MainLayout>
         }
         />
 
         <Route path='/aguardando' element={
-          <MainLayout title='Aguardando' description='Itens que foram delegados e estão aguardandno retorno'>
+          <MainLayout title='Aguardando' description='Tarefas que foram delegados e estão aguardandno retorno'>
             <Waiting />
           </MainLayout>
         }
         />
 
         <Route path='/agendado' element={
-          <MainLayout title='Agendado' description='Itens que você deve agendou para uma data específica'>
+          <MainLayout title='Agendado' description='Tarefas que você deve agendou para uma data específica'>
             <Scheduled />
           </MainLayout>
         }
@@ -67,21 +69,21 @@ function App() {
         />
 
         <Route path='/algumdia' element={
-          <MainLayout title='Algum dia talvez' description='Itens que não possuem prioridades e que serão feitas algum dia ou talvez não serão feitas'>
+          <MainLayout title='Algum dia talvez' description='Tarefas que não possuem prioridades e que serão feitas algum dia ou talvez não serão feitas'>
             <Someday />
           </MainLayout>
         }
         />
 
         <Route path='/concluidos' element={
-          <MainLayout title='Concluídos' description='Itens que foram concluídos'>
+          <MainLayout title='Concluídos' description='Tarefas que foram concluídos'>
             <Finished />
           </MainLayout>
         }
         />
 
-        <Route path='/deletados' element={
-          <MainLayout title='Deletados' description='Itens que foram deletados'>
+        <Route path='/arquivadas' element={
+          <MainLayout title='Arquivadas' description='Tarefas e Itens que foram arquivadas'>
             <Archived />
           </MainLayout>
         }
@@ -114,6 +116,21 @@ function App() {
           </MainLayout>
         }
         />
+
+        <Route path='/metricas/lead-time' element={
+          <MainLayout title='Lead Time' description='Monitoramento de Lead Time e eficiência do processo'>
+            <LeadTimePage />
+          </MainLayout>
+        }
+        />
+
+        <Route path='/metricas/taxa-conclusao' element={
+          <MainLayout title='Taxa de Conclusão' description='Confiabilidade do planeamento (PPC)'>
+            <ConclusionRatePage />
+          </MainLayout>
+        }
+        />
+
       </Route>
 
       <Route path='*' element={<Navigate to="/" replace />} />

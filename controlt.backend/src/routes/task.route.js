@@ -30,4 +30,12 @@ router.delete("/:id", (req, res, next) => {
   return taskController.delete(req, res, next);
 });
 
+router.patch("/:id/start", authMiddleware, taskController.start);
+router.patch("/:id/pause", authMiddleware, taskController.pause);
+router.patch("/:id/finish", authMiddleware, taskController.finish);
+
+router.patch("/finish-many", (req, res, next) => {
+  return taskController.finishMany(req, res, next);
+});
+
 export default router;

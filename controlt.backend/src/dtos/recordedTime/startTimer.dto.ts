@@ -5,14 +5,6 @@ import { type } from "os";
 export default class StartTimerDto {
 
     /**
-     * ID do item associado ao tempo registrado.
-     */
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    item_id: number;
-
-    /**
      * ID da tarefa associada ao tempo registrado.
      */
     @IsOptional()

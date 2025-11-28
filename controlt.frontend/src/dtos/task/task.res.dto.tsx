@@ -1,4 +1,3 @@
-import type { Item } from "../item/Item.res.dto";
 import type { PriorityTask } from "../priorityTask/priorityTask.res.dto";
 import type { Project } from "../Project.entity";
 import type { StatusTask } from "../statusTask/statusTask.res.dto";
@@ -23,5 +22,4 @@ export interface Task {
     assigned_to: User | null,
     created_by: User | null,
     project: Project | null,
-    item: Item | null,
 }

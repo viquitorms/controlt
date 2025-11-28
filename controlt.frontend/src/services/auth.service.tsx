@@ -65,7 +65,7 @@ export const authService = {
             if (!user) {
                 return false;
             }
-            if (user.profile.id == ProfileEnum.GERENTE) {
+            if (user.profile.id == ProfileEnum.Gerente) {
                 return true;
             }
             else {

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import CTSnackbar from "../components/ui/CTSnackbar.component";
+import CTSnackbar from "../components/ui/atoms/snackbar/CTSnackbar.component";
 import type { AlertColor } from "@mui/material";
 
 interface ISnackbar {

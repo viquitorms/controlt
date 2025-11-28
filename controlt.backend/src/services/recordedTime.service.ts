@@ -12,15 +12,22 @@ class RecordedTimeService {
      * @returns 
      */
     public async start(data: StartTimerDto, userId: number): Promise<RecordedTime> {
-        const { item_id, task_id } = data;
+        const { task_id } = data;
 
-        if ((!item_id && !task_id) || (item_id && task_id)) {
-            throw new Error('Forneça somente um dos parâmetros: item_id ou task_id.');
+        if (!task_id) {
+            throw new Error('Tarefa não especificada para iniciar o cronômetro.');
+        }
+
+        const userExists = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!userExists) {
+            throw new Error('Usuário não encontrado.');
         }
 
         const activeTime = await this.getActiveTimer(userId);
+
         if (activeTime) {
-            throw new Error('Já existe um tempo registrado ativo para este usuário. Pare o atual antes de iniciar um novo.');
+            this.stop(userId);
         }
 
         return prisma.recordedTime.create({
@@ -28,8 +35,7 @@ class RecordedTimeService {
                 startedAt: new Date(),
                 endedAt: null,
                 user_id: userId,
-                item_id: item_id || null,
-                task_id: task_id || null
+                task_id: task_id
             }
         });
     }
@@ -41,15 +47,23 @@ class RecordedTimeService {
      */
     public async stop(user_id: number): Promise<RecordedTime> {
         const activeTime = await this.getActiveTimer(user_id);
+
         if (!activeTime) {
             throw new Error('Não há tempo registrado ativo para este usuário.');
         }
-        return prisma.recordedTime.update({
-            where: { id: activeTime.id },
-            data: { endedAt: new Date() }
-        });
-    }
 
+        // Armazene o resultado da atualização em uma nova variável ou retorne diretamente
+        const updatedTime = await prisma.recordedTime.update({
+            where: {
+                id: activeTime.id
+            },
+            data: {
+                endedAt: new Date()
+            }
+        });
+
+        return updatedTime;
+    }
     /**
      * Busca todos os tempos registrados com base nos filtros fornecidos.
      * @param filters 
@@ -77,12 +91,6 @@ class RecordedTimeService {
                         name: true,
                     }
                 },
-                item: {
-                    select: {
-                        id: true,
-                        title: true,
-                    }
-                },
                 task: {
                     select: {
                         id: true,
@@ -103,12 +111,6 @@ class RecordedTimeService {
                 endedAt: null,
             },
             include: {
-                item: {
-                    select: {
-                        id: true,
-                        title: true,
-                    }
-                },
                 task: {
                     select: {
                         id: true,

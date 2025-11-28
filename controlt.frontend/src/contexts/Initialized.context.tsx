@@ -20,14 +20,16 @@ import type { Profile } from "../dtos/profile/profile.res.dto.tsx";
 import type { StatusProject } from "../dtos/statusProject/statusProject.res.dto.tsx";
 
 type InitializeState = {
-    statusTasks: StatusTask[];
+    actionableStatusTasks: StatusTask[];
+    nonActionableStatusTasks: StatusTask[];
     priorities: PriorityTask[];
     profiles: Profile[];
     statusProjects: StatusProject[];
     loading: boolean;
-    loaded: boolean;      // true quando já carregou ao menos uma vez
+    loaded: boolean;
     error?: string;
     refresh: () => Promise<void>;
+    getStatus: (statusName: string) => StatusTask | undefined;
 };
 
 const InitializeContext = createContext<InitializeState | undefined>(undefined);
@@ -39,7 +41,8 @@ export function InitializeProvider({
     children: ReactNode;
     autoLoad?: boolean;
 }) {
-    const [statusTasks, setStatusTasks] = useState<StatusTask[]>([]);
+    const [actionableStatusTasks, setActionableStatusTasks] = useState<StatusTask[]>([]);
+    const [nonActionableStatusTasks, setNonActionableStatusTasks] = useState<StatusTask[]>([]);
     const [priorities, setPriorities] = useState<PriorityTask[]>([]);
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [statusProjects, setStatusProjects] = useState<StatusProject[]>([]);
@@ -78,7 +81,8 @@ export function InitializeProvider({
                 // se abortado, evitar setState
                 if (ac.signal.aborted) return;
 
-                setStatusTasks(statusTasksRes);
+                setActionableStatusTasks(statusTasksRes.filter(st => st.is_actionable));
+                setNonActionableStatusTasks(statusTasksRes.filter(st => !st.is_actionable));
                 setPriorities(prioritiesRes);
                 setProfiles(profilesRes);
                 setStatusProjects(statusProjectsRes);
@@ -114,9 +118,18 @@ export function InitializeProvider({
         await loadAll();
     }, [loadAll]);
 
+    /**
+     * Retorna o ID do StatusTask com base no StatusTask fornecido
+     */
+    const getStatus = useCallback((statusName: string) => {
+        return actionableStatusTasks.find((s) => s.name === statusName) ??
+            nonActionableStatusTasks.find((s) => s.name === statusName);
+    }, [actionableStatusTasks, nonActionableStatusTasks]);
+
     const value = useMemo(
         () => ({
-            statusTasks,
+            actionableStatusTasks,
+            nonActionableStatusTasks,
             priorities,
             profiles,
             statusProjects,
@@ -124,8 +137,9 @@ export function InitializeProvider({
             loaded,
             error,
             refresh,
+            getStatus,
         }),
-        [statusTasks, priorities, profiles, statusProjects, loading, loaded, error, refresh]
+        [actionableStatusTasks, nonActionableStatusTasks, priorities, profiles, statusProjects, loading, loaded, error, refresh, getStatus]
     );
 
     return <InitializeContext.Provider value={value}>{children}</InitializeContext.Provider>;

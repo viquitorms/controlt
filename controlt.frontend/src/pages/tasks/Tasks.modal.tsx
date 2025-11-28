@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Dialog,
     DialogTitle,
@@ -21,6 +21,9 @@ import type { Project } from "../../dtos/project/Project.res.dto";
 import { useInitialize } from "../../contexts/Initialized.context";
 import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import type { StatusTask } from "../../dtos/statusTask/statusTask.res.dto";
+import { EnumActionableType, EnumActionableTypeName } from "../../enums/ActionableType.enum";
+import { EnumNonActionableType, EnumNonActionableTypeName } from "../../enums/NonActionableType.enum";
 
 interface TaskEditModalProps {
     open: boolean;
@@ -29,6 +32,7 @@ interface TaskEditModalProps {
     projects: Project[];
     onClose: () => void;
     onSave: (data: Partial<Task>) => Promise<void>;
+    status: StatusTask;
 }
 
 export default function TaskEditModal({
@@ -38,6 +42,7 @@ export default function TaskEditModal({
     projects,
     onClose,
     onSave,
+    status,
 }: TaskEditModalProps) {
 
     const [title, setTitle] = useState("");
@@ -47,7 +52,12 @@ export default function TaskEditModal({
     const [priorityId, setPriorityId] = useState<number | "">("");
     const [projectId, setProjectId] = useState<number | "">("");
     const [statusId, setStatusId] = useState<number | "">("");
-    const { statusTasks, priorities } = useInitialize();
+    const { priorities } = useInitialize();
+
+    const [canChangeAssignedUser, setCanChangeAssignedUser] = useState(false);
+    const [canChangeDueDate, setCanChangeDueDate] = useState(false);
+    const [canChangePriority, setCanChangePriority] = useState(false);
+    const [canChangeProject, setCanChangeProject] = useState(false);
 
     useEffect(() => {
         if (task) {
@@ -67,6 +77,8 @@ export default function TaskEditModal({
             setProjectId("");
             setStatusId("");
         }
+
+        setComponnets();
     }, [task]);
 
     const handleSave = async () => {
@@ -87,6 +99,46 @@ export default function TaskEditModal({
     };
 
     const canSave = () => title.trim().length > 0;
+
+    /**
+     * Define quais componentes podem ser alterados com base no status da tarefa
+     */
+    const setComponnets = () => {
+        if (!status) return;
+
+        if (status.is_actionable) {
+            switch (status.name) {
+                case EnumActionableTypeName[EnumActionableType.EmAndamento]:
+                case EnumActionableTypeName[EnumActionableType.ProximaAcao]:
+                case EnumActionableTypeName[EnumActionableType.Agendada]:
+                case EnumActionableTypeName[EnumActionableType.Aguardando]:
+                    setCanChangeAssignedUser(true);
+                    setCanChangeDueDate(true);
+                    setCanChangePriority(true);
+                    setCanChangeProject(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            switch (status.name) {
+                case EnumNonActionableTypeName[EnumNonActionableType.AlgumDia]:
+                    setCanChangeAssignedUser(true);
+                    setCanChangeProject(true);
+                    break;
+                case EnumNonActionableTypeName[EnumNonActionableType.Arquivada]:
+                case EnumNonActionableTypeName[EnumNonActionableType.Referencia]:
+                case EnumNonActionableTypeName[EnumNonActionableType.Concluida]:
+                default:
+                    setCanChangeAssignedUser(false);
+                    setCanChangeDueDate(false);
+                    setCanChangePriority(false);
+                    setCanChangeProject(false);
+                    break;
+            }
+        }
+    };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -121,57 +173,66 @@ export default function TaskEditModal({
                         onChange={(e) => setDescription(e.target.value)}
                     />
 
-                    <FormControl fullWidth>
-                        <InputLabel>Responsável</InputLabel>
-                        <Select
-                            value={assignedUserId}
-                            label="Responsável"
-                            onChange={(e) => setAssignedUserId(e.target.value as number | "")}
-                        >
-                            <MenuItem value="">
-                                <em>Nenhum</em>
-                            </MenuItem>
-                            {users.map((user) => (
-                                <MenuItem key={user.id} value={user.id}>
-                                    <Stack direction="row" spacing={1} alignItems="center">
-                                        <Typography>{user.name}</Typography>
-                                        <Chip
-                                            label={user.profile?.name || "Sem perfil"}
-                                            size="small"
-                                            variant="outlined"
-                                        />
-                                    </Stack>
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                    <DateTimePicker
-                        label="Data de Vencimento"
-                        value={dueDate}
-                        onChange={(newValue) => setDueDate(newValue)}
-                    />
-
-                    <FormControl fullWidth>
-                        <InputLabel>Prioridade</InputLabel>
-                        <Select
-                            value={priorityId}
-                            label="Prioridade"
-                            onChange={(e) => setPriorityId(e.target.value as number | "")}
-                        >
-                            {
-                                priorities.map((priority) => (
-                                    <MenuItem key={priority.id} value={priority.id}>
-                                        {priority.name}
+                    {
+                        canChangeAssignedUser && (
+                            <FormControl fullWidth>
+                                <InputLabel>Responsável</InputLabel>
+                                <Select
+                                    value={assignedUserId}
+                                    label="Responsável"
+                                    onChange={(e) => setAssignedUserId(e.target.value as number | "")}
+                                >
+                                    <MenuItem value="">
+                                        <em>Nenhum</em>
                                     </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
+                                    {users.map((user) => (
+                                        <MenuItem key={user.id} value={user.id}>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography>{user.name}</Typography>
+                                                <Chip
+                                                    label={user.profile?.name || "Sem perfil"}
+                                                    size="small"
+                                                    variant="outlined"
+                                                />
+                                            </Stack>
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )
+                    }
 
                     {
-                        task?.status?.name !== "Projeto" &&
-                        (
+                        canChangeDueDate && (
+                            <DateTimePicker
+                                label="Data de Vencimento"
+                                value={dueDate}
+                                onChange={(newValue) => setDueDate(newValue)}
+                            />
+                        )
+                    }
+
+                    {
+                        canChangePriority && (
+                            <FormControl fullWidth>
+                                <InputLabel>Prioridade</InputLabel>
+                                <Select
+                                    value={priorityId}
+                                    label="Prioridade"
+                                    onChange={(e) => setPriorityId(e.target.value as number | "")}
+                                >
+                                    {priorities.map((priority) => (
+                                        <MenuItem key={priority.id} value={priority.id}>
+                                            {priority.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )
+                    }
+
+                    {
+                        canChangeProject && (
                             <FormControl fullWidth>
                                 <InputLabel>Projeto</InputLabel>
                                 <Select
@@ -185,27 +246,6 @@ export default function TaskEditModal({
                                     {projects.map((project) => (
                                         <MenuItem key={project.id} value={project.id}>
                                             {project.title}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        )
-                    }
-
-                    {
-                        task?.status?.name !== "Projeto" &&
-                        task?.status?.name !== "Concluído" &&
-                        (
-                            <FormControl fullWidth required>
-                                <InputLabel>Status</InputLabel>
-                                <Select
-                                    value={statusId}
-                                    label="Status"
-                                    onChange={(e) => setStatusId(e.target.value as number | "")}
-                                >
-                                    {statusTasks.map((status) => (
-                                        <MenuItem key={status.id} value={status.id}>
-                                            {status.name}
                                         </MenuItem>
                                     ))}
                                 </Select>

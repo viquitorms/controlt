@@ -1,6 +1,6 @@
 import { Stack, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import CTDataGrid from "../../components/ui/CTDataGrid.component";
+import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
 import ProcessItem from "./processModal/ProcessItem.modal";
 import { useInboxController } from "./Inbox.controller";
 

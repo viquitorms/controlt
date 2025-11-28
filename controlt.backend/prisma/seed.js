@@ -30,23 +30,23 @@ async function main() {
 
   // Criar status de tarefas
   const statuses_task = [
-    { name: 'Próxima Ação' },
-    { name: 'Em Andamento' },
-    { name: 'Aguardando' },
-    { name: 'Agendada' },
-    { name: 'Algum Dia' },
-    { name: 'Concluída' },
-    { name: 'Cancelada' },
-    { name: 'Arquivada' },
-    { name: 'Bloqueada' },
-    { name: 'Em Revisão' },
-    { name: 'Referência' },
-    { name: 'Projeto' }
+    { name: 'Em Andamento', is_actionable: true },
+    { name: 'Próxima Ação', is_actionable: true },
+    { name: 'Agendada', is_actionable: true },
+    { name: 'Aguardando', is_actionable: true },
+    { name: 'Concluída', is_actionable: false },
+    { name: 'Algum Dia', is_actionable: false },
+    { name: 'Referência', is_actionable: false },
+    { name: 'Arquivada', is_actionable: false },
+    { name: 'Projeto', is_actionable: true },
   ];
 
   for (const status of statuses_task) {
     await prisma.statusTask.upsert({
-      where: { name: status.name },
+      where: {
+        name: status.name,
+        is_actionable: status.is_actionable
+      },
       update: {},
       create: status,
     });
@@ -58,6 +58,7 @@ async function main() {
   const statuses_project = [
     { name: 'Não iniciado' },
     { name: 'Em Andamento' },
+    { name: 'Pausado' },
     { name: 'Concluído' },
   ];
 
@@ -95,7 +96,7 @@ async function main() {
     where: { email: 'admin@controlt.com' },
     update: {},
     create: {
-      name: 'Administrador',
+      name: 'admin',
       email: 'admin@controlt.com',
       hash_password: hashPassword,
       profile_id: profileManager.id

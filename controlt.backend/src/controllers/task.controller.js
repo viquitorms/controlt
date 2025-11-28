@@ -78,6 +78,86 @@ class TaskController {
             res.status(400).json({ error: error.message });
         }
     }
+
+    /**
+     * Inicia a execução de uma tarefa (Start)
+     * @param {Request} req
+     * @param {Response} res
+     */
+    static async start(req, res) {
+        try {
+            const id = parseInt(req.params.id, 10);
+            // O middleware de autenticação deve popular req.user
+            const userId = req.user.id;
+
+            if (isNaN(id)) {
+                return res.status(400).json({ error: 'ID inválido.' });
+            }
+
+            const task = await TaskService.start(id, userId);
+            res.status(200).json(task);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    /**
+     * Pausa a execução de uma tarefa (Pause)
+     * @param {Request} req
+     * @param {Response} res
+     */
+    static async pause(req, res) {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const userId = req.user.id;
+
+            if (isNaN(id)) {
+                return res.status(400).json({ error: 'ID inválido.' });
+            }
+
+            const task = await TaskService.pause(id, userId);
+            res.status(200).json(task);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    /**
+     * Conclui a execução de uma tarefa (Finish)
+     * @param {Request} req
+     * @param {Response} res
+     */
+    static async finish(req, res) {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const userId = req.user.id;
+
+            if (isNaN(id)) {
+                return res.status(400).json({ error: 'ID inválido.' });
+            }
+
+            const task = await TaskService.finish(id, userId);
+            res.status(200).json(task);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    /**
+     * Conclui a execução de uma tarefa (Finish)
+     * @param {Request} req
+     * @param {Response} res
+     */
+    static async finishMany(req, res) {
+        try {
+            const ids = req.body.ids;
+            const userId = req.user.id;
+            const task = await TaskService.finishMany(ids, userId);
+            res.status(200).json(task);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 }
 
 export default TaskController;

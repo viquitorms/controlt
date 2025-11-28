@@ -56,7 +56,7 @@ export default function Login() {
                 setUser(authUser);
                 showSnackbar('Login realizado com sucesso!', 2000, 'success');
                 await refresh();
-                navigate('/caixadeentrada');
+                navigate('/captura');
             } else {
                 throw new Error('Erro ao recuperar dados do usuário');
             }

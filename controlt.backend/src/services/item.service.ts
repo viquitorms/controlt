@@ -8,6 +8,7 @@ class ItemService {
     public async create(data: CreateItemDto): Promise<Item> {
 
         const userExists = await prisma.user.findUnique({ where: { id: data.created_by_id } });
+
         if (!userExists) {
             throw new Error('Usuário criador não encontrado.');
         }
@@ -22,7 +23,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             }
         });
     }
@@ -45,7 +45,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             },
             skip: (page - 1) * limit,
             take: limit,
@@ -59,7 +58,6 @@ class ItemService {
             include: {
                 created_by: { select: { id: true, name: true } },
                 tasks: true,
-                recorded_time: true,
             },
         });
 
@@ -77,7 +75,6 @@ class ItemService {
             include: {
                 created_by: true,
                 tasks: true,
-                recorded_time: true
             },
         });
     }

@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components\\features\\chip",
+    "\\src\\components\\ui\\atoms\\backdrop",
+    "\\src\\components\\ui\\organisms\\data grid",
+    "\\src\\components\\ui\\organisms\\dialog",
+    "\\src\\components\\ui\\organisms\\sidebar",
+    "\\src\\pages",
+    "\\src\\pages\\capture"
+  ],
+  "SelectedNode": "\\src\\pages\\capture\\CaptureItem.page.tsx",
+  "PreviewInSolutionExplorer": false
+}

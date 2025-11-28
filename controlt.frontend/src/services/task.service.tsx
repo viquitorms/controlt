@@ -30,4 +30,24 @@ export const taskService = {
     async remove(id: number): Promise<void> {
         await api.delete(`/tasks/${id}`);
     },
+
+    async start(id: number): Promise<Task> {
+        const response = await api.patch(`/tasks/${id}/start`);
+        return response.data as Task;
+    },
+
+    async pause(id: number): Promise<Task> {
+        const response = await api.patch(`/tasks/${id}/pause`);
+        return response.data as Task;
+    },
+
+    async finish(id: number): Promise<Task> {
+        const response = await api.patch(`/tasks/${id}/finish`);
+        return response.data as Task;
+    },
+
+    async finishMany(ids: number[]): Promise<Task> {
+        const response = await api.patch(`/tasks/finish-many`, { ids });
+        return response.data as Task;
+    },
 };

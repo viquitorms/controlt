@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
-import CTDialog from "../../components/ui/CTDialog.component";
+import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import type { Profile } from "../../dtos/Profile.entity";
 import type { TermFindByIdResponse } from "../../dtos/term/Term.res.dto";
 import type { TermUpdateRequest } from "../../dtos/term/Term.req.dto";
