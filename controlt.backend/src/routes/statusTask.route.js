@@ -1,7 +1,7 @@
 import { Router } from "express";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import { validateDto } from "../middlewares/validateDto.middleware.js";
-import CreateStatusTaskDto from "../dtos/statusTask/createStatusTask.dto.ts";
+import CreateStatusTaskDto from "../dtos/statusTask/createStatusTask.dto.js";
 import statusTaskController from "../controllers/statusTask.controller.js";
 
 const router = Router();

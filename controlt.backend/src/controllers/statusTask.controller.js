@@ -1,4 +1,4 @@
-import statusTaskService from "../services/statusTask.service";
+import statusTaskService from "../services/statusTask.service.js";
 
 class StatusProjectController {
     static async create(req, res) {

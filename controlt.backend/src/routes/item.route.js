@@ -2,9 +2,9 @@ import { Router } from 'express';
 import itemController from '../controllers/item.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { validateDto } from '../middlewares/validateDto.middleware.js';
-import CreateItemDto from '../dtos/item/createItem.dto.ts';
-import FilterItemDto from '../dtos/item/filterItem.dto.ts';
-import UpdateItemDto from '../dtos/item/updateItem.dto.ts';
+import CreateItemDto from '../dtos/item/createItem.dto.js';
+import FilterItemDto from '../dtos/item/filterItem.dto.js';
+import UpdateItemDto from '../dtos/item/updateItem.dto.js';
 
 const router = Router();
 

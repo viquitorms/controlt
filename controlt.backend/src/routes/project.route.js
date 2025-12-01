@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { validateDto } from "../middlewares/validateDto.middleware.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
-import CreateProjectDto from "../dtos/project/createProject.dto.ts";
-import UpdateProjectDto from "../dtos/project/updateProject.dto.ts";
-import FilterProjectDto from "../dtos/project/filterProject.dto.ts";
+import CreateProjectDto from "../dtos/project/createProject.dto.js";
+import UpdateProjectDto from "../dtos/project/updateProject.dto.js";
+import FilterProjectDto from "../dtos/project/filterProject.dto.js";
 import projectController from "../controllers/project.controller.js";
 
 const router = Router();

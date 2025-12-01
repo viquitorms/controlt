@@ -1,4 +1,4 @@
-import priorityTaskService from "../services/priorityTask.service";
+import priorityTaskService from "../services/priorityTask.service.js";
 
 class PriorityTaskController {
     static async create(req, res) {
