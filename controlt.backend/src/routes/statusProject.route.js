@@ -2,7 +2,7 @@ import { Router } from "express";
 import statusProjectController from "../controllers/statusProject.controller.js";
 import { validateDto } from "../middlewares/validateDto.middleware.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
-import CreateStatusProjectDto from "../dtos/statusProject/createStatusProject.dto.ts";
+import CreateStatusProjectDto from "../dtos/statusProject/createStatusProject.dto.js";
 
 const router = Router();
 

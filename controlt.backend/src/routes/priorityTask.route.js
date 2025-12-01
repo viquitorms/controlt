@@ -1,7 +1,7 @@
 import { Router } from "express";
 import priorityTaskController from "../controllers/priorityTask.controller.js";
 import { validateDto } from "../middlewares/validateDto.middleware.js";
-import CreatePriorityTaskDto from "../dtos/priorityTask/createPriorityTask.dto.ts";
+import CreatePriorityTaskDto from "../dtos/priorityTask/createPriorityTask.dto.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();

@@ -2,8 +2,8 @@ import { Router } from 'express';
 import userController from '../controllers/user.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { validateDto } from '../middlewares/validateDto.middleware.js';
-import CreateUserDto from '../dtos/user/createUser.dto.ts';
-import UpdateUserDto from '../dtos/user/updateUser.dto.ts';
+import CreateUserDto from '../dtos/user/createUser.dto.js';
+import UpdateUserDto from '../dtos/user/updateUser.dto.js';
 
 const router = Router();
 

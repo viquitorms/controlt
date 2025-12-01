@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import { validateDto } from '../middlewares/validateDto.middleware.js';
-import StartTimerDto from '../dtos/recordedTime/startTimer.dto.ts';
-import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto.ts';
+import StartTimerDto from '../dtos/recordedTime/startTimer.dto.js';
+import FilterRecordedTimeDto from '../dtos/recordedTime/filterRecordedTime.dto.js';
 import RecordedTimeController from '../controllers/recordedTime.controller.js';
 
 const router = Router();
