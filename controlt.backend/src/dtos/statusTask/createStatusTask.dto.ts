@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 export default class CreateStatusTaskDto {
     /**
@@ -7,5 +7,8 @@ export default class CreateStatusTaskDto {
      * @example "In Progress"
      */
     @IsString()
-    name: string;
+    name!: string;
+
+    @IsBoolean()
+    is_actionable!: boolean;
 }
