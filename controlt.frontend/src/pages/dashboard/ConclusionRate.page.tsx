@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Chip, Divider, Drawer, Grid, IconButton, LinearProgress, List, ListItemButton, Stack, Typography } from "@mui/material";
-import { CheckCircle, Close, EventAvailable, TrendingUp } from "@mui/icons-material";
+import { Box, Card, CardContent, Chip, Divider, Drawer, Grid, IconButton, List, Stack, Typography } from "@mui/material";
+import { CheckCircle, Close, EventAvailable } from "@mui/icons-material";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
 import { metricService } from "../../services/metric.service";

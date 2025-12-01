@@ -6,7 +6,7 @@ import Users from './pages/user/Users.page'
 import Settings from './pages/Settings.page'
 import CTProtectedRoute from './components/ui/CTProtectedRoute.component'
 import Projects from './pages/project/Projects.page'
-import Teams from './pages/team/Teams.page'
+// import Teams from './pages/team/Teams.page'
 import CaptureItem from './pages/capture/CaptureItem.page'
 import Waiting from './pages/waiting/Waiting.page'
 import NextActions from './pages/nextActions/NextAction.page'
@@ -110,12 +110,12 @@ function App() {
         }
         />
 
-        <Route path='/equipes' element={
+        {/* <Route path='/equipes' element={
           <MainLayout title='Equipes' >
             <Teams />
           </MainLayout>
         }
-        />
+        /> */}
 
         <Route path='/metricas/lead-time' element={
           <MainLayout title='Lead Time' description='Monitoramento de Lead Time e eficiência do processo'>

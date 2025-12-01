@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Grid, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { AccessTime, AssignmentTurnedIn, Speed } from "@mui/icons-material";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import CTDataGrid from "../../components/ui/organisms/data grid/CTDataGrid.component";
@@ -9,7 +9,6 @@ import { useBackdrop } from "../../contexts/Backdrop.context";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 
 export default function LeadTimePage() {
-    const theme = useTheme();
     const { showBackdrop, hideBackdrop } = useBackdrop();
     const { showSnackbar } = useSnackbar();
 

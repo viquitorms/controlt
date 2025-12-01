@@ -1,5 +1,5 @@
 import { Update } from "@mui/icons-material";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { DataGrid, type GridColDef, type GridRowSelectionModel } from "@mui/x-data-grid";
 import type { JSXElementConstructor, ReactNode } from "react";
 

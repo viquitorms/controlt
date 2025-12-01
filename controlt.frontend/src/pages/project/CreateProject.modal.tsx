@@ -1,12 +1,12 @@
 import { TextField, Stack } from "@mui/material";
 import { useState } from "react";
 import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
-import type { ProjectCreateRequest } from "../../dtos/project/Project.req.dto";
+import type { CreateProjectDto } from "../../dtos/project/Project.req.dto";
 
 interface ICreateProjectModal {
 	open: boolean;
 	onClose: () => void;
-	onSave: (project: ProjectCreateRequest) => Promise<boolean>;
+	onSave: (project: CreateProjectDto) => Promise<boolean>;
 }
 
 export default function CreateProjectModal({ open, onClose, onSave }: ICreateProjectModal) {
@@ -35,10 +35,10 @@ export default function CreateProjectModal({ open, onClose, onSave }: ICreatePro
 	const handleSave = async () => {
 		if (!isValid()) return;
 
-		const projectData: ProjectCreateRequest = {
+		const projectData: CreateProjectDto = {
 			title: title,
 			description: description,
-			status: status,
+			status_id: 1
 		};
 
 		const success = await onSave(projectData);
