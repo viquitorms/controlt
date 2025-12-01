@@ -6,6 +6,7 @@ import type { Task } from "../../dtos/task/task.res.dto";
 import { useNavigate } from "react-router-dom";
 import CTDialog from "../../components/ui/organisms/dialog/CTDialog.component";
 import { Done, DoneAll } from "@mui/icons-material";
+import { EnumActionableType, EnumActionableTypeName } from "../../enums/ActionableType.enum";
 
 interface TasksPageProps {
     statusName: string;
@@ -47,7 +48,9 @@ export default function TasksPage({ statusName }: TasksPageProps) {
         taskToArchive,
 
         handleRowSelectionModelChange,
-        selectedTasks
+        selectedTasks,
+
+        isMultipleSelectActive
     } = controller;
 
     function NoRowsOverlay() {
@@ -66,17 +69,19 @@ export default function TasksPage({ statusName }: TasksPageProps) {
      * @returns 
      */
     const renderActions = () => {
-        return (
-            <Stack direction="row" spacing={1}>
-                {
-                    selectedTasks.length > 0 && (
-                        <Button variant={"contained"} color="success" onClick={() => setConfirmFinishDialogOpen(true)} startIcon={selectedTasks.length > 1 ? <DoneAll /> : <Done />}>
-                            {selectedTasks.length} {selectedTasks.length === 1 ? 'finalizar tarefa' : 'finalizar tarefas'}
-                        </Button>
-                    )
-                }
-            </Stack>
-        )
+        if (status?.name === EnumActionableTypeName[EnumActionableType.EmAndamento]) {
+            return (
+                <Stack direction="row" spacing={1}>
+                    {
+                        selectedTasks.length > 0 && (
+                            <Button variant={"contained"} color="success" onClick={() => setConfirmFinishDialogOpen(true)} startIcon={selectedTasks.length > 1 ? <DoneAll /> : <Done />}>
+                                {selectedTasks.length} {selectedTasks.length === 1 ? 'finalizar tarefa' : 'finalizar tarefas'}
+                            </Button>
+                        )
+                    }
+                </Stack>
+            )
+        }
     }
 
     /**
@@ -130,7 +135,7 @@ export default function TasksPage({ statusName }: TasksPageProps) {
                 refresh={refresh}
                 cursor="pointer"
                 actions={renderActions()}
-                checkboxSelection={true}
+                checkboxSelection={isMultipleSelectActive()}
                 disableRowSelectionOnClick={true}
                 onRowSelectionModelChange={(selection) => { handleRowSelectionModelChange(selection) }}
                 NoRowsOverlay={NoRowsOverlay}

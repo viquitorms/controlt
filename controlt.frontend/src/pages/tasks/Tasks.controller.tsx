@@ -358,6 +358,10 @@ export function useTasksController(statusName: string) {
         }
     }
 
+    const isMultipleSelectActive = () => {
+        return status?.name === EnumActionableTypeName[EnumActionableType.EmAndamento]
+    }
+
     /**
      * Define as colunas da tabela de tarefas com base no statusName e nas funções de manipulação.
      * O useMemo garante que, se os dados não mudaram, a referência do array columns permanece a mesma na memória.  Isso é importante para otimização de performance, evitando renderizações desnecessárias.
@@ -411,6 +415,8 @@ export function useTasksController(statusName: string) {
 
         // Seleção de itens
         handleRowSelectionModelChange,
-        selectedTasks
+        selectedTasks,
+
+        isMultipleSelectActive
     };
 }
