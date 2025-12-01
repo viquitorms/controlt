@@ -9,8 +9,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const allowedOrigins = (process.env.FRONTEND_URL || "").split(",");
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.error(`Bloqueado pelo CORS: ${origin}`);
+            callback(new Error('Bloqueado pelo CORS'));
+        }
+    },
     credentials: true,
 }));
 
@@ -24,7 +35,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`🌐 API: http://localhost:${PORT}/api`);
+    console.log(`🌐 API disponível`);
 });
 
 export default app;
