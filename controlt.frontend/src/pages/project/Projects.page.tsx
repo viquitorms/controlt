@@ -1,9 +1,8 @@
-import { Button, IconButton, Stack, Typography, Drawer, Box, List, ListItem, Divider, ListItemButton } from "@mui/material";
+import { Button, IconButton, Stack, Typography, Drawer, Box, List, Divider, ListItemButton } from "@mui/material";
 import UpdateIcon from '@mui/icons-material/Update';
 import CloseIcon from '@mui/icons-material/Close';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import CreateProjectModal from "./CreateProject.modal";
 import { useSnackbar } from "../../contexts/Snackbar.context";
 import { useBackdrop } from "../../contexts/Backdrop.context";

@@ -13,7 +13,7 @@ interface ISnackbar {
 export default function CTSnackbar({ open, message, duration = 6000, onClose, severity }: ISnackbar) {
 
     const handleClose = (
-        event: React.SyntheticEvent | Event,
+        _event: React.SyntheticEvent | Event,
         reason?: SnackbarCloseReason,
     ) => {
         if (reason === 'clickaway') {

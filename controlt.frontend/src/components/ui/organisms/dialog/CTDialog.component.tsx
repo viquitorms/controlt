@@ -1,5 +1,5 @@
 import { ArrowLeft } from "@mui/icons-material";
-import { Dialog as MuiDialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Box, IconButton } from "@mui/material";
+import { Dialog as MuiDialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
 import type { ReactNode } from "react";
 
 interface IDialog {

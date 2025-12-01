@@ -1,4 +1,3 @@
-import { EnumActionableType } from "../../enums/ActionableType.enum";
 import { EnumNonActionableType, EnumNonActionableTypeName } from "../../enums/NonActionableType.enum";
 import TasksPage from "../tasks/Tasks.page";
 

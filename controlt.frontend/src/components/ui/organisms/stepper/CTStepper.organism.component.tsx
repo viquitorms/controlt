@@ -4,7 +4,6 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { Stack } from '@mui/material';
 
 interface ICTStepper {
@@ -56,7 +55,7 @@ export default function CTStepper(
             isLastStep() && !allStepsCompleted()
                 ? // It's the last step, but not all steps have been completed,
                 // find the first step that has been completed
-                steps.findIndex((step, i) => !(i in completed)) : activeStep + 1;
+                steps.findIndex((_step, i) => !(i in completed)) : activeStep + 1;
 
         setActiveStep(newActiveStep);
 

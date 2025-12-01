@@ -1,4 +1,4 @@
-import { dayjs } from '../config/dayjs.config';
+import { dayjs } from '../config/Dayjs.config';
 import type { Dayjs } from 'dayjs';
 
 // Formatos padrão centralizados (não precisa passar pela app)
