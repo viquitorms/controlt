@@ -752,6 +752,8 @@ export default function CaptureItem() {
                     description: selectedItem.note,
                     status_id: 1
                 });
+
+                await itemService.update(selectedItem.id, { is_processed: true });
             }
             // Se for tarefa
             else {
