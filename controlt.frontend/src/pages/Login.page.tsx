@@ -49,7 +49,7 @@ export default function Login() {
                 password
             };
 
-            await authService.login(data);
+            const result = await authService.login(data);
             const authUser = await authService.getCurrentUser();
 
             if (authUser) {

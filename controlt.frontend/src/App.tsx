@@ -23,7 +23,8 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/' element={<Login />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/' element={<Navigate to="/login" replace />} />
 
       <Route element={<CTProtectedRoute />}>
         <Route path='/captura' element={
