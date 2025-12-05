@@ -15,6 +15,7 @@
 
 <p align="center">
   <em>Trabalho de Conclusão de Curso - Sistemas de Informação - PUC Minas</em>
+  <em>A versão apresentada no TCC foi a versão v1.0.0</em>
 </p>
 
 ## Índice
