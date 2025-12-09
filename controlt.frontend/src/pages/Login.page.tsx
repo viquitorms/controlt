@@ -70,41 +70,54 @@ export default function Login() {
 
     return (
         <Stack
-            spacing={1}
-            sx={{ width: '300px' }}
-            margin="auto"
-            height="98vh"
-            justifyContent="center"
+            direction={'row'}
+            spacing={5}
+            justifyContent={"center"}
+            alignItems={'center'}
+            margin={'auto'}
+            height={'98vh'}
+            flexWrap={'wrap'}
         >
-            <TextField
-                value={email}
-                onFocus={() => setErrorEmail(false)}
-                label="Email"
-                type="email"
-                variant="outlined"
-                onChange={(e) => setEmail(e.target.value)}
-                error={errorEmail}
-                helperText={helperTextEmail}
-                autoFocus
-            />
-            <TextField
-                value={password}
-                onFocus={() => setErrorPassword(false)}
-                label="Senha"
-                type="password"
-                variant="outlined"
-                onChange={(e) => setPassword(e.target.value)}
-                error={errorPassword}
-                helperText={helperTextPassword}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        handleLogin(e);
-                    }
-                }}
-            />
-            <Button variant="contained" onClick={handleLogin}>
-                Entrar
-            </Button>
+            <Stack
+                sx={{ width: '20rem' }}>
+                <img src='src\assets\logo-light.png' />
+            </Stack>
+            <Stack
+                spacing={1}
+                sx={{ width: '20rem' }}
+            >
+                <TextField
+                    value={email}
+                    onFocus={() => setErrorEmail(false)}
+                    label="Email"
+                    type="email"
+                    variant="outlined"
+                    onChange={(e) => setEmail(e.target.value)}
+                    error={errorEmail}
+                    helperText={helperTextEmail}
+                    autoFocus
+                />
+                <TextField
+                    value={password}
+                    onFocus={() => setErrorPassword(false)}
+                    label="Senha"
+                    type="password"
+                    variant="outlined"
+                    onChange={(e) => setPassword(e.target.value)}
+                    error={errorPassword}
+                    helperText={helperTextPassword}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleLogin(e);
+                        }
+                    }}
+                />
+                <Button variant="contained" onClick={handleLogin} disableElevation>
+                    Entrar
+                </Button>
+            </Stack>
+
+
         </Stack>
     );
 }
