@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '../contexts/Snackbar.context';
@@ -7,6 +7,10 @@ import { useBackdrop } from '../contexts/Backdrop.context';
 import type { LoginRequest } from '../dtos/auth/Auth.req.dto';
 import { useAuth } from '../contexts/Auth.context';
 import { useInitialize } from '../contexts/Initialized.context';
+import { theme } from '../styles/theme.style';
+import Lottie from "lottie-react";
+
+import manBalacingTasksAnimation from '../assets/animations/man-balancing-tasks-animation.json'
 
 export default function Login() {
     const navigate = useNavigate();
@@ -78,46 +82,49 @@ export default function Login() {
             height={'98vh'}
             flexWrap={'wrap'}
         >
-            <Stack
-                sx={{ width: '20rem' }}>
-                <img src='src\assets\logo-light.png' />
-            </Stack>
-            <Stack
-                spacing={1}
-                sx={{ width: '20rem' }}
-            >
-                <TextField
-                    value={email}
-                    onFocus={() => setErrorEmail(false)}
-                    label="Email"
-                    type="email"
-                    variant="outlined"
-                    onChange={(e) => setEmail(e.target.value)}
-                    error={errorEmail}
-                    helperText={helperTextEmail}
-                    autoFocus
-                />
-                <TextField
-                    value={password}
-                    onFocus={() => setErrorPassword(false)}
-                    label="Senha"
-                    type="password"
-                    variant="outlined"
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={errorPassword}
-                    helperText={helperTextPassword}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleLogin(e);
-                        }
-                    }}
-                />
-                <Button variant="contained" onClick={handleLogin} disableElevation>
-                    Entrar
-                </Button>
-            </Stack>
-
-
+            <Box sx={{
+                backgroundColor: theme.palette.grey[50],
+                padding: "5rem",
+                display: "flex",
+                alignItems: "center"
+            }}>
+                <Stack>
+                    <Lottie animationData={manBalacingTasksAnimation} style={{ width: '30rem' }} />
+                </Stack>
+                <Stack
+                    spacing={1}
+                >
+                    <TextField
+                        value={email}
+                        onFocus={() => setErrorEmail(false)}
+                        label="Email"
+                        type="email"
+                        variant="outlined"
+                        onChange={(e) => setEmail(e.target.value)}
+                        error={errorEmail}
+                        helperText={helperTextEmail}
+                        autoFocus
+                    />
+                    <TextField
+                        value={password}
+                        onFocus={() => setErrorPassword(false)}
+                        label="Senha"
+                        type="password"
+                        variant="outlined"
+                        onChange={(e) => setPassword(e.target.value)}
+                        error={errorPassword}
+                        helperText={helperTextPassword}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleLogin(e);
+                            }
+                        }}
+                    />
+                    <Button variant="contained" onClick={handleLogin} disableElevation>
+                        Entrar
+                    </Button>
+                </Stack>
+            </Box>
         </Stack>
     );
 }
