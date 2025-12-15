@@ -83,46 +83,51 @@ export default function Login() {
             flexWrap={'wrap'}
         >
             <Box sx={{
-                backgroundColor: theme.palette.grey[50],
-                padding: "5rem",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
             }}>
                 <Stack>
                     <Lottie animationData={manBalacingTasksAnimation} style={{ width: '30rem' }} />
                 </Stack>
                 <Stack
                     spacing={1}
+                    sx={{
+                        width: '20rem',
+                        padding: '2rem',
+                    }}
+                    alignItems={'center'}
                 >
-                    <TextField
-                        value={email}
-                        onFocus={() => setErrorEmail(false)}
-                        label="Email"
-                        type="email"
-                        variant="outlined"
-                        onChange={(e) => setEmail(e.target.value)}
-                        error={errorEmail}
-                        helperText={helperTextEmail}
-                        autoFocus
-                    />
-                    <TextField
-                        value={password}
-                        onFocus={() => setErrorPassword(false)}
-                        label="Senha"
-                        type="password"
-                        variant="outlined"
-                        onChange={(e) => setPassword(e.target.value)}
-                        error={errorPassword}
-                        helperText={helperTextPassword}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleLogin(e);
-                            }
-                        }}
-                    />
-                    <Button variant="contained" onClick={handleLogin} disableElevation>
-                        Entrar
-                    </Button>
+                    <Stack spacing={1} sx={{ width: '100%' }}>
+                        <TextField
+                            value={email}
+                            onFocus={() => setErrorEmail(false)}
+                            label="Email"
+                            type="email"
+                            variant="outlined"
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={errorEmail}
+                            helperText={helperTextEmail}
+                            autoFocus
+                        />
+                        <TextField
+                            value={password}
+                            onFocus={() => setErrorPassword(false)}
+                            label="Senha"
+                            type="password"
+                            variant="outlined"
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={errorPassword}
+                            helperText={helperTextPassword}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleLogin(e);
+                                }
+                            }}
+                        />
+                        <Button variant="contained" onClick={handleLogin} disableElevation>
+                            Entrar
+                        </Button>
+                    </Stack>
                 </Stack>
             </Box>
         </Stack>
