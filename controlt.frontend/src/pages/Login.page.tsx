@@ -83,8 +83,6 @@ export default function Login() {
             flexWrap={'wrap'}
         >
             <Box sx={{
-                border: `1px solid ${theme.palette.grey[200]}`,
-                borderRadius: theme.shape.borderRadius,
                 display: "flex",
                 alignItems: "center",
             }}>
